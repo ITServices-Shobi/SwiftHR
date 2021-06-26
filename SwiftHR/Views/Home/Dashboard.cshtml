@@ -1,0 +1,556 @@
+﻿
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "Dashboard";
+}
+
+<style type="text/css">
+    .info-box-number {
+        display: block;
+        font-weight: bold;
+        font-size: 24px;
+        color: #337ab7;
+    }
+
+    .pre-loader {
+        background: #ffffff;
+        background-position: center center;
+        background-size: 13%;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 12345;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .pre-loader .loader-logo {
+            padding-bottom: 15px;
+        }
+
+        .pre-loader .loader-progress {
+            height: 8px;
+            border-radius: 15px;
+            max-width: 200px;
+            margin: 0 auto;
+            display: block;
+            background: #ecf0f4;
+            overflow: hidden;
+        }
+
+        .pre-loader .bar {
+            width: 0%;
+            height: 8px;
+            display: block;
+            background: #1b00ff;
+        }
+
+        .pre-loader .percent {
+            text-align: center;
+            font-size: 24px;
+            display: none;
+        }
+
+        .pre-loader .loading-text {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+            padding-top: 15px;
+        }
+</style>
+
+<div class="pre-loader">
+    <div class="pre-loader-box" style="margin-top: -4%;">
+        <div class="loader-logo" style="margin-left:8%;"><img src="~/dist/img/swiftHRPrgressbar.png" alt=""></div>
+        <div class='loader-progress' id="progress_div" style="margin-top: -4%;">
+            <div class='bar' id='bar1'></div>
+        </div>
+        <div class='percent' id='percent1'>0%</div>
+        <div class="loading-text" style="font-weight: 600; font-size:20px; margin-left: 5%; color: #337ab7;">
+            Page is Loading... Please Wait...
+        </div>
+    </div>
+</div>
+
+<section class="content-header">
+    <h1>
+        Dashboard
+    </h1>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <!-- Info boxes -->
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">New Joinee</span>
+                    <span class="info-box-number">20</span>
+                </div>
+                <!-- /.info-box-content -->
+
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+
+                <span class="info-box-icon bg-green"><i class="fa fa-calendar"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">Today's Attandence</span>
+                    <span class="info-box-number">360</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <!-- fix for small devices only -->
+        <div class="clearfix visible-sm-block"></div>
+
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-red"><i class="fa fa-exclamation-circle"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">Employee's On Leave</span>
+                    <span class="info-box-number">15</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-md-3 col-sm-6 col-xs-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-aqua"><i class="fa fa-desktop"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">Helpdesk Requests</span>
+                    <span class="info-box-number">40</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Monthly Employee Joining Report</h3>
+
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body" style="margin-bottom: -2%;">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <p class="text-center">
+                                <strong> Jan, @System.DateTime.Now.Year.ToString() - June, @System.DateTime.Now.Year.ToString() </strong>
+                            </p>
+
+                            <div class="chart">
+                                <!-- Sales Chart Canvas -->
+                                <canvas id="salesChart" style="height: 180px;"></canvas>
+                            </div>
+                            <!-- /.chart-responsive -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-md-4">
+                            <p class="text-center">
+                                <strong>Department wise employee count</strong>
+                            </p>
+                            <div id="divDepartEmpCount">
+                                <div class="progress-group">
+                                    <span class="progress-text">HR & Admin</span>
+                                    <span class="progress-number"><b>20</b> &nbsp; </span>
+
+                                    <div class="progress sm">
+                                        <div class="progress-bar progress-bar-aqua" style="width: 80%"></div>
+                                    </div>
+                                </div>
+                                <!-- /.progress-group -->
+                                <div class="progress-group">
+                                    <span class="progress-text">IT</span>
+                                    <span class="progress-number"><b>80</b> &nbsp; </span>
+
+                                    <div class="progress sm">
+                                        <div class="progress-bar progress-bar-red" style="width: 80%"></div>
+                                    </div>
+                                </div>
+                                <!-- /.progress-group -->
+                                <div class="progress-group">
+                                    <span class="progress-text">Finance</span>
+                                    <span class="progress-number"><b>10</b> &nbsp; </span>
+
+                                    <div class="progress sm">
+                                        <div class="progress-bar progress-bar-green" style="width: 80%"></div>
+                                    </div>
+                                </div>
+                                <!-- /.progress-group -->
+                                <div class="progress-group">
+                                    <span class="progress-text">Corporate IT Support Center</span>
+                                    <span class="progress-number"><b>150</b> &nbsp;</span>
+
+                                    <div class="progress sm">
+                                        <div class="progress-bar progress-bar-yellow" style="width: 80%"></div>
+                                    </div>
+                                </div>
+                                <div class="progress-group">
+                                    <span class="progress-text">Management</span>
+                                    <span class="progress-number"><b>15</b> &nbsp; </span>
+
+                                    <div class="progress sm">
+                                        <div class="progress-bar progress-bar-red" style="width: 80%"></div>
+                                    </div>
+                                </div>
+                                <!-- /.progress-group -->
+                                <div class="progress-group">
+                                    <span class="progress-text">Sales</span>
+                                    <span class="progress-number"><b>30</b> &nbsp; </span>
+
+                                    <div class="progress sm">
+                                        <div class="progress-bar progress-bar-green" style="width: 80%"></div>
+                                    </div>
+                                </div>
+                                <!-- /.progress-group -->
+                                <div class="progress-group">
+                                    <span class="progress-text">Quality Assurance</span>
+                                    <span class="progress-number"><b>50</b>&nbsp;</span>
+
+                                    <div class="progress sm">
+                                        <div class="progress-bar progress-bar-yellow" style="width: 80%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.progress-group -->
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- ./box-body -->
+                <div class="box-footer">
+                    <div class="row">
+                        <div class="col-sm-3 col-xs-6">
+                            <div class="description-block border-right">
+                                @*<span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 17%</span>*@
+                                <h5 class="description-header">375</h5>
+                                <span class="description-text">TOTAL EMPLOYEES</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-3 col-xs-6">
+                            <div class="description-block border-right">
+                                @*<span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>*@
+                                <h5 class="description-header">150</h5>
+                                <span class="description-text">JOINED IN LAST 6 MONTHS</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-sm-3 col-xs-6">
+                            <div class="description-block border-right">
+                                @*<span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 20%</span>*@
+                                <h5 class="description-header">25</h5>
+                                <span class="description-text">RESIGNED IN LAST 6 MONTHS</span>
+                            </div>
+                            <!-- /.description-block -->
+                        </div>
+
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- /.box-footer -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+
+    <div class="row">
+        <!-- Left col -->
+        <div class="col-md-8">
+            <!-- TABLE: LATEST ORDERS -->
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">New Joined Employees</h3>
+
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table class="table no-margin">
+                            <thead>
+                                <tr>
+                                    <th>Employee No</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Self-Onboarding</th>
+                                    <th>Joining Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="pages/examples/invoice.html">OR9842</a></td>
+                                    <td>Call of Duty IV</td>
+                                    <td><span class="label label-success">Shipped</span></td>
+                                    <td>
+                                        <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="pages/examples/invoice.html">OR1848</a></td>
+                                    <td>Samsung Smart TV</td>
+                                    <td><span class="label label-warning">Pending</span></td>
+                                    <td>
+                                        <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="pages/examples/invoice.html">OR7429</a></td>
+                                    <td>iPhone 6 Plus</td>
+                                    <td><span class="label label-danger">Delivered</span></td>
+                                    <td>
+                                        <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="pages/examples/invoice.html">OR7429</a></td>
+                                    <td>Samsung Smart TV</td>
+                                    <td><span class="label label-info">Processing</span></td>
+                                    <td>
+                                        <div class="sparkbar" data-color="#00c0ef" data-height="20">90,80,-90,70,-61,83,63</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="pages/examples/invoice.html">OR1848</a></td>
+                                    <td>Samsung Smart TV</td>
+                                    <td><span class="label label-warning">Pending</span></td>
+                                    <td>
+                                        <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="pages/examples/invoice.html">OR7429</a></td>
+                                    <td>iPhone 6 Plus</td>
+                                    <td><span class="label label-danger">Delivered</span></td>
+                                    <td>
+                                        <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="pages/examples/invoice.html">OR9842</a></td>
+                                    <td>Call of Duty IV</td>
+                                    <td><span class="label label-success">Shipped</span></td>
+                                    <td>
+                                        <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><a href="pages/examples/invoice.html">OR9842</a></td>
+                                    <td>Call of Duty IV</td>
+                                    <td><span class="label label-success">Shipped</span></td>
+                                    <td>
+                                        <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer clearfix" style="margin-top: 2%;">
+                    <a href="javascript:void(0)" class="btn btn-sm btn-info btn-flat pull-left">Add New Employee</a>
+                    <a href="javascript:void(0)" class="btn btn-sm btn-default btn-flat pull-right">View All</a>
+                </div>
+                <!-- /.box-footer -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <div class="col-md-4">
+            <!-- PRODUCT LIST -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Employees On Leave Today</h3>
+
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <ul class="products-list product-list-in-box">
+                        <li class="item">
+                            <div class="product-img">
+                                <img src="~/dist/img/default-50x50.gif" alt="Product Image">
+                            </div>
+                            <div class="product-info">
+                                <a href="javascript:void(0)" class="product-title">
+                                    Employee Name
+                                    <span class="label label-warning pull-right"> days</span>
+                                </a>
+                                <span class="product-description">
+                                    Department | Designation
+                                </span>
+                                <span class="product-description">
+                                    15 Feb to 20 Feb | SL
+                                </span>
+                            </div>
+                        </li>
+                        <!-- /.item -->
+                        <li class="item">
+                            <div class="product-img">
+                                <img src="~/dist/img/default-50x50.gif" alt="Product Image">
+                            </div>
+                            <div class="product-info">
+                                <a href="javascript:void(0)" class="product-title">
+                                    Employee Name
+                                    <span class="label label-warning pull-right">days</span>
+                                </a>
+                                <span class="product-description">
+                                    Department | Designation
+                                </span>
+                                <span class="product-description">
+                                    15 Feb to 20 Feb | SL
+                                </span>
+                            </div>
+                        </li>
+                        <!-- /.item -->
+                        <li class="item">
+                            <div class="product-img">
+                                <img src="~/dist/img/default-50x50.gif" alt="Product Image">
+                            </div>
+                            <div class="product-info">
+                                <a href="javascript:void(0)" class="product-title">
+                                    Employee Name
+                                    <span class="label label-warning pull-right">days</span>
+                                </a>
+                                <span class="product-description">
+                                    Department | Designation
+                                </span>
+                                <span class="product-description">
+                                    15 Feb to 20 Feb | SL
+                                </span>
+                            </div>
+                        </li>
+                        <!-- /.item -->
+                        <li class="item">
+                            <div class="product-img">
+                                <img src="~/dist/img/default-50x50.gif" alt="Product Image">
+                            </div>
+                            <div class="product-info">
+                                <a href="javascript:void(0)" class="product-title">
+                                    Employee Name
+                                    <span class="label label-warning pull-right">days</span>
+                                </a>
+                                <span class="product-description">
+                                    Department | Designation
+                                </span>
+                                <span class="product-description">
+                                    15 Feb to 20 Feb | SL
+                                </span>
+                            </div>
+                        </li>
+
+                    </ul>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer text-center">
+                    <a href="javascript:void(0)" class="uppercase"> View All </a>
+                </div>
+                <div class="box-footer text-center">
+                    <a href="javascript:void(0)" class="uppercase"> Add Leave On-behalf </a>
+                </div>
+                <!-- /.box-footer -->
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+
+
+
+</section>
+
+@section Scripts {
+    <!-- ChartJS -->
+    <script src="~/bower_components/chart.js/Chart.js"></script>
+
+    <script>
+        // SLIMSCROLL FOR CHAT WIDGET
+        $('#divDepartEmpCount').slimScroll({
+            height: '200px'
+        });
+
+        var width = 100,
+            perfData = window.performance.timing, // The PerformanceTiming interface represents timing-related performance information for the given page.
+            EstimatedTime = -(perfData.loadEventEnd - perfData.navigationStart),
+            time = parseInt((EstimatedTime / 1000) % 60) * 100;
+
+        // Percentage Increment Animation
+        var PercentageID = $("#percent1"),
+            start = 0,
+            end = 100,
+            durataion = time;
+        animateValue(PercentageID, start, end, durataion);
+
+        function animateValue(id, start, end, duration) {
+
+            var range = end - start,
+                current = start,
+                increment = end > start ? 1 : -1,
+                stepTime = Math.abs(Math.floor(duration / range)),
+                obj = $(id);
+
+            var timer = setInterval(function () {
+                current += increment;
+                $(obj).text(current + "%");
+                $("#bar1").css('width', current + "%");
+                //obj.innerHTML = current;
+                if (current == end) {
+                    clearInterval(timer);
+                }
+            }, stepTime);
+        }
+
+        // Fading Out Loadbar on Finised
+        setTimeout(function () {
+            $('.pre-loader').fadeOut(300);
+        }, time);
+
+    </script>
+
+<script>
+    $(document).ready(function () {
+        $("#liDashboard").addClass("active");
+    });
+</script>
+
+}
