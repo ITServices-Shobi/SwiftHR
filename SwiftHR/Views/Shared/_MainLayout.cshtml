@@ -344,12 +344,19 @@
                             </span>
                         </a>
                         <ul class="treeview-menu">
+                            <li id="liEmployeeLeaves" class="liItems">
+                                <a asp-controller="Leaves" asp-action="LeavesTakenView" onclick="menuClick('liEmployeeLeaves')">
+                                    <i class="fa fa-circle-o">
+                                    </i>
+                                    Employee Leaves List
+                                </a>
+                            </li>
                             <li id="liLeaveTypes" class="liItems"><a href="pages/UI/general.html"><i class="fa fa-circle-o"></i> Leave Types</a></li>
                             <li id="liLeaveRules" class="liItems"><a href="pages/UI/icons.html"><i class="fa fa-circle-o"></i> Leave Rules</a></li>
                             <li id="liLeavePolicySetup" class="liItems"><a href="pages/UI/buttons.html"><i class="fa fa-circle-o"></i> Leave Policy Setup</a></li>
                             <li id="liApplyLeave" class="liItems"><a href="pages/UI/sliders.html"><i class="fa fa-circle-o"></i> Apply Leave </a></li>
                             @*<li><a href="pages/UI/timeline.html"><i class="fa fa-circle-o"></i> Leave Reasons</a></li>
-                <li><a href="pages/UI/modals.html"><i class="fa fa-circle-o"></i> Holiday Calender</a></li>*@
+        <li><a href="pages/UI/modals.html"><i class="fa fa-circle-o"></i> Holiday Calender</a></li>*@
                         </ul>
                     </li>
                     <li id="liAttendance" class="treeview liItems">
