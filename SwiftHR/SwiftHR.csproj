@@ -59,7 +59,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Leaves\" />
     <Folder Include="wwwroot\bower_components\New folder\" />
   </ItemGroup>
 

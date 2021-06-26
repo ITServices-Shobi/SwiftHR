@@ -25,6 +25,8 @@ namespace SwiftHR
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            //services.AddDbContext<SHR_SHOBIGROUP_DBContext>(item => item.UseSqlServer(Configuration.GetConnectionString("SHR_Client_DBConnection")));
+
             services.AddDbContext<SHR_SHOBIGROUP_DBContext>(item => item.UseSqlServer(Configuration.GetConnectionString("SHR_Client_DBConnection")));
         }
 
