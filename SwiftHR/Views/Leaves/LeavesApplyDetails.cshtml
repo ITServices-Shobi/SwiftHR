@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SwiftHR.Models.LeaveApplyDetail>
+﻿@model SwiftHR.Utility.LeavesAllDetails
 @{
     Layout = "_MainLayout";
     ViewData["Title"] = "LeavesApplyDetails";
@@ -33,25 +33,39 @@
                     </thead>
                     <tbody>
 
-                        @if (Model != null && Model.Count() > 0)
+                        @if (Model != null && Model.leaveApplyListAll.Count() > 0)
                         {
-                            @foreach (var contact in Model)
+                            @foreach (var leave in Model.leaveApplyListAll)
                             {
                         <tr>
                             @*<td style="width: 34%;"> <img src="../UploadImages/@contact.EmployeeProfilePhoto" alt="Emp Image" style="width:10% !important; border-radius: 50%;"> <span style="margin-left:5%;"> <strong> @contact.FirstName  @contact.MiddleName  @contact.LastName </strong>  </span> </td>*@
-                            <td style="width: 34%;"> <img src="../UploadImages/default.avatar" alt="Emp Image" style="width:10% !important; border-radius: 50%;"> <span style="margin-left:5%;"> <strong> @contact.EmployeeId  @contact.EmployeeId  @contact.EmployeeId </strong>  </span> </td>
-                            <td>
-                                <a asp-controller="Employee" asp-action="EmployeeDetails" asp-route-empId="@contact.EmployeeId" data-toggle="modal" data-target="#modal-default">
-                                    @contact.EmployeeId
-                                </a>
-                                <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@contact.EmployeeId" />
-                            </td>
 
-                            <td> @contact.LeaveFromDate </td>
-                            <td>@contact.LeaveToDate</td>
-                            <td>@contact.LeaveAppliedOn</td>
-                            <td>@contact.LeaveReason </td>
-                            <td>@contact.LeaveStatus </td>
+                            @foreach (var empd in Model.empMasterDataItems.Where(x => x.EmployeeId == @leave.EmployeeId).ToList())
+                            {
+                            <td style="width: 34%;">
+                                <img src="../UploadImages/default-avatar.png" alt="Emp Image" style="width:10% !important; border-radius: 50%;">
+                                <a asp-controller="Employee" asp-action="EmployeeDetails" asp-route-empId="@leave.EmployeeId" data-toggle="modal" data-target="#modal-default">
+                                    <span style="margin-left:5%;">
+                                        <strong> @empd.FirstName  @empd.MiddleName  @empd.LastName </strong>
+                                    </span>
+                                </a>
+                                <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leave.EmployeeId" />
+                            </td>
+                            }
+
+                            @*<td style="width: 34%;"> <img src="../UploadImages/default-avatar.png" alt="Emp Image" style="width:10% !important; border-radius: 50%;"> <span style="margin-left:5%;"> <strong> @leave.EmployeeId  @leave.EmployeeId  @leave.EmployeeId </strong>  </span> </td>*@
+                            @*<td>
+                                <a asp-controller="Employee" asp-action="EmployeeDetails" asp-route-empId="@leave.EmployeeId" data-toggle="modal" data-target="#modal-default">
+                                    @leave.EmployeeId
+                                </a>
+                                <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leave.EmployeeId" />
+                            </td>*@
+
+                            <td> @leave.LeaveFromDate </td>
+                            <td>@leave.LeaveToDate</td>
+                            <td>@leave.LeaveAppliedOn</td>
+                            <td>@leave.LeaveReason </td>
+                            <td>@leave.LeaveStatus </td>
                         </tr>
                             }
                         }

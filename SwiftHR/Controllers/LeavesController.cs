@@ -36,10 +36,25 @@ namespace SwiftHR.Controllers
         // GET: Leaves List
         public ActionResult LeavesList()
         {
+            //List<LeaveApplyDetail> leaveData = new List<LeaveApplyDetail>();
+            //leaveData = _context.LeaveApplyDetails.ToList();
+
+            //return View("LeavesApplyDetails", leaveData);
+
+
+            LeavesAllDetails empLeavesAll = new LeavesAllDetails();
+
             List<LeaveApplyDetail> leaveData = new List<LeaveApplyDetail>();
             leaveData = _context.LeaveApplyDetails.ToList();
 
-            return View("LeavesApplyDetails", leaveData);
+            List<Employee> empData = new List<Employee>();
+            empData = _context.Employees.ToList();
+
+            empLeavesAll.empMasterDataItems = empData;
+            empLeavesAll.leaveApplyListAll = leaveData;
+
+            return View("LeavesApplyDetails", empLeavesAll);
+
         }
 
         // GET: LeavesController
