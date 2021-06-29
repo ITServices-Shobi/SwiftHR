@@ -1,0 +1,199 @@
+﻿@model IEnumerable<SwiftHR.Models.LeaveApplyDetail>
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "LeavesApplyDetails";
+}
+
+<!-- DataTables -->
+<link rel="stylesheet" href="~/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+
+<section class="content-header">
+    <h1>
+        Employee Leaves
+    </h1>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="box box-default">
+        <div class="box">
+           
+            <div class="box-body">
+                <table id="tblLeavesList" class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th> Employee </th>
+                            <th> Employee Code</th>
+                            <th> Leave From </th>
+                            <th> Leave To </th>
+                            <th> Leave Applied On </th>
+                            <th> Leave Reason </th>
+                            <th> Leave Status </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @if (Model != null && Model.Count() > 0)
+                        {
+                            @foreach (var contact in Model)
+                            {
+                        <tr>
+                            @*<td style="width: 34%;"> <img src="../UploadImages/@contact.EmployeeProfilePhoto" alt="Emp Image" style="width:10% !important; border-radius: 50%;"> <span style="margin-left:5%;"> <strong> @contact.FirstName  @contact.MiddleName  @contact.LastName </strong>  </span> </td>*@
+                            <td style="width: 34%;"> <img src="../UploadImages/default.avatar" alt="Emp Image" style="width:10% !important; border-radius: 50%;"> <span style="margin-left:5%;"> <strong> @contact.EmployeeId  @contact.EmployeeId  @contact.EmployeeId </strong>  </span> </td>
+                            <td>
+                                <a asp-controller="Employee" asp-action="EmployeeDetails" asp-route-empId="@contact.EmployeeId" data-toggle="modal" data-target="#modal-default">
+                                    @contact.EmployeeId
+                                </a>
+                                <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@contact.EmployeeId" />
+                            </td>
+
+                            <td> @contact.LeaveFromDate </td>
+                            <td>@contact.LeaveToDate</td>
+                            <td>@contact.LeaveAppliedOn</td>
+                            <td>@contact.LeaveReason </td>
+                            <td>@contact.LeaveStatus </td>
+                        </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog" style="width: 65% !important;">
+
+            <div class="modal-content">
+
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+</section>
+
+
+
+
+@section Scripts {
+
+    <!-- DataTables -->
+    <script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#liLeave").addClass("active");
+            $("#liEmployeeLeaves").addClass("active");
+            document.getElementById("liEmployeeLeaves").style.backgroundColor = "#3c8dbc45";
+        });
+
+        $(function () {
+            $('#tblLeavesList').DataTable();
+        })
+
+    </script>
+}
+
+
+
+
+@*<p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.EmployeeId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LeaveType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LeaveReason)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LeaveFromDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LeaveToDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LeaveAppliedOn)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LeaveStatus)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReportingManagerUserId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReportingManagerName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LeaveStatusChangeDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LeaveStatusChangedBy)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LeaveRejectReason)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EmployeeId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LeaveType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LeaveReason)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LeaveFromDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LeaveToDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LeaveAppliedOn)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LeaveStatus)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReportingManagerUserId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReportingManagerName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LeaveStatusChangeDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LeaveStatusChangedBy)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LeaveRejectReason)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.EmpLeaveId">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.EmpLeaveId">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.EmpLeaveId">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>*@
