@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SwiftHR.Utility
 {
-    public class LeavesAllDetails
+    public class DashBoard
     {
         public List<Employee> empMasterDataItems { get; set; }
 

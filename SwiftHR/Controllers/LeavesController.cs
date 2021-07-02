@@ -17,7 +17,7 @@ namespace SwiftHR.Controllers
     public class LeavesController : Controller
     {
 
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<LeavesController> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private static string date;
         private static string time;
@@ -26,7 +26,7 @@ namespace SwiftHR.Controllers
 
         SHR_SHOBIGROUP_DBContext _context = new SHR_SHOBIGROUP_DBContext();
 
-        public LeavesController(ILogger<HomeController> logger, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
+        public LeavesController(ILogger<LeavesController> logger, IWebHostEnvironment webHostEnvironment, IConfiguration configuration)
         {
             _logger = logger;
             this._webHostEnvironment = webHostEnvironment;
@@ -52,6 +52,7 @@ namespace SwiftHR.Controllers
 
             empLeavesAll.empMasterDataItems = empData;
             empLeavesAll.leaveApplyListAll = leaveData;
+           
 
             return View("LeavesApplyDetails", empLeavesAll);
 

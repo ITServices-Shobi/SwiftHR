@@ -106,9 +106,22 @@ namespace SwiftHR.Controllers
         #region Dashboard
         public IActionResult Dashboard()
         {
-            List<FeedsGroup> postsGroup = new List<FeedsGroup>();
-            postsGroup = _context.FeedsGroups.ToList();
-            return View("Dashboard", postsGroup);
+            //List<FeedsGroup> postsGroup = new List<FeedsGroup>();
+            //postsGroup = _context.FeedsGroups.ToList();
+
+
+            DashBoard dBoard = new DashBoard();
+
+            List<LeaveApplyDetail> leaveData = new List<LeaveApplyDetail>();
+            leaveData = _context.LeaveApplyDetails.ToList();
+
+            List<Employee> empData = new List<Employee>();
+            empData = _context.Employees.ToList();
+
+            dBoard.empMasterDataItems = empData;
+            dBoard.leaveApplyListAll = leaveData;
+
+            return View("Dashboard", dBoard);
         }
 
         #endregion
@@ -481,6 +494,13 @@ namespace SwiftHR.Controllers
             Employee empData = _context.Employees.Where(i => i.EmployeeNumber == Convert.ToInt32(userName)).Single();
             return empData;
         }
+
+        //public ActionResult NewJoiningEmployeeDetails(string empId)
+        //{
+        //    Employee empData = new Employee();
+        //    empData = _context.Employees.Where(o => o.EmployeeId == Convert.ToInt32(empId)).SingleOrDefault();
+        //    return PartialView("Dashboard", empData);
+        //}
 
         private UserDetail GetUserByUserName(string userName)
         {

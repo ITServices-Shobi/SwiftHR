@@ -23,7 +23,7 @@
                     <thead>
                         <tr>
                             <th> Employee </th>
-                            <th> Employee Code</th>
+                            <th> Leave Type</th>
                             <th> Leave From </th>
                             <th> Leave To </th>
                             <th> Leave Applied On </th>
@@ -42,31 +42,33 @@
 
                             @foreach (var empd in Model.empMasterDataItems.Where(x => x.EmployeeId == @leave.EmployeeId).ToList())
                             {
-                            <td style="width: 34%;">
-                                <img src="../UploadImages/default-avatar.png" alt="Emp Image" style="width:10% !important; border-radius: 50%;">
-                                <a asp-controller="Employee" asp-action="EmployeeDetails" asp-route-empId="@leave.EmployeeId" data-toggle="modal" data-target="#modal-default">
-                                    <span style="margin-left:5%;">
-                                        <strong> @empd.FirstName  @empd.MiddleName  @empd.LastName </strong>
-                                    </span>
-                                </a>
-                                <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leave.EmployeeId" />
-                            </td>
+                                <td style="width: 34%;">
+                                    <img src="../UploadImages/default-avatar.png" alt="Emp Image" style="width:10% !important; border-radius: 50%;">
+                                    <a asp-controller="Employee" asp-action="EmployeeDetails" asp-route-empId="@leave.EmployeeId" data-toggle="modal" data-target="#modal-default">
+                                        <span style="margin-left:5%;">
+                                            <strong> @empd.FirstName  @empd.MiddleName  @empd.LastName </strong>
+                                        </span>
+                                    </a>
+                                    <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leave.EmployeeId" />
+                                </td>
                             }
 
                             @*<td style="width: 34%;"> <img src="../UploadImages/default-avatar.png" alt="Emp Image" style="width:10% !important; border-radius: 50%;"> <span style="margin-left:5%;"> <strong> @leave.EmployeeId  @leave.EmployeeId  @leave.EmployeeId </strong>  </span> </td>*@
                             @*<td>
-                                <a asp-controller="Employee" asp-action="EmployeeDetails" asp-route-empId="@leave.EmployeeId" data-toggle="modal" data-target="#modal-default">
-                                    @leave.EmployeeId
-                                </a>
-                                <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leave.EmployeeId" />
-                            </td>*@
+            <a asp-controller="Employee" asp-action="EmployeeDetails" asp-route-empId="@leave.EmployeeId" data-toggle="modal" data-target="#modal-default">
+                @leave.EmployeeId
+            </a>
+            <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leave.EmployeeId" />
+        </td>*@
 
-                            <td> @leave.LeaveFromDate </td>
-                            <td>@leave.LeaveToDate</td>
-                            <td>@leave.LeaveAppliedOn</td>
-                            <td>@leave.LeaveReason </td>
-                            <td>@leave.LeaveStatus </td>
-                        </tr>
+                           
+                                <td> @leave.LeaveType </td>
+                                <td> @leave.LeaveFromDate </td>
+                                <td>@leave.LeaveToDate</td>
+                                <td>@leave.LeaveAppliedOn</td>
+                                <td>@leave.LeaveReason </td>
+                                <td>@leave.LeaveStatus </td>
+                            </tr>
                             }
                         }
 
