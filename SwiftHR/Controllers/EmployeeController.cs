@@ -44,6 +44,16 @@ namespace SwiftHR.Controllers
                 return RedirectToAction("AccessDenied", "Home");
         }
 
+        public ActionResult UpdateEmployee()
+        {
+            EmpMasters empMasters = new EmpMasters();
+            empMasters = GetEmpMasterDetails();
+
+            if (IsAllowPageAccess("AddEmployee"))
+                return View("EditEmployeeDetails", empMasters);
+            else
+                return RedirectToAction("AccessDenied", "Home");
+        }
 
         private EmpMasters GetEmpMasterDetails()
         {

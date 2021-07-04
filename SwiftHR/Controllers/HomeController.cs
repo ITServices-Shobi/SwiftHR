@@ -118,8 +118,12 @@ namespace SwiftHR.Controllers
             List<Employee> empData = new List<Employee>();
             empData = _context.Employees.ToList();
 
+            List<Department> deptData = new List<Department>();
+            deptData = _context.Departments.ToList();
+
             dBoard.empMasterDataItems = empData;
             dBoard.leaveApplyListAll = leaveData;
+            dBoard.departmentListAll = deptData;
 
             return View("Dashboard", dBoard);
         }
@@ -493,6 +497,13 @@ namespace SwiftHR.Controllers
         {
             Employee empData = _context.Employees.Where(i => i.EmployeeNumber == Convert.ToInt32(userName)).Single();
             return empData;
+        }
+
+        private Department GetEmployeeDepartmentColorByDeptNumber(string deptName)
+        {
+            Department deptData = _context.Departments.Where(i => i.DepartmentName == deptName).Single();
+
+            return deptData;
         }
 
         //public ActionResult NewJoiningEmployeeDetails(string empId)

@@ -59,5 +59,7 @@ namespace SwiftHR.Models
         public bool? IsActive { get; set; }
         public string CreatedDate { get; set; }
         public int? CreatedBy { get; set; }
+        public string DateOfResignation { get; set; }
+        public string DateOfLastWorking { get; set; }
     }
 }

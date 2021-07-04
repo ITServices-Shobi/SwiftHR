@@ -79,7 +79,7 @@ namespace SwiftHR.Models
                 // optionsBuilder.UseSqlServer("Server=VIKI;Database=SHR_SHOBIGROUP_DB;UID=SHOBI_TECH;PWD=SHOBI_TECH;");
                 DbContextOptionsBuilder dbContextOptionsBuilder = optionsBuilder.UseSqlServer(@ConnectionString);
             }
-        }
+            }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

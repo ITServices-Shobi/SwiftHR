@@ -12,5 +12,8 @@ namespace SwiftHR.Models
         public string DepartmentCode { get; set; }
         public string CreatedDate { get; set; }
         public int? CreatedBy { get; set; }
+        public int? ColorCode { get; set; }
+        public int? CompanyId { get; set; }
+        public bool? IsActive { get; set; }
     }
 }
