@@ -1,25 +1,36 @@
 ﻿$(function () {
     'use strict';
 
+    //result = JSON.parse(result);
+    //var labels = result['labels'].split(",");
+    //var data = JSON.parse("[" + result['data'] + "]");
+
     // -----------------------
     // - MONTHLY EMPLOYEES CHART -
     // -----------------------
 
     // Get context with jQuery - using jQuery's .get() method.
-    var salesChartCanvas = $('#salesChart2').get(0).getContext('2d');
+    var salesChartCanvas = $('#swifthrcharts').get(0).getContext('2d');
     // This will get the first returned node in the jQuery collection.
     var salesChart = new Chart(salesChartCanvas);
 
     var months = ["Null","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
     
+    var dataPerMonth = JSON.parse("[" + document.getElementById("chartData").value + "]");
+    var monthNumbers = JSON.parse("[" + document.getElementById("chartMonths").value + "]");
 
-        //var dateToday = @System.DateTime.Now.AddMonths(-2).Month;
-        var monthName = months[dateToday]; // "July" (or current month)
-                
+    var monthsTo = months[monthNumbers[0]] + "," + months[monthNumbers[1]] + "," + months[monthNumbers[2]] + "," + months[monthNumbers[3]] + "," + months[monthNumbers[4]] + "," + months[monthNumbers[5]];
+    var monthsToDisplay = monthsTo.split(',');
+    //document.getElementById("TotalEmployees").textContent = monthNumbers[1];
+       
 
+    //var dataPerMonth = [45, 48, 40, 19, 86, 88]
+    //var monthsToDisplay = ['A','B','C','D','E','F']
+
+  
         var salesChartData = {
-            labels: globalVariable.monthsToDisplay,
+            labels: monthsToDisplay,
             datasets: [
                 {
                     label: 'Digital Goods',
@@ -29,7 +40,8 @@
                     pointStrokeColor: 'rgba(60,141,188,1)',
                     pointHighlightFill: '#fff',
                     pointHighlightStroke: 'rgba(60,141,188,1)',
-                    data: globalVariable.dataPerMonth
+                    data: dataPerMonth
+                    
                 }
             ]
         };

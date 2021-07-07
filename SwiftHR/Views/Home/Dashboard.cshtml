@@ -175,17 +175,14 @@
                             </p>
 
                             <div class="chart">
+                                <input id="chartData" name="chartValue1" type="hidden"/>
+                                <input id="chartMonths" name="chartValue2" type="hidden"/>
                                 <!-- Sales Chart Canvas -->
                                 @*<canvas id="salesChart" style="height: 180px;">
-                                        lkjvkljslj
-                                    </canvas>*@
-                                <canvas id="salesChart1" style="height: 180px;"></canvas>
-
-
+            
+                                </canvas>*@
+                                <canvas id="swifthrcharts" style="height: 180px;"></canvas>
                                 @*<canvas id="myChart" style="height: 180px;"></canvas>*@
-
-
-
                             </div>
                             <!-- /.chart-responsive -->
                         </div>
@@ -289,7 +286,7 @@
                 <div class="box-footer">
                     <div class="row">
                         <div class="col-sm-3 col-xs-6">
-                            <div class="description-block border-right">
+                            <div id="TotalEmployees" class="description-block border-right">
                                 @*<span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 17%</span>*@
                                 @*<h5 class="description-header">375</h5>*@
                                 <h5 class="description-header">@Model.empMasterDataItems.Count</h5>
@@ -679,36 +676,25 @@
         });
 
     </script>
-    <script src="~/bower_components/chart.js/Chart.js"></script>
+
     <script>
 
-        var globalVariable = {
-            monthsToDisplay =[months[@System.DateTime.Now.AddMonths(-6).Month],
-            months[@System.DateTime.Now.AddMonths(-5).Month],
-            months[@System.DateTime.Now.AddMonths(-4).Month],
-            months[@System.DateTime.Now.AddMonths(-3).Month],
-            months[@System.DateTime.Now.AddMonths(-2).Month],
-            months[@System.DateTime.Now.AddMonths(-1).Month]];
+        const globalVariable = {
+            dataPerMonth5: [45, 48, 40, 19, 86, 88]
         };
-        
-        var globalVariable = {
-            xb: 'sachin'
-        };
-        var  globalVariable = {
-            dataPerMonth =[@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-6).Month).ToList().Count,
-                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-5).Month).ToList().Count,
-                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-4).Month).ToList().Count,
-                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-3).Month).ToList().Count,
-                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-2).Month).ToList().Count,
-                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-1).Month).ToList().Count
-            ];
-        };
-    </script>
-    
 
-        
-    
-    
+
+    </script>
+
+
+    <script src="~/bower_components/chart.js/Chart.js"></script>
+
+    @*<script src="~/dist/js/pages/swifthrcharts.js?labels="+"[January, February, March, April, May, April]"+"&data="+"[45, 48, 40, 19, 86, 88]""></script>*@
+
+
+
+
+
 
     <script>
         // -----------------------
@@ -722,22 +708,7 @@
 
         var months = ["Null","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-        @*for (let i = 1; i < cars.length; i++) {
 
-            var monthNum = @System.DateTime.Now.Month;
-            var monthName = months[@System.DateTime.Now.Month]; // "July" (or current month)
-
-            var monthsToDisplay[];
-            var monthsToDisplay = [monthName,
-                monthName,
-                monthName,
-                monthName,
-                monthName,
-                monthName];
-        }*@
-
-        var dateToday = @System.DateTime.Now.AddMonths(-2).Month;
-        var monthName = months[dateToday]; // "July" (or current month)
         var monthsToDisplay = [months[@System.DateTime.Now.AddMonths(-6).Month],
                                months[@System.DateTime.Now.AddMonths(-5).Month],
                                months[@System.DateTime.Now.AddMonths(-4).Month],
@@ -753,8 +724,6 @@
                             @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-2).Month).ToList().Count,
                             @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-1).Month).ToList().Count
                             ];
-
-        @*var dataPerMonth = [28, 48, 40, 19, 86, perMonthData];*@
 
         var salesChartData = {
             labels: monthsToDisplay,
@@ -813,17 +782,8 @@
 
         // Create the line chart
         salesChart.Line(salesChartData, salesChartOptions);
+
     </script>
-
-    <script src="~/dist/js/pages/dashboard2.js"></script>
-    <script src="~/dist/js/pages/swifthrcharts.js"></script>
-    @*<script src="~/dist/js/pages/dashboard2.js"></script>*@
-
-
-
-
-
-
 
 
 
@@ -877,6 +837,28 @@
         });
     </script>
 
+    <script src="~/dist/js/pages/dashboard2.js"></script>
+    <script>
+
+        var monthsToDisplay = [@System.DateTime.Now.AddMonths(-6).Month,
+                               @System.DateTime.Now.AddMonths(-5).Month,
+                               @System.DateTime.Now.AddMonths(-4).Month,
+                               @System.DateTime.Now.AddMonths(-3).Month,
+                               @System.DateTime.Now.AddMonths(-2).Month,
+                               @System.DateTime.Now.AddMonths(-1).Month];
+
+
+        var dataPerMonth = [@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-6).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-5).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-4).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-3).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-2).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-1).Month).ToList().Count
+                            ];
+        document.getElementById("chartData").value = dataPerMonth;
+        document.getElementById("chartMonths").value = monthsToDisplay;
+    </script>
+    <script src="~/dist/js/pages/swifthrcharts.js"></script>
 
 
 }
