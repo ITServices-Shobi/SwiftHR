@@ -16,7 +16,7 @@
     <Content Include="wwwroot\bower_components\fullcalendar\dist\fullcalendar.min.css" />
     <Content Include="wwwroot\bower_components\fullcalendar\dist\fullcalendar.print.min.css" />
     <Content Include="wwwroot\bower_components\Ionicons\css\ionicons.min.css" />
-    <Content Include="wwwroot\bower_components\Ionicons\fonts\ionicons.eot" />
+    <Content Include="wwwroot\bower_components\Ionicons\fonts\ionicons.eot" />dashboard2
     <Content Include="wwwroot\bower_components\Ionicons\fonts\ionicons.ttf" />
     <Content Include="wwwroot\bower_components\Ionicons\fonts\ionicons.woff" />
     <Content Include="wwwroot\bower_components\jvectormap\jquery-jvectormap.css" />
@@ -56,9 +56,11 @@
     <None Include="wwwroot\bower_components\morris.js\morris.min.js" />
     <None Include="wwwroot\bower_components\raphael\raphael.min.js" />
     <None Include="wwwroot\bower_components\select2\dist\js\select2.full.min.js" />
+    <None Include="wwwroot\dist\js\pages\swifthrcharts.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Utility\Scripts\" />
     <Folder Include="wwwroot\bower_components\New folder\" />
   </ItemGroup>
 

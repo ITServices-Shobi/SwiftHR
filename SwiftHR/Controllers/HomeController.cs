@@ -66,7 +66,7 @@ namespace SwiftHR.Controllers
                     string rlId = DataSecurity.EncryptString(roleId.ToString());
 
                     SetCookies("rid", rlId);
-
+                    
                     bool IsAllowAccess = false;
 
                     if (roleId > 0)
@@ -486,7 +486,30 @@ namespace SwiftHR.Controllers
 
                     if (employee.EmployeeId > 0)
                         employeeUserDetails.empDetails = employee;
-                }               
+                }
+
+                
+                employeeUserDetails.addEmployeeAccess= IsAllowPageAccess("AddEmployee");
+                employeeUserDetails.employeeListAccess = IsAllowPageAccess("EmployeeList");
+                employeeUserDetails.generalSettingsAccess = IsAllowPageAccess("GeneralSettings");
+                employeeUserDetails.leaveTypesAccess = IsAllowPageAccess("LeaveTypes");
+                employeeUserDetails.leaveRulesAccess = IsAllowPageAccess("LeaveRules");
+                employeeUserDetails.leavePolicySetupAccess = IsAllowPageAccess("LeavePolicySetup");
+                employeeUserDetails.notificationsAccess = IsAllowPageAccess("Notifications");
+                employeeUserDetails.leaveReasonsAccess = IsAllowPageAccess("LeaveReasons");
+                employeeUserDetails.leaveReportsAccess = IsAllowPageAccess("LeaveReports");
+                employeeUserDetails.shiftsAccess = IsAllowPageAccess("Shifts");
+                employeeUserDetails.attendancePolicySetupAccess = IsAllowPageAccess("AttendancePolicySetup");
+                employeeUserDetails.attendanceSchemeAccess = IsAllowPageAccess("AttendanceScheme");
+                employeeUserDetails.showLeavesAccess = IsAllowPageAccess("ShowLeaves");
+                employeeUserDetails.applyLeaveAccess = IsAllowPageAccess("ApplyLeave");
+                employeeUserDetails.showAttendanceAccess = IsAllowPageAccess("ShowAttendance");
+                employeeUserDetails.helpDeskSetupAccess = IsAllowPageAccess("HelpDeskSetup");
+                employeeUserDetails.helpDeskAnalysisAccess = IsAllowPageAccess("HelpDeskAnalysis");
+                employeeUserDetails.reportsMappingAccess = IsAllowPageAccess("ReportsMapping");
+                employeeUserDetails.dashboardAccess = IsAllowPageAccess("Dashboard");
+                employeeUserDetails.eSSDashboardAccess = IsAllowPageAccess("ESSDashboard");
+
             }
 
             string result = JsonConvert.SerializeObject(employeeUserDetails);

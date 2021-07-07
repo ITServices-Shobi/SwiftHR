@@ -1,12 +1,15 @@
 ﻿@model SwiftHR.Utility.DashBoard
 
 @using Microsoft.Extensions.Configuration
+@using System.Globalization
 @inject IConfiguration Configuration
 
 @{
     Layout = "_MainLayout";
     ViewData["Title"] = "Dashboard";
 }
+
+
 
 <style type="text/css">
     .info-box-number {
@@ -96,7 +99,7 @@
 
                 <div class="info-box-content">
                     <span class="info-box-text">New Joinee</span>
-                    <span class="info-box-number">@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.Month - 1).ToList().Count</span>
+                    <span class="info-box-number">@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.Month).ToList().Count</span>
                 </div>
                 <!-- /.info-box-content -->
 
@@ -168,13 +171,21 @@
                     <div class="row">
                         <div class="col-md-8">
                             <p class="text-center">
-                                <strong> @System.DateTime.Now.AddMonths(-5).ToString("MMMM"), @System.DateTime.Now.AddMonths(-5).Year.ToString() - @System.DateTime.Now.ToString("MMMM"), @System.DateTime.Now.Year.ToString() </strong>
+                                <strong> @System.DateTime.Now.AddMonths(-6).ToString("MMMM"), @System.DateTime.Now.AddMonths(-6).Year.ToString() - @System.DateTime.Now.AddMonths(-1).ToString("MMMM"), @System.DateTime.Now.AddMonths(-1).Year.ToString() </strong>
                             </p>
 
                             <div class="chart">
                                 <!-- Sales Chart Canvas -->
-                                <canvas id="salesChart" style="height: 180px;"></canvas>
-                                
+                                @*<canvas id="salesChart" style="height: 180px;">
+                                        lkjvkljslj
+                                    </canvas>*@
+                                <canvas id="salesChart1" style="height: 180px;"></canvas>
+
+
+                                @*<canvas id="myChart" style="height: 180px;"></canvas>*@
+
+
+
                             </div>
                             <!-- /.chart-responsive -->
                         </div>
@@ -184,29 +195,29 @@
                                 <strong>Department wise employee count</strong>
                             </p>
                             <div id="divDepartEmpCount">
-                                    @{int totalEmp = @Model.empMasterDataItems.Where(x => x.IsActive == true).ToList().Count;}
-                                    @foreach (var depd in Model.departmentListAll.Where(x => x.CompanyId == 1).ToList())
+                                @{int totalEmp = @Model.empMasterDataItems.Where(x => x.IsActive == true).ToList().Count;}
+                                @foreach (var depd in Model.departmentListAll.Where(x => x.CompanyId == 1).ToList())
+                                {
+                                    @if (depd.DepartmentName != "" && depd.DepartmentName != null)
                                     {
-                                        @if (depd.DepartmentName != "" && depd.DepartmentName != null)
-                                        {
-                                            <div class="progress-group">
-                                                <span class="progress-text">@depd.DepartmentName</span>
-                                                @{int totalInDep = Model.empMasterDataItems.Where(x => x.IsActive == true && x.Department == depd.DepartmentName).ToList().Count;}
-                                                @{String deptPerc = Model.GetDepartmentWiseEmployeePercentage(totalInDep, totalEmp);}
+                                        <div class="progress-group">
+                                            <span class="progress-text">@depd.DepartmentName</span>
+                                            @{int totalInDep = Model.empMasterDataItems.Where(x => x.IsActive == true && x.Department == depd.DepartmentName).ToList().Count;}
+                                            @{String deptPerc = Model.GetDepartmentWiseEmployeePercentage(totalInDep, totalEmp);}
 
-                                                <span class="progress-number"><b>@totalInDep</b> &nbsp; </span>
-                                                <div class="progress">
-                                                    @*<div class="progress-bar progress-bar-aqua progress-bar-striped active" style="width: @deptPerc%">@deptPerc%</div>*@
-                                                    @if (depd.DepartmentName  != "" && depd.DepartmentName  != null)
-                                                    {
-                                                        <div class="progress-bar @Configuration["DepartmentProgressBarClass:" + @depd.DepartmentName] progress-bar-striped active" style="width: @deptPerc%">@deptPerc%</div>
-                                                    }
-                                                </div>
+                                            <span class="progress-number"><b>@totalInDep</b> &nbsp; </span>
+                                            <div class="progress">
+                                                @*<div class="progress-bar progress-bar-aqua progress-bar-striped active" style="width: @deptPerc%">@deptPerc%</div>*@
+                                                @if (depd.DepartmentName != "" && depd.DepartmentName != null)
+                                                {
+                                                    <div class="progress-bar @Configuration["DepartmentProgressBarClass:" + @depd.DepartmentName] progress-bar-striped active" style="width: @deptPerc%">@deptPerc%</div>
+                                                }
                                             </div>
-                                         }
-                                     }
-                                
-                                    <!--<div class="progress-group">
+                                        </div>
+                                    }
+                                }
+
+                                <!--<div class="progress-group">
                                     <span class="progress-text">HR & Admin</span>
                                     <span class="progress-number"><b>20</b> &nbsp; </span>
 
@@ -291,7 +302,9 @@
                             <div class="description-block border-right">
                                 @*<span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>*@
                                 @*<h5 class="description-header">@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.Month - 6).ToList().Count</h5>*@
-                                <h5 class="description-header">@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).AddDays(180) >= @System.DateTime.Now).ToList().Count</h5>
+                                @*<h5 class="description-header">@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).AddMonths(6) >= @System.DateTime.Now).ToList().Count</h5>*@
+
+                                <h5 class="description-header">@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining) >= @System.Convert.ToDateTime(@System.DateTime.Now.Year + "/" + @System.DateTime.Now.Month + "/" + "1").AddMonths(-6)).ToList().Count</h5>
                                 <span class="description-text">JOINED IN LAST 6 MONTHS</span>
                             </div>
                             <!-- /.description-block -->
@@ -622,7 +635,193 @@
 
 @section Scripts {
     <!-- ChartJS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.4.1/dist/chart.min.js"></script>
+    <script>
+
+        @*getData();
+        chartIT();
+
+        function chartIT() {*@
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+    </script>
     <script src="~/bower_components/chart.js/Chart.js"></script>
+    <script>
+
+        var globalVariable = {
+            monthsToDisplay =[months[@System.DateTime.Now.AddMonths(-6).Month],
+            months[@System.DateTime.Now.AddMonths(-5).Month],
+            months[@System.DateTime.Now.AddMonths(-4).Month],
+            months[@System.DateTime.Now.AddMonths(-3).Month],
+            months[@System.DateTime.Now.AddMonths(-2).Month],
+            months[@System.DateTime.Now.AddMonths(-1).Month]];
+        };
+        
+        var globalVariable = {
+            xb: 'sachin'
+        };
+        var  globalVariable = {
+            dataPerMonth =[@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-6).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-5).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-4).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-3).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-2).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-1).Month).ToList().Count
+            ];
+        };
+    </script>
+    
+
+        
+    
+    
+
+    <script>
+        // -----------------------
+        // - MONTHLY EMPLOYEES CHART -
+        // -----------------------
+
+        // Get context with jQuery - using jQuery's .get() method.
+        var salesChartCanvas = $('#salesChart1').get(0).getContext('2d');
+        // This will get the first returned node in the jQuery collection.
+        var salesChart = new Chart(salesChartCanvas);
+
+        var months = ["Null","January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        @*for (let i = 1; i < cars.length; i++) {
+
+            var monthNum = @System.DateTime.Now.Month;
+            var monthName = months[@System.DateTime.Now.Month]; // "July" (or current month)
+
+            var monthsToDisplay[];
+            var monthsToDisplay = [monthName,
+                monthName,
+                monthName,
+                monthName,
+                monthName,
+                monthName];
+        }*@
+
+        var dateToday = @System.DateTime.Now.AddMonths(-2).Month;
+        var monthName = months[dateToday]; // "July" (or current month)
+        var monthsToDisplay = [months[@System.DateTime.Now.AddMonths(-6).Month],
+                               months[@System.DateTime.Now.AddMonths(-5).Month],
+                               months[@System.DateTime.Now.AddMonths(-4).Month],
+                               months[@System.DateTime.Now.AddMonths(-3).Month],
+                               months[@System.DateTime.Now.AddMonths(-2).Month],
+                               months[@System.DateTime.Now.AddMonths(-1).Month]];
+
+
+        var dataPerMonth = [@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-6).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-5).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-4).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-3).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-2).Month).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-1).Month).ToList().Count
+                            ];
+
+        @*var dataPerMonth = [28, 48, 40, 19, 86, perMonthData];*@
+
+        var salesChartData = {
+            labels: monthsToDisplay,
+            datasets: [
+                {
+                    label: 'Digital Goods',
+                    fillColor: 'rgba(60,141,188,0.9)',
+                    strokeColor: 'rgba(60,141,188,0.8)',
+                    pointColor: '#3b8bba',
+                    pointStrokeColor: 'rgba(60,141,188,1)',
+                    pointHighlightFill: '#fff',
+                    pointHighlightStroke: 'rgba(60,141,188,1)',
+                    data: dataPerMonth
+                }
+            ]
+        };
+
+        var salesChartOptions = {
+            // Boolean - If we should show the scale at all
+            showScale: true,
+            // Boolean - Whether grid lines are shown across the chart
+            scaleShowGridLines: true,
+            // String - Colour of the grid lines
+            scaleGridLineColor: 'rgba(0,0,0,.05)',
+            // Number - Width of the grid lines
+            scaleGridLineWidth: 2,
+            // Boolean - Whether to show horizontal lines (except X axis)
+            scaleShowHorizontalLines: true,
+            // Boolean - Whether to show vertical lines (except Y axis)
+            scaleShowVerticalLines: true,
+            // Boolean - Whether the line is curved between points
+            bezierCurve: true,
+            // Number - Tension of the bezier curve between points
+            bezierCurveTension: 0.3,
+            // Boolean - Whether to show a dot for each point
+            pointDot: true,
+            // Number - Radius of each point dot in pixels
+            pointDotRadius: 4,
+            // Number - Pixel width of point dot stroke
+            pointDotStrokeWidth: 1,
+            // Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+            pointHitDetectionRadius: 20,
+            // Boolean - Whether to show a stroke for datasets
+            datasetStroke: true,
+            // Number - Pixel width of dataset stroke
+            datasetStrokeWidth: 2,
+            // Boolean - Whether to fill the dataset with a color
+            datasetFill: true,
+            // String - A legend template
+            legendTemplate: '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<datasets.length; i++){%><li><span style=\'background-color:<%=datasets[i].lineColor%>\'></span><%=datasets[i].label%></li><%}%></ul>',
+            // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+            maintainAspectRatio: true,
+            // Boolean - whether to make the chart responsive to window resizing
+            responsive: true
+        };
+
+        // Create the line chart
+        salesChart.Line(salesChartData, salesChartOptions);
+    </script>
+
+    <script src="~/dist/js/pages/dashboard2.js"></script>
+    <script src="~/dist/js/pages/swifthrcharts.js"></script>
+    @*<script src="~/dist/js/pages/dashboard2.js"></script>*@
+
+
+
+
 
 
 
@@ -677,5 +876,7 @@
             $("#liDashboard").addClass("active");
         });
     </script>
+
+
 
 }
