@@ -583,6 +583,10 @@ namespace SwiftHR.Models
                     .HasMaxLength(250)
                     .IsUnicode(false);
 
+                entity.Property(e => e.NomineeContactNumber)
+                   .HasMaxLength(20)
+                   .IsUnicode(false);
+
                 entity.Property(e => e.OnbemployeeId).HasColumnName("ONBEmployeeId");
 
                 entity.Property(e => e.PermanentAddress)
@@ -677,6 +681,10 @@ namespace SwiftHR.Models
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
+                entity.Property(e => e.PlaceOfBirth)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.DateOfJoining)
                     .HasMaxLength(20)
                     .IsUnicode(false);
@@ -725,6 +733,14 @@ namespace SwiftHR.Models
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
+                entity.Property(e => e.BloodGroup)
+                   .HasMaxLength(10)
+                   .IsUnicode(false);
+
+                entity.Property(e => e.Religion)
+                   .HasMaxLength(20)
+                   .IsUnicode(false);
+
                 entity.Property(e => e.Grade)
                     .HasMaxLength(250)
                     .IsUnicode(false);
@@ -765,6 +781,10 @@ namespace SwiftHR.Models
                 entity.Property(e => e.NomineeName)
                     .HasMaxLength(100)
                     .IsUnicode(false);
+
+                entity.Property(e => e.NomineeContactNumber)
+                   .HasMaxLength(20)
+                   .IsUnicode(false);
 
                 entity.Property(e => e.NomineeRelation)
                     .HasMaxLength(100)

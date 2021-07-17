@@ -1,11 +1,13 @@
-﻿@model SwiftHR.Models.Employee
-
+﻿@model SwiftHR.Utility.LeavesEmployeeDetails
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 @{
-    ViewData["Title"] = "Edit Employee Details";
+
+    ViewData["Title"] = "Leave Status";
 }
 
 
-<form asp-controller="Employee" asp-action="EditEmployeeDetails" method="post">
+<form asp-controller="Leaves" asp-action="EditLeavesStatus" method="post">
 
     <button type="submit" class="close" style="margin-right: 2%; margin-top: 1%;" title="Close Window">
         <span aria-hidden="true">&times;</span>
@@ -18,30 +20,30 @@
                 <!-- Profile Image -->
                 <div class="box box-primary">
                     <div class="box-body box-profile">
-                        <img class="profile-user-img img-responsive img-circle" src="../UploadImages/@Model.EmployeeProfilePhoto" alt="User profile picture">
+                        <img class="profile-user-img img-responsive img-circle" src="../UploadImages/@Model.empDetails.EmployeeProfilePhoto" alt="User profile picture">
 
-                        <h3 class="profile-username text-center">@Model.FirstName @Model.MiddleName @Model.LastName </h3>
+                        <h3 class="profile-username text-center">@Model.empDetails.FirstName @Model.empDetails.MiddleName @Model.empDetails.LastName Leave Status</h3>
 
-                        <p class="text-muted text-center" style="font-size: 20px; font-weight: 700;"> @Model.EmployeeNumber </p>
+                        <p class="text-muted text-center" style="font-size: 20px; font-weight: 700;"> @Model.empDetails.EmployeeNumber </p>
 
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
-                                <b> Contact No </b>  <span style="color:#3c8dbc; margin-left: 4%;"> <strong> @Model.ContactNumber </strong> </span>
+                                <b> Contact No </b>  <span style="color:#3c8dbc; margin-left: 4%;"> <strong> @Model.empDetails.ContactNumber </strong> </span>
                             </li>
                             <li class="list-group-item">
-                                <b> Email </b>  <br /> <span style="color:#3c8dbc;"><strong> @Model.Email </strong>  </span>
+                                <b> Email </b>  <br /> <span style="color:#3c8dbc;"><strong> @Model.empDetails.Email </strong>  </span>
                             </li>
                             <li class="list-group-item">
-                                <b>Department</b>  <br /> <span style="color:#3c8dbc;"><strong> @Model.Department </strong>  </span>
+                                <b>Department</b>  <br /> <span style="color:#3c8dbc;"><strong> @Model.empDetails.Department </strong>  </span>
                             </li>
                             <li class="list-group-item">
-                                <b>Designation</b>  <br /> <span style="color:#3c8dbc;"> <strong> @Model.Designation </strong> </span>
+                                <b>Designation</b>  <br /> <span style="color:#3c8dbc;"> <strong> @Model.empDetails.Designation </strong> </span>
                             </li>
                             <li class="list-group-item">
-                                <b>Date of Joining </b>   <span style="color:#3c8dbc; margin-left: 4%;"> <strong> @Model.DateOfJoining </strong>  </span>
+                                <b>Date of Joining </b>   <span style="color:#3c8dbc; margin-left: 4%;"> <strong> @Model.empDetails.DateOfJoining </strong>  </span>
                             </li>
                         </ul>
-                         
+
                         <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
                     </div>
                     <!-- /.box-body -->
@@ -52,7 +54,7 @@
 
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#Personal" data-toggle="tab">Personal Details</a></li>
+                        <li class="active"><a href="#Personal" data-toggle="tab">Leaves Status</a></li>
                         <li><a href="#Employment" data-toggle="tab">Employment Details</a></li>
                         <li><a href="#Account" data-toggle="tab">Account Details</a></li>
                     </ul>
@@ -60,12 +62,12 @@
                         <div class="active tab-pane" id="Personal">
                             <div class="box box-solid" style="box-shadow: none !important;">
                                 <div class="box-body">
-                                    <div class="box-group" id="accordion">
+                                    <div class="box box-default" id="accordion">
                                         <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
                                         <div id="divPanelBox1" class="panel box" style="border-top: none !important; background-color:#ddd6;">
                                             <div class="box-header">
                                                 <h4 class="box-title">
-                                                    Basic Details
+                                                    Approved Leaves
                                                 </h4>
                                                 <div class="box-tools pull-right">
                                                     <button id="btnPToggle1" type="button" class="btn btn-box-tool" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" title="Collapse" onclick="onToggle(this)">
@@ -75,68 +77,63 @@
 
                                             </div>
                                             <div id="collapseOne" class="panel-collapse collapse in">
-                                                <hr style="border-top: 1px solid #d2d6de;" />
-                                                <div class="box-body">
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label for="txtFName">First Name</label>
-                                                                <input type="text" id="txtFName" name="FirstName" asp-for="@Model.FirstName" class="form-control" placeholder="First Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label for="txtMName">Middle Name</label>
-                                                                <input type="text" id="txtMName" name="MiddleName" asp-for="@Model.MiddleName" class="form-control" placeholder="Middle Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label for="txtLName">Last Name</label>
-                                                                <input type="text" id="txtLName" name="LastName" asp-for="@Model.LastName" class="form-control" placeholder="Last Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
-                                                            </div>
+                                                @*<hr style="border-top: 1px solid #d2d6de;" />*@
+                                                <div class="box box-default">
+                                                    <div class="box">
+                                                        <div class="box-body">
+                                                            <table id="tblLeavesList" class="table table-bordered table-striped">
+                                                                <thead background-color:#ddd6>
+
+                                                                    <tr>
+                                                                        <th> Leave Type</th>
+                                                                        <th> Leave From </th>
+                                                                        <th> Leave To </th>
+                                                                        <th> Leave Applied On </th>
+                                                                        <th> Leave Reason </th>
+                                                                        <th> Leave Status </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @if (Model.leaveApplyListAll != null && Model.leaveApplyListAll.Count() > 0)
+                                                                    {
+                                                                        @foreach (var leave in Model.leaveApplyListAll.Where(x => x.LeaveStatus == "Approved"))
+                                                                        {
+                                                                            <tr>
+
+                                                                                @foreach (var empd in Model.leaveApplyListAll.Where(x => x.EmployeeId == @leave.EmployeeId).ToList())
+                                                                                {
+                                                                                    <!--<td style="width: 34%;">-->
+                                                                                    @*<img src="../UploadImages/default-avatar.png" alt="Emp Image" style="width:10% !important; border-radius: 50%;">
+                                            <a asp-controller="Leaves" asp-action="LeavesStatus" asp-route-empId="@leave.EmployeeId" data-toggle="modal" data-target="#modal-default">
+                                                <span style="margin-left:5%;">
+                                                    <strong> @Model.empDetails.FirstName  @Model.empDetails.MiddleName  @Model.empDetails.LastName </strong>
+                                                </span>
+                                            </a>
+                                            <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leave.EmployeeId" />*@
+                                                                                    <!--</td>-->
+                                                                                }
+                                                                                <td style="width: 24%;"> @leave.LeaveType </td>
+                                                                                <td> @leave.LeaveFromDate </td>
+                                                                                <td>@leave.LeaveToDate</td>
+                                                                                <td>@leave.LeaveAppliedOn</td>
+                                                                                <td style="width: 24%;">@leave.LeaveReason </td>
+                                                                                <td>@leave.LeaveStatus </td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
+
+                                                                </tbody>
+                                                            </table>
                                                         </div>
                                                     </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtMobileNo">Mobile Number</label>
-                                                                <input type="text" id="txtMobileNo" name="ContactNumber" asp-for="@Model.ContactNumber" class="form-control" maxlength="10" min="10" placeholder="Mobile Number" onkeypress='return restrictAlphabets(event)' onchange="ValidateMobileNo(this)">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtEmail">Email </label>
-                                                                <input type="email" id="txtEmail" name="Email" asp-for="@Model.Email" class="form-control" placeholder="Email" onchange="ValidateEmail(this)">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="dtDateOfJoining">Date of Birth </label>
-                                                                <input class="form-control" name="DateOfBirth" asp-for="@Model.DateOfBirth" type="date" id="dtDateOfBirth">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="ddlGender">Gender</label>
-                                                                <select class="form-control select2" id="ddlGender" name="Gender" >
-                                                                    <option value="Male">Male</option>
-                                                                    <option value="Female">Female</option>
-                                                                    <option value="Other">Other</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
                                         </div>
-
+                                        <!-- Box 2 -->
                                         <div class="panel box" id="divPanelBox2" style="border-top: none !important;">
                                             <div class="box-header">
                                                 <h4 class="box-title">
-                                                    Additional Details
+                                                    Applied Leaves
                                                 </h4>
                                                 <div class="box-tools pull-right">
                                                     <button id="btnPToggle2" type="button" class="btn btn-box-tool" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" title="Expand" onclick="onToggle(this)">
@@ -145,124 +142,62 @@
                                                 </div>
                                             </div>
                                             <div id="collapseTwo" class="panel-collapse collapse">
-                                                <hr style="border-top: 1px solid #d2d6de;" />
-                                                <div class="box-body" style="margin-top: -3%;">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <select class="form-control select2" id="ddlAddressSelection" name="AddessType" style="background: none; width: 35%;" onchange="ddlAddressSelectionChange(this.value)">
-                                                                    <option value="PresentAddress">Present Address</option>
-                                                                    <option value="PermanentAddress">Permanent Address</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="divPresentAddress">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="form-group">
-                                                                    <label for="txtAddress">Address</label>
-                                                                    <textarea class="form-control" id="txtAddress" rows="2" name="PresentAddress" asp-for="@Model.Address placeholder="Address"></textarea>
-                                                                </div>
-                                                            </div>
+                                                @*<hr style="border-top: 1px solid #d2d6de;" />*@
+                                                <div class="box box-default">
+                                                    <div class="box">
+                                                        <div class="box-body">
+                                                            <table id="tblLeavesList" class="table table-bordered table-striped">
+                                                                <thead background-color:#ddd6>
+                                                                    <tr>
+                                                                        <th> Leave Type</th>
+                                                                        <th> Leave From </th>
+                                                                        <th> Leave To </th>
+                                                                        <th> Leave Applied On </th>
+                                                                        <th> Leave Reason </th>
+                                                                        <th> Leave Status </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @if (Model.leaveApplyListAll != null && Model.leaveApplyListAll.Count() > 0)
+                                                                    {
+                                                                        @foreach (var leave in Model.leaveApplyListAll.Where(x => x.LeaveStatus == "Applied"))
+                                                                        {
+                                                                            <tr>
 
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label for="ddlCountry">Country</label>
-                                                                    <select class="form-control select2" id="ddlCountry" name="Country">
-                                                                        <option value="India">India</option>
-                                                                        <option value="USA">USA</option>
-                                                                        <option value="Austrelia">Austrelia</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label for="ddlState">State</label>
-                                                                    <select class="form-control select2" id="ddlState" name="State">
-                                                                        <option value="Maharashtra">Maharashtra</option>
-                                                                        <option value="Punjab">Punjab</option>
-                                                                        <option value="Calcutta">Calcutta</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label for="ddlCity">City</label>
-                                                                    <select class="form-control select2" id="ddlCity" name="City">
-                                                                        <option value="Pune">Pune</option>
-                                                                        <option value="Mumbai">Mumbai</option>
-                                                                        <option value="Delhi">Delhi</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label for="txtPinCode">Pin Code</label>
-                                                                    <input type="text" id="txtPinCode" name="PinCode" class="form-control" maxlength="6" min="6" placeholder="Pin Code" onkeypress='return restrictAlphabets(event)'>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="divPermanentAddress" style="display:none;">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="form-group">
-                                                                    <label for="txtPermanentAddress">Address</label>
-                                                                    <textarea class="form-control" id="txtPermanentAddress" rows="2" name="PermanentAddress" placeholder="Address"></textarea>
-                                                                </div>
-                                                            </div>
+                                                                                @foreach (var empd in Model.leaveApplyListAll.Where(x => x.EmployeeId == @leave.EmployeeId).ToList())
+                                                                                {
+                                                                                    <!--<td style="width: 34%;">-->
+                                                                                    @*<img src="../UploadImages/default-avatar.png" alt="Emp Image" style="width:10% !important; border-radius: 50%;">
+                                                <a asp-controller="Leaves" asp-action="LeavesStatus" asp-route-empId="@leave.EmployeeId" data-toggle="modal" data-target="#modal-default">
+                                                    <span style="margin-left:5%;">
+                                                        <strong> @Model.empDetails.FirstName  @Model.empDetails.MiddleName  @Model.empDetails.LastName </strong>
+                                                    </span>
+                                                </a>
+                                                <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leave.EmployeeId" />*@
+                                                                                    <!--</td>-->
+                                                                                }
+                                                                                <td style="width: 24%;"> @leave.LeaveType </td>
+                                                                                <td> @leave.LeaveFromDate </td>
+                                                                                <td>@leave.LeaveToDate</td>
+                                                                                <td>@leave.LeaveAppliedOn</td>
+                                                                                <td style="width: 24%;">@leave.LeaveReason </td>
+                                                                                <td>@leave.LeaveStatus </td>
+                                                                            </tr>
+                                                                        }
+                                                                    }
 
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label for="ddlPermanentCountry">Country</label>
-                                                                    <select class="form-control select2" id="ddlPermanentCountry" name="Country">
-                                                                        <option value="India">India</option>
-                                                                        <option value="USA">USA</option>
-                                                                        <option value="Australia">Australia</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label for="ddlPermanentState">State</label>
-                                                                    <select class="form-control select2" id="ddlPermanentState" name="State">
-                                                                        <option value="Maharashtra">Maharashtra</option>
-                                                                        <option value="Punjab">Punjab</option>
-                                                                        <option value="Calcutta">Calcutta</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label for="ddlPermanentCity">City</label>
-                                                                    <select class="form-control select2" id="ddlPermanentCity" name="City">
-                                                                        <option value="Pune">Pune</option>
-                                                                        <option value="Mumbai">Mumbai</option>
-                                                                        <option value="Delhi">Delhi</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-3">
-                                                                <div class="form-group">
-                                                                    <label for="txtPermanentPinCode">Pin Code</label>
-                                                                    <input type="text" id="txtPermanentPinCode" name="PinCode" class="form-control" maxlength="6" min="6" placeholder="Pin Code" onkeypress='return restrictAlphabets(event)'>
-                                                                </div>
-                                                            </div>
+                                                                </tbody>
+                                                            </table>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <!--Panel Box 3-->
                                         <div class="panel box" id="divPanelBox3" style="border-top: none !important;">
                                             <div class="box-header">
                                                 <h4 class="box-title">
-                                                    Family Details
+                                                    Cancelled Leaves
                                                 </h4>
                                                 <div class="box-tools pull-right">
                                                     <button id="btnPToggle3" type="button" class="btn btn-box-tool" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" title="Expand" onclick="onToggle(this)">
@@ -277,13 +212,13 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="txtMobileNo">Father's Name</label>
-                                                                <input type="text" id="txtFathersName" name="FathersName" asp-for="@Model.FathersName" class="form-control" placeholder="Father's Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
+                                                                <input type="text" id="txtFathersName" name="FathersName" asp-for="@Model.empDetails.FathersName class=" form-control" placeholder="Father's Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="txtEmail">Mother's Name </label>
-                                                                <input type="text" id="txtMothersName" name="MothersName"  asp-for="@Model.MothersName" class="form-control" placeholder="Mother's Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
+                                                                <input type="text" id="txtMothersName" name="MothersName" asp-for="@Model.empDetails.MothersName class=" form-control" placeholder="Mother's Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -291,7 +226,7 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="txtMobileNo">Spouse Name</label>
-                                                                <input type="text" id="txtSpouseName" name="SpouseName" asp-for="@Model.SpouseName" class="form-control" placeholder="Spouse Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
+                                                                <input type="text" id="txtSpouseName" name="SpouseName" asp-for="@Model.empDetails.SpouseName class=" form-control" placeholder="Spouse Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
@@ -302,13 +237,13 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="txtMobileNo">Nominee Name</label>
-                                                                <input type="text" id="txtFathersName" name="FathersName" asp-for="@Model.NomineeName" class="form-control" placeholder="Nominee Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
+                                                                <input type="text" id="txtFathersName" name="FathersName" asp-for="@Model.empDetails.NomineeName class=" form-control" placeholder="Nominee Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="txtEmail"> Nominee Contact No </label>
-                                                                <input type="text" id="txtNomineeContactNo" name="NomineeContactNo"  class="form-control" maxlength="10" min="10" placeholder="Nominee Contact No" onkeypress='return restrictAlphabets(event)' onchange="ValidateMobileNo(this)">
+                                                                <input type="text" id="txtNomineeContactNo" name="NomineeContactNo" class="form-control" maxlength="10" min="10" placeholder="Nominee Contact No" onkeypress='return restrictAlphabets(event)' onchange="ValidateMobileNo(this)">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -316,13 +251,13 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="txtMobileNo">Nominee DOB</label>
-                                                                <input class="form-control" name="NomineeDateOfBirth" asp-for="@Model.NomineeDob" type="date" id="dtNomineeDateOfBirth">
+                                                                <input class="form-control" name="NomineeDateOfBirth" asp-for="@Model.empDetails.NomineeDob type=" date" id="dtNomineeDateOfBirth">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="txtMobileNo">Relation With Nominee </label>
-                                                                <input type="text" id="txtNomineeRelation" name="NomineeRelation" asp-for="@Model.NomineeRelation" class="form-control" placeholder="Relation With Nominee" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
+                                                                <input type="text" id="txtNomineeRelation" name="NomineeRelation" asp-for="@Model.empDetails.NomineeRelation class=" form-control" placeholder="Relation With Nominee" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -333,7 +268,7 @@
                                         <div class="panel box" id="divPanelBox4" style="border-top: none !important;">
                                             <div class="box-header">
                                                 <h4 class="box-title">
-                                                    Educational Details
+                                                    Rejected Leaves
                                                 </h4>
                                                 <div class="box-tools pull-right">
                                                     <button id="btnPToggle4" type="button" class="btn btn-box-tool" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" title="Expand" onclick="onToggle(this)">
@@ -539,13 +474,13 @@
             </div>
             <!-- /.col -->
         </div>
-       
+
     </section>
 
 </form>
 
 <script type="text/javascript">
-    function onToggle(btnToggle) { 
+    function onToggle(btnToggle) {
 
         document.getElementById("divPanelBox1").style.backgroundColor = "#ffffff";
         document.getElementById("divPanelBox2").style.backgroundColor = "#ffffff";
@@ -668,10 +603,33 @@
         }
         else {
             document.getElementById("divPermanentAddress").style.display = "none";
-            document.getElementById("divPresentAddress").style.display = "block";            
+            document.getElementById("divPresentAddress").style.display = "block";
         }
     }
 
 </script>
+
+
+
+@section Scripts {
+
+    <!-- DataTables -->
+    <script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#liLeave").addClass("active");
+            $("#liEmployeeLeaves").addClass("active");
+            document.getElementById("liEmployeeLeaves").style.backgroundColor = "#3c8dbc45";
+        });
+
+        $(function () {
+            $('#tblLeavesList').DataTable();
+        })
+
+    </script>
+}
+
 
 

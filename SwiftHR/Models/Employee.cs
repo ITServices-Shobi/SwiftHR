@@ -20,14 +20,18 @@ namespace SwiftHR.Models
         public string Email { get; set; }
         public string PersonalEmail { get; set; }
         public string Gender { get; set; }
+        public string BloodGroup { get; set; }
+        public string Religion { get; set; }
         public string Address { get; set; }
         public string PermanentAddress { get; set; }
         public string DateOfBirth { get; set; }
+        public string PlaceOfBirth { get; set; }
         public string EmployeeProfilePhoto { get; set; }
         public string SpouseName { get; set; }
         public string FathersName { get; set; }
         public string MothersName { get; set; }
         public string NomineeName { get; set; }
+        public string NomineeContactNumber { get; set; }
         public string NomineeRelation { get; set; }
         public string NomineeDob { get; set; }
         public string ProbationPeriod { get; set; }
@@ -36,6 +40,7 @@ namespace SwiftHR.Models
         public string ConfirmationDate { get; set; }
         public string EmployeeStatus { get; set; }
         public string MaritalStatus { get; set; }
+        public string MarriageDate { get; set; }
         public string Department { get; set; }
         public string Designation { get; set; }
         public string Grade { get; set; }

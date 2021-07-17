@@ -330,7 +330,7 @@
                         </a>
                         <ul class="treeview-menu">
                             <li id="liAddEmployee" class="liItems"><a asp-controller="Employee" asp-action="AddEmployee" onclick="menuClick('liAddEmployee')"><i class="fa fa-circle-o"></i> Add Employee </a></li>
-                            <li id="liUpdateEmployee" class="liItems"><a asp-controller="Employee" asp-action="UpdateEmployee" onclick="menuClick('liUpdateEmployee')"><i class="fa fa-circle-o"></i> Update Employee Details </a></li>
+                            <li id="liUpdateEmployee" class="liItems"><a  asp-controller="Employee" asp-action="EmployeeProfileDetails" onclick="menuClick('liUpdateEmployee')"><i class="fa fa-circle-o"></i> Employee Profile </a></li>
                             <li id="liEmployeeList" class="liItems"><a asp-controller="Employee" asp-action="EmployeeList" onclick="menuClick('liEmployeeList')"><i class="fa fa-circle-o"></i> Employee List</a></li>
                             @*<li id="liEditEmployeeList" class="liItems"> <a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> Edit Employee Details</a></li>*@
                             <li id="liEmpSelfOnboard" class="liItems"><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> Employee Self Onboarding </a></li>
@@ -406,7 +406,7 @@
                             <li id="liAddEmployee" class="liItems"><a asp-controller="Employee" asp-action="AddEmployee" onclick="menuClick('liAddEmployee')"><i class="fa fa-circle-o"></i> Add Employee </a></li>
                             <li id="liUpdateEmployee" class="liItems"><a asp-controller="Employee" asp-action="UpdateEmployee" onclick="menuClick('liUpdateEmployee')"><i class="fa fa-circle-o"></i> Update Employee Details </a></li>
                             <li id="liEmployeeList" class="liItems"><a asp-controller="Employee" asp-action="EmployeeList" onclick="menuClick('liEmployeeList')"><i class="fa fa-circle-o"></i> Employee List</a></li>
-                            <li>@Model.  GetCookies("uid")</li>
+                            @*<li>@Model.  GetCookies("uid")</li>*@
                         </ul>
                     </li>
                     <li id="liHelpDesk" class="treeview liItems">
@@ -771,6 +771,12 @@
                         document.getElementById("liAddEmployee").hidden = usrData.addEmployeeAccess == true ? false : true;
                         document.getElementById("liUpdateEmployee").hidden = usrData.addEmployeeAccess == true ? false : true;
                         document.getElementById("liEmployeeList").hidden = usrData.employeeListAccess == true ? false : true;
+
+                        //var g_id = usrData.empDetails.EmployeeId;
+                        //document.getElementById("linkEmployeeProfileDetails").setAttribute("asp-route-empId", "2000");
+                        //var newhref = $("#linkEmployeeProfileDetails").attr('href') + '/?empId=' + g_id;
+                        //$("#linkEmployeeProfileDetails").attr("href", newhref);
+                            //= empDetails.EmployeeId;
                     }
                 },
                 error: function (req, status, error) {
@@ -783,6 +789,7 @@
             if ($(".liItems").hasClass("active")) {
                 $(".liItems").removeClass("active")
             }
+            
         }
     </script>
 

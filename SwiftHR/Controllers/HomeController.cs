@@ -513,7 +513,6 @@ namespace SwiftHR.Controllers
             }
 
             string result = JsonConvert.SerializeObject(employeeUserDetails);
-
             return new JsonResult(result);
         }
         private Employee GetEmployeeDetailsByEmpNumber(string userName)

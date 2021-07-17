@@ -89,11 +89,33 @@ namespace SwiftHR.Controllers
             Employee empData = new Employee();
             empData = _context.Employees.Where(o => o.EmployeeId == Convert.ToInt32(empId)).SingleOrDefault();
             return PartialView("EmployeeDetails", empData);
+            
         }
 
         public ActionResult EditEmployeeDetails(string empId)
         {
             return RedirectToAction("EmployeeList", "Employee");
+        }
+
+        public ActionResult EmployeeProfileDetails()
+        {
+            String empId = GetLoggedInEmpId().ToString();
+            EmployeeOnboardingDetails empOnboardingDetails = new EmployeeOnboardingDetails(empId);
+            empOnboardingDetails = GetEmployeeProfileDetails(empId);
+
+            if (IsAllowPageAccess("AddEmployee"))
+                return View("EditEmployeeDetails", empOnboardingDetails);
+            else
+                return RedirectToAction("AccessDenied", "Home");
+
+        }
+
+
+        private EmployeeOnboardingDetails GetEmployeeProfileDetails(string empId)
+        {
+            EmployeeOnboardingDetails empOnboardingDetails = new EmployeeOnboardingDetails(empId);
+            return empOnboardingDetails;
+
         }
 
         // GET: EmployeeController/Details/5
@@ -198,7 +220,7 @@ namespace SwiftHR.Controllers
                                 id = emp.EmployeeId;
                             }
 
-
+                            //Adding user details for new employee
                             if (id > 0)
                             {
                                 UserDetail user = new UserDetail();
@@ -290,6 +312,239 @@ namespace SwiftHR.Controllers
             {
                 string error = ex.Message.ToString();
                 return RedirectToAction("AddEmployee", "Employee");
+            }
+        }
+
+
+        // POST: EmployeeController/Create
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult UpdateEmployeeDetails(IFormCollection collection)
+        {
+            try
+            {
+                int loggedEmployeeId = GetLoggedInEmpId();
+
+                if (loggedEmployeeId>0)
+                {
+                    
+                    if (ModelState.IsValid)
+                    {
+                        if (IsAllowPageAccess("AddEmployee"))
+                        {
+                            
+                            Employee emp = new Employee();
+                            EmployeeOnboardingDetails empDetails = GetEmployeeProfileDetails(loggedEmployeeId.ToString());
+                            emp.EmployeeId = 0;
+                            emp.EmployeeNumber = Convert.ToInt32(collection["loggedEmployeeId"]);
+                            empDetails.empDetails.FirstName = collection["FirstName"];
+                            empDetails.empDetails.MiddleName = collection["MiddleName"];
+                            empDetails.empDetails.LastName = collection["LastName"];
+                            empDetails.empDetails.ContactNumber = collection["ContactNumber"];
+                            empDetails.empDetails.Email = collection["Email"];
+
+                            if (!string.IsNullOrEmpty(collection["ReportingManager"]) && collection["ReportingManager"] != "0")
+                                empDetails.empDetails.ReportingManager = collection["ReportingManager"];
+                            empDetails.empDetails.DateOfJoining = collection["DateOfJoining"];
+                            empDetails.empDetails.ConfirmationDate = collection["ConfirmationDate"];
+
+
+                            //If self enboarding is enabled
+                            if (Convert.ToBoolean(empDetails.empDetails.IsSelfOnboarding))
+                            {
+                                empDetails.empOnboardingDetails.OnbemployeeId = Convert.ToInt32(collection["loggedEmployeeId"]);
+                                empDetails.empOnboardingDetails.OnbemployeeId = GetLoggedInEmpId();
+                                if (!string.IsNullOrEmpty(collection["BloodGroup"]))
+                                    empDetails.empOnboardingDetails.BloodGroup = collection["BloodGroup"];
+                                if (!string.IsNullOrEmpty(collection["DateOfBirth"]))
+                                    empDetails.empOnboardingDetails.DateOfBirth = collection["DateOfBirth"];
+                                if (!string.IsNullOrEmpty(collection["MaritalStatus"]))
+                                    empDetails.empOnboardingDetails.MaritalStatus = collection["MaritalStatus"];
+                                if (!string.IsNullOrEmpty(collection["DateOfMarriage"]))
+                                    empDetails.empOnboardingDetails.MarriageDate = collection["DateOfMarriage"];
+                                if (!string.IsNullOrEmpty(collection["PlaceOfBirth"]))
+                                    empDetails.empOnboardingDetails.PlaceOfBirth = collection["PlaceOfBirth"];
+                                if (!string.IsNullOrEmpty(collection["MothersName"]))
+                                    empDetails.empOnboardingDetails.MothersName = collection["MothersName"];
+                                if (!string.IsNullOrEmpty(collection["Religion"]))
+                                    empDetails.empOnboardingDetails.Religion = collection["Religion"];
+                                empDetails.empOnboardingDetails.PhysicallyChallenged = false;
+                                empDetails.empOnboardingDetails.InternationalEmployee = false;
+                                empDetails.empOnboardingDetails.PresentAddress = collection["PresentAddress"];
+                                empDetails.empOnboardingDetails.PermanentAddress = collection["PermanentAddress"];
+                                if (!string.IsNullOrEmpty(collection["EmergencyContactNumber"]))
+                                    empDetails.empOnboardingDetails.AlternateContactNo = collection["EmergencyContactNumber"];
+                                if (!string.IsNullOrEmpty(collection["EmergencyContactName"]))
+                                    empDetails.empOnboardingDetails.AlternateContactName = collection["EmergencyContactName"];
+                                if (!string.IsNullOrEmpty(collection["NomineeName"]))
+                                    empDetails.empOnboardingDetails.NomineeName = collection["NomineeName"];
+                                if (!string.IsNullOrEmpty(collection["NomineeContactNo"]))
+                                    empDetails.empOnboardingDetails.NomineeContactNumber = collection["NomineeContactNo"];
+                                if (!string.IsNullOrEmpty(collection["NomineeDateOfBirth"]))
+                                    empDetails.empOnboardingDetails.NomineeDob = collection["NomineeDateOfBirth"];
+                                if (!string.IsNullOrEmpty(collection["NomineeRelation"]))
+                                    empDetails.empOnboardingDetails.RelationWithNominee = collection["NomineeRelation"];
+                                //Time Stamp
+                                empDetails.empOnboardingDetails.CreatedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy");
+                                empDetails.empOnboardingDetails.CreatedBy = GetLoggedInUserId();
+                            }
+                            else
+                            {
+                                //Normal saving to Employee Master if selfenboarding in disabled
+                                if (!string.IsNullOrEmpty(collection["BloodGroup"]))
+                                    empDetails.empDetails.BloodGroup = collection["BloodGroup"];
+                                if (!string.IsNullOrEmpty(collection["DateOfBirth"]))
+                                    empDetails.empDetails.DateOfBirth = collection["DateOfBirth"];
+                                if (!string.IsNullOrEmpty(collection["PlaceOfBirth"]))
+                                    empDetails.empDetails.PlaceOfBirth = collection["PlaceOfBirth"];
+                                if (!string.IsNullOrEmpty(collection["MaritalStatus"]))
+                                    empDetails.empDetails.MaritalStatus = collection["MaritalStatus"];
+                                if (!string.IsNullOrEmpty(collection["DateOfMarriage"]))
+                                    empDetails.empDetails.MarriageDate = collection["DateOfMarriage"];
+                                empDetails.empDetails.PlaceOfBirth = collection["FirstName"];
+                                if (!string.IsNullOrEmpty(collection["MothersName"]))
+                                    empDetails.empDetails.MothersName = collection["MothersName"];
+                                if (!string.IsNullOrEmpty(collection["Religion"]))
+                                    empDetails.empDetails.Religion = collection["Religion"];
+                               // empDetails.empDetails.PhysicallyChallenged = false;
+                               // empDetails.empDetails.InternationalEmployee = false;
+                                empDetails.empDetails.Address = collection["PresentAddress"];
+                                empDetails.empDetails.PermanentAddress = collection["PermanentAddress"];
+                                if (!string.IsNullOrEmpty(collection["EmergencyContactNumber"]))
+                                    empDetails.empDetails.EmergencyNumber = collection["EmergencyContactNumber"];
+                                if (!string.IsNullOrEmpty(collection["EmergencyContactName"]))
+                                    empDetails.empDetails.EmergencyContactName = collection["EmergencyContactName"];
+                                if (!string.IsNullOrEmpty(collection["NomineeName"]))
+                                    empDetails.empDetails.NomineeName = collection["NomineeName"];
+                                if (!string.IsNullOrEmpty(collection["NomineeContactNo"]))
+                                    empDetails.empDetails.NomineeContactNumber = collection["NomineeContactNo"];
+                                if (!string.IsNullOrEmpty(collection["NomineeDateOfBirth"]))
+                                    empDetails.empDetails.NomineeDob = collection["NomineeDateOfBirth"];
+                                if (!string.IsNullOrEmpty(collection["NomineeRelation"]))
+                                    empDetails.empDetails.NomineeRelation = collection["NomineeRelation"];
+                                
+                            }
+
+
+                            //if (!string.IsNullOrEmpty(collection["EmployeeStatus"]) && collection["EmployeeStatus"] != "0")
+                            //    empOnboardingDetails.EmployeeStatus = collection["EmployeeStatus"];
+
+                            //empOnboardingDetails.ProbationPeriod = collection["ProbationPeriod"];
+
+                            //if (!string.IsNullOrEmpty(collection["Department"]) && collection["Department"] != "0")
+                            //    empOnboardingDetails.Department = collection["Department"];
+
+                            //if (!string.IsNullOrEmpty(collection["Designation"]) && collection["Designation"] != "0")
+                            //    empOnboardingDetails.Designation = collection["Designation"];
+
+                            //if (!string.IsNullOrEmpty(collection["Grade"]) && collection["Grade"] != "0")
+                            //    empOnboardingDetails.Grade = collection["Grade"];
+
+                            //if (!string.IsNullOrEmpty(collection["FunctionalGrade"]) && collection["FunctionalGrade"] != "0")
+                            //    empOnboardingDetails.FunctionalGrade = collection["FunctionalGrade"];
+
+                            //if (!string.IsNullOrEmpty(collection["Level"]) && collection["Level"] != "0")
+                            //    empOnboardingDetails.Level = collection["Level"];
+
+                            //if (!string.IsNullOrEmpty(collection["SubLevel"]) && collection["SubLevel"] != "0")
+                            //    empOnboardingDetails.SubLevel = collection["SubLevel"];
+
+                            //if (!string.IsNullOrEmpty(collection["CostCenter"]) && collection["CostCenter"] != "0")
+                            //    empOnboardingDetails.CostCenter = collection["CostCenter"];
+
+                            //if (!string.IsNullOrEmpty(collection["Location"]) && collection["Location"] != "0")
+                            //    empOnboardingDetails.Location = collection["Location"];
+
+                            //empOnboardingDetails.EmployeeProfilePhoto = "default-avatar.png";
+                            //empOnboardingDetails.Pfnumber = collection["Pfnumber"];
+                            //empOnboardingDetails.Uannumber = collection["Uannumber"];
+                            //empOnboardingDetails.IncludeEsi = Convert.ToBoolean(collection["IncludeEsi"]);
+                            //empOnboardingDetails.IncludeLwf = Convert.ToBoolean(collection["IncludeLwf"]);
+
+                            //if (!string.IsNullOrEmpty(collection["PaymentMethod"]) && collection["PaymentMethod"] != "0")
+                            //    empOnboardingDetails.PaymentMethod = collection["PaymentMethod"];
+
+                            //if (!string.IsNullOrEmpty(collection["IsSelfOnboarding"]))
+                            //    empOnboardingDetails.IsSelfOnboarding = Convert.ToBoolean(collection["IsSelfOnboarding"]);
+                            //else
+                            //    empOnboardingDetails.IsSelfOnboarding = false;
+
+                            //empOnboardingDetails.IsActive = true;
+                            //empOnboardingDetails.CreatedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy");
+                            //empOnboardingDetails.CreatedBy = 1;
+
+                            empDetails.SaveEmployeeData();
+                            
+
+                            //using (SHR_SHOBIGROUP_DBContext entities = new SHR_SHOBIGROUP_DBContext())
+                            //{
+                            //    entities.Employees.Add(emp);
+                            //entities.Add(emp);
+                            //entities.SaveChanges();
+                            //    id = emp.EmployeeId;
+                            //}
+
+                            //Adding user details for new employee
+
+                            //if (id > 0)
+                            //{
+                            //    UserDetail user = new UserDetail();
+
+                            //    if (!string.IsNullOrEmpty(emp.EmployeeNumber.ToString()))
+                            //    {
+                            //        user.UserName = emp.EmployeeNumber.ToString();
+                            //        user.UserPassword = emp.EmployeeNumber.ToString();
+
+                            //        if (!string.IsNullOrEmpty(emp.EmployeeId.ToString()))
+                            //            user.EmployeeId = emp.EmployeeId;
+
+                            //        user.RoleId = 4;
+
+                            //        user.IsPwdChangeFt = false;
+
+                            //        if (!string.IsNullOrEmpty(emp.FirstName))
+                            //            user.FirstName = emp.FirstName;
+                            //        if (!string.IsNullOrEmpty(emp.LastName))
+                            //            user.LastName = emp.LastName;
+                            //        if (!string.IsNullOrEmpty(emp.Email))
+                            //            user.Email = emp.Email;
+                            //        if (!string.IsNullOrEmpty(emp.ContactNumber))
+                            //            user.Contact = emp.ContactNumber;
+
+                            //        user.ProfilePicturePath = "default-avatar.png";
+
+                            //        using (SHR_SHOBIGROUP_DBContext entities = new SHR_SHOBIGROUP_DBContext())
+                            //        {
+                            //            entities.UserDetails.Add(user);
+                            //            entities.SaveChanges();
+                            //        }
+
+                            //        ViewBag.Message = string.Format("Successfully Added Employee {0}.\\n Date: {1}", emp.EmployeeNumber, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+
+                            //Send mail for self enboarding with link....
+                            //if (Convert.ToBoolean(emp.IsSelfOnboarding))
+                            //{
+                            //    bool success = SendSelfOnboardingMail(emp);
+                            //}
+
+                            //    }
+
+
+                            //}
+
+
+                        }
+
+                    }
+
+
+                }
+                return View("EditEmployeeDetails", GetEmployeeProfileDetails(loggedEmployeeId.ToString()));
+            }
+            catch (Exception ex)
+            {
+                string error = ex.Message.ToString();
+                return RedirectToAction("EditEmployeeDetails", "Employee");
             }
         }
 
@@ -478,6 +733,45 @@ namespace SwiftHR.Controllers
                                                  select a.IsAllow).SingleOrDefault());
 
             return IsAllowedAccess;
+        }
+
+        private bool SendSelfOnboardingMail(Employee emp)
+        {
+            MailMessage m = new MailMessage();
+            SmtpClient sc = new SmtpClient();
+
+            string baseUrl = _configuration["AppData:BaseUrlLocal"];
+
+            string callUrl = baseUrl + "Employee/EmpSetPassword?eid=" + DataSecurity.Encode(emp.EmployeeId.ToString());
+
+            string htmlText = _context.EmailTemplates.Where(x => x.EmailTemplateTitle == "EmployeeOnboardingTemplate").Select(x => x.EmailTemplateHtml).SingleOrDefault();
+
+            htmlText = htmlText.Replace("#FullName", emp.FirstName + " " + emp.MiddleName + " " + emp.LastName);
+
+            htmlText = htmlText.Replace("#CallUrl", callUrl);
+
+            htmlText = htmlText.Replace("#EmployeeNumber", emp.EmployeeNumber.ToString());
+
+            string ToName = string.Empty;
+
+            if (!string.IsNullOrEmpty(emp.MiddleName)) ToName = emp.FirstName + "" + emp.MiddleName + "" + emp.LastName;
+            else ToName = emp.FirstName + "" + emp.LastName;
+
+            m.From = new MailAddress(_configuration["AppData:EmailAccessName"], "Human Resource");
+            m.To.Add(new MailAddress(emp.Email, ToName));
+
+            m.Subject = "Employee Self-Onboarding";
+            m.IsBodyHtml = true;
+            m.Body = htmlText;
+
+            sc.Host = "smtpout.asia.secureserver.net";
+            sc.Port = 3535;
+            sc.Credentials = new
+            System.Net.NetworkCredential(_configuration["AppData:EmailAccessName"], _configuration["AppData:EmailAccessPwd"]);
+            sc.EnableSsl = true;
+            sc.Send(m);
+            return true;
+
         }
         #endregion
     }

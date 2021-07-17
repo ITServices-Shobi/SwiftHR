@@ -58,6 +58,26 @@ namespace SwiftHR.Controllers
 
         }
 
+        public ActionResult LeavesStatus(string empId)
+        {
+            //Employee empData = new Employee();
+            //empData = _context.Employees.Where(o => o.EmployeeId == Convert.ToInt32(empId)).SingleOrDefault();
+            //return PartialView("LeavesStatus", empData);
+            //return View("LeavesStatus", empData);
+
+            LeavesEmployeeDetails leaveEmployeeData = new LeavesEmployeeDetails(empId);
+
+            
+
+            return PartialView("LeaveStatus", leaveEmployeeData);
+
+        }
+
+        public ActionResult EditLeavesStatus(string empId)
+        {
+            return RedirectToAction("LeavesList", "Leaves");
+        }
+
         // GET: LeavesController
         public ActionResult Index()
         {
