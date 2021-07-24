@@ -1,0 +1,234 @@
+﻿@model IEnumerable<SwiftHR.Utility.EmployeeOnboardingDetails>
+@{
+    Layout = "_MainLayout";
+    ViewData["Title"] = "Employee Self Onboarding";
+}
+
+<!-- DataTables-->
+<link rel="stylesheet" href="~/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+@*<link rel="stylesheet" href="~/bower_components/databases.net-bs4/css/bootstrap.css">
+    <link rel="stylesheet" href="~/bower_components/databases.net-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="~/bower_components/databases.net-bs4/css/responsive.bootstrap4.min.css">*@
+
+<form id="frmOnboardingList" asp-controller="Employee" asp-action="EmployeeOnbList" method="post">
+    <section class="content-header">
+        <h1>
+            Onboarding Employees
+        </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="alertS alert-success" id="modal-success" style="display:none;">
+            <button type="button" class="close" aria-hidden="true" onclick="successAlertClose(event)">&times;</button>
+            <h4><i class="icon fa fa-check"></i> Success </h4>
+            <p id="successBody"></p>
+        </div>
+        <div class="box box-default">
+
+            @*<div class="box-header">
+                <h3 class="box-title">Data Table With Full Features</h3>
+            </div>*@
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table id="tblEmpOnbList" class="table table-bordered table-striped dt-responsive nowrap table-hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th> Name </th>
+                            <th> Onboarding Status </th>
+                            <th> Employee No </th>
+                            @*<th> Contact No </th>
+                            <th> Email </th>*@
+                            <th> Department </th>
+                            <th> Designation </th>
+                            <th> Action </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @if (Model != null && Model.Count() > 0)
+                        {
+                            @foreach (var contact in Model)
+                            {
+                                <tr id="@contact.empDetails.EmployeeId">
+                                    <td style="width: 20%;"> <img src="../UploadImages/@contact.empDetails.EmployeeProfilePhoto" alt="Emp Image" style="width:10% !important; border-radius: 50%;"> <span style="margin-left:5%;"> <strong> @contact.empDetails.FirstName  @contact.empDetails.MiddleName  @contact.empDetails.LastName </strong>  </span> </td>
+                                    @if (contact.empOnboardingDetails.OnboardingStatus==0)
+                                    { 
+                                        <td style="width: 10%;"><small class="label  bg-red-gradient"><i class="fa fa-gears"></i> Initiated</small></td>
+                                    }
+                                    @if (contact.empOnboardingDetails.OnboardingStatus==1)
+                                    { 
+                                         <td style="width: 10%;"><small class="label  bg-green-gradient"><i class="fa fa-folder-open-o"></i> In Progress</small></td>
+                                    }
+                                    @if (contact.empOnboardingDetails.OnboardingStatus==2)
+                                    { 
+                                        <td style="width: 10%;"><small class="label bg-aqua-gradient"><i class="fa fa-calendar-times-o"></i> Pending Approval</small></td>
+                                    }
+                                    <td style="width: 5%;">
+                                        <a asp-controller="Employee" asp-action="EmployeeProfileDetails" asp-route-empId="@contact.empDetails.EmployeeId" asp-route-callingView="EmployeeOnboarding" data-toggle="modal" data-target="#modal-profile" data-backdrop="static" data-keyboard="false">
+                                            @contact.empDetails.EmployeeNumber
+                                        </a>
+                                        <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@contact.empDetails.EmployeeId" />
+                                    </td>
+                                    @*<td>@contact.empDetails.ContactNumber</td>
+                                    <td> @contact.empDetails.Email </td>*@
+                                    <td>@contact.empDetails.Department</td>
+                                    <td>@contact.empDetails.Designation </td>
+                                    <td style="width: 20%;">
+                                        @if (contact.empOnboardingDetails.OnboardingStatus >= 2)
+                                        {
+                                            <button type="button" id="_@contact.empDetails.EmployeeId" asp-controller="Employee" asp-action="ApproveEmployeeOnboarding" asp-route-empId="@contact.empDetails.EmployeeId" class="btn btn-primary pull-left btn-xs" style="float: left; margin-right: 4%;" onclick="ApproveOnboard(@contact.empDetails.EmployeeId);"> Approve Onboard </button>
+                                            <button type="submit" id="btnUpdateAllOnbDetails" class="btn btn-danger pull-right btn-xs" style="float: right; margin-right: 4%;" onclick="validateOnbData(event);"> Send For Updation </button>
+                                        }
+                                        @if (contact.empOnboardingDetails.OnboardingStatus < 2)
+                                        {
+                                            <button type="button" disabled id="_@contact.empDetails.EmployeeId" asp-controller="Employee" asp-action="ApproveEmployeeOnboarding" asp-route-empId="@contact.empDetails.EmployeeId" class="btn btn-default pull-left btn-xs" style="float: left; margin-right: 4%;" onclick="ApproveOnboard(@contact.empDetails.EmployeeId);"> Approve Onboard </button>
+                                            <button type="submit" disabled id="btnUpdateAllOnbDetails" class="btn btn-default pull-right btn-xs" style="float: right; margin-right: 4%;" onclick="validateOnbData(event);"> Send For Updation </button>
+                                        }
+
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+            </div>
+            <!-- /.box-body -->
+
+        </div>
+
+        <!-- /.modal -->
+    </section>
+</form>
+
+
+
+@section Scripts {
+
+    <!-- DataTables-->
+    <script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+
+    <!-- DataTables bootstrap 4-->
+    @*<script src="~/bower_components/databases.net-bs4/js/jquery.dataTables.min.js"></script>
+        <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap4.min.js"></script>
+        <script src="~/bower_components/datatables.net-bs/js/dataTables.responsive.min.js"></script>
+        <script src="~/bower_components/datatables.net-bs/js/jquery-3.5.1.js"></script>
+        <script src="~/bower_components/datatables.net-bs/js/responsive.bootstrap4.min.js"></script>*@
+
+    @if (ViewBag.Message != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                document.getElementById("successBody").innerHTML = "@ViewBag.Message";
+                document.getElementById("modal-success").style.display = "block";
+                //alert("main window load");
+        };
+        </script>
+    }
+
+<script>
+        $(document).ready(function () {
+            $("#liEmployee").addClass("active");
+            $("#liEmpSelfOnboard").addClass("active");
+            document.getElementById("liEmpSelfOnboard").style.backgroundColor = "#3c8dbc45";
+
+            setTimeout(successAlertClose, 5000);
+
+            $("#modal-profile").on("hidden.bs.modal", function () {
+               // alert("heret...");
+                //$("#modal-profile").html("asdasdad");
+                //document.getElementById("frmOnboardingList").reset();
+                document.getElementById("frmOnboardingList").submit();
+                document.getElementById("modal-success").style.display = "none";
+            });
+
+        });
+
+
+
+        $(function () {
+            $('#tblEmpOnbList').DataTable();
+        })
+
+        function validateOnbData(event) {
+            alert("here...");
+            event.preventDefault();
+
+
+        }
+
+    
+
+        function closeEditEmployeeWindow(event) {
+
+            //alert("inside empoyee self onboarding1");
+            //document.getElementById("frmEditEmployee").reset();
+            //document.getElementById("modal-profile").style.display = "none";
+            //var x = document.getElementById("modal-profile");
+           // x.innerHTML("");
+           // event.preventDefault();
+            //var form_data = new FormData();
+           // form_data.append('CallingViewName', 'N/A');
+            //document.getElementById("frmEditEmployee").append('CallingViewName', 'N/A');
+            //document.getElementById("frmEditEmployee").submit();
+
+            //var data = new FormData($('frmEditEmployee')[0]);
+            //data.append("route", 1); //adding a new value)
+            //data.set('CallingView1', 'newValue'); //use the name attribute of html tag to target the respective key-value pair
+            //document.getElementById("hndCallingView").value = "Close";
+           // document.getElementById("modal-profile").innerHTML = "";
+            
+            //document.getElementById("frmEditEmployee").submit();
+           // document.getElementById("modal-profile").style.display = "none";
+            //data.submit();
+            //alert("inside empoyee self onboarding2");
+        }
+
+        function successAlertClose(event) {
+                 document.getElementById("modal-success").style.display = "none";
+         }
+    function ApproveOnboard(empId) {
+            // alert("Inside SavePictureData method1");
+            var form_data = new FormData();
+            form_data.append('empId', empId);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("ApproveEmployeeOnboarding", "Employee")",
+                processData: false,
+                contentType: false,
+                async: false,
+                cache: false,
+                data: form_data,
+                success: function (response) {
+                    //alert($(this).parent().);
+                    var usrMsgData = JSON.parse(response);
+                    //alert(usrMsgData[0]);
+                    if (usrMsgData != null && usrMsgData != undefined) {
+                        var myTable = $('#tblEmpOnbList').DataTable();
+                        //myTable.cell({ focused: true }).row().remove();
+                        //myTable.draw();
+                        var selectedButton = "#_" + empId;
+                        //alert(selectedButton);
+                        myTable.row($(selectedButton).parents('tr')).remove().draw(false);
+                        //myTable.row($('#_1').parents('tr')).remove().draw(false);
+                        //myTable.row(document.getElementById(selectedButton).parents('tr')).remove().draw(false);
+
+                        document.getElementById("successBody").innerHTML = usrMsgData[0];
+                        document.getElementById("modal-success").style.display = "block";
+                        setTimeout(successAlertClose, 5000);
+
+                    }
+                },
+                error: function (req, status, error) {
+                    //console.log(msg);
+                }
+            });
+    }
+
+    
+</script>
+}
+

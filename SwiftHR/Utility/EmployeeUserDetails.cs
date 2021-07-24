@@ -31,8 +31,7 @@ namespace SwiftHR.Utility
         public bool reportsMappingAccess { get; set; }
         public bool dashboardAccess { get; set; }
         public bool eSSDashboardAccess { get; set; }
-
-              
+        public string userRoleName { get; set; }
 
     }
 }

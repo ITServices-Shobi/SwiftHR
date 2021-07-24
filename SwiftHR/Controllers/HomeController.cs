@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using SwiftHR.Models;
 using SwiftHR.Utility;
 
+
 namespace SwiftHR.Controllers
 {
     public class HomeController : Controller
@@ -464,7 +465,6 @@ namespace SwiftHR.Controllers
             int userId = GetLoggedInUserId();
 
             EmployeeUserDetails employeeUserDetails = new EmployeeUserDetails();
-
             UserDetail userData = _context.UserDetails.Where(i => i.UserId == userId).SingleOrDefault();
 
             int empId = 0;
@@ -476,6 +476,14 @@ namespace SwiftHR.Controllers
 
                 userData.UserPassword = string.Empty;
 
+                String role = "";
+
+                role = Convert.ToString((from a in _context.UserDetails
+                                                     join c in _context.RoleMasters on a.RoleId equals c.RoleId
+                                                     where c.IsActive == true & a.EmployeeId== userData.EmployeeId
+                                         select c.RoleName).SingleOrDefault());
+
+                employeeUserDetails.userRoleName = role;
                 employeeUserDetails.userDetails = userData;
 
                 if (userData.EmployeeId > 0)
@@ -515,6 +523,70 @@ namespace SwiftHR.Controllers
             string result = JsonConvert.SerializeObject(employeeUserDetails);
             return new JsonResult(result);
         }
+
+        public ActionResult ModifyPassword(String callingView)
+        {
+            int loggedUser = GetLoggedInUserId();
+            if(loggedUser>0)
+            {
+                UserDetail usrData = new UserDetail();
+                usrData = _context.UserDetails.Where(o => o.UserId == Convert.ToInt32(loggedUser)).SingleOrDefault();
+                return PartialView("UserPasswordChange", usrData);
+            }
+            return null;
+        }
+
+        // POST: Password Data for save
+        [HttpPost("UpdatePassword")]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdatePassword(IFormFile PicturePath, IFormCollection collection)
+        {
+            UserDetail usrData = new UserDetail();
+            int loggedUser = GetLoggedInUserId();
+            int loggedEmployee = GetLoggedInEmpId();
+            if (loggedUser > 0)
+            {
+                usrData = _context.UserDetails.Where(o => o.UserId == Convert.ToInt32(loggedUser) && o.EmployeeId== Convert.ToInt32(loggedEmployee)).SingleOrDefault();
+                if (usrData != null)
+                {
+                    if (!string.IsNullOrEmpty(collection["newUserPassword"]))
+                        usrData.UserPassword = collection["newUserPassword"];
+
+                    //Upload profile picture
+                    string fileUploadName = string.Empty;
+                    if (PicturePath != null && !string.IsNullOrEmpty(PicturePath.FileName))
+                    {
+                        long size = PicturePath.Length;
+                        // full path to file in temp location
+                        var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot\\UploadImages", PicturePath.FileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await PicturePath.CopyToAsync(stream);
+                        }
+
+                        fileUploadName = PicturePath.FileName;
+                        usrData.ProfilePicturePath = fileUploadName;
+                    }
+                    _context.SaveChanges();
+                }
+                // return Content(@"<script>window.close();</script>", "text/html");
+                //string headder=HttpContext.Request.Headers["Referer"];
+                //string headder = HttpContext.Request.fo;
+                //return View(headder);
+                // return PartialView("UserPasswordChange", usrData);
+                //Login(usrData);
+                // return ModifyPassword("Self");
+
+            }
+            
+            Login(usrData);
+            string result = JsonConvert.SerializeObject(usrData);
+            return new JsonResult(result);
+            //return ModifyPassword("Self");
+            //return PartialView("UserPasswordChange");
+        }
+
         private Employee GetEmployeeDetailsByEmpNumber(string userName)
         {
             Employee empData = _context.Employees.Where(i => i.EmployeeNumber == Convert.ToInt32(userName)).Single();

@@ -20,7 +20,7 @@ namespace SwiftHR.Models
         public string PlaceOfBirth { get; set; }
         public string MothersName { get; set; }
         //public string FathersName { get; set; }
-        //public string SpoucesName { get; set; }
+        public string SpouceName { get; set; }
         public string Religion { get; set; }
         public bool? PhysicallyChallenged { get; set; }
         public bool? InternationalEmployee { get; set; }
@@ -32,6 +32,7 @@ namespace SwiftHR.Models
         public string NomineeContactNumber { get; set; }
         public string RelationWithNominee { get; set; }
         public string NomineeDob { get; set; }
+        public int OnboardingStatus { get; set; }
         public string CreatedDate { get; set; }
         public int? CreatedBy { get; set; }
 

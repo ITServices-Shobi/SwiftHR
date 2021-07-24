@@ -15,65 +15,66 @@
 
 <!-- Main content -->
 <section class="content">
+
     <div class="box box-default">
-        <div class="box">
-            @*<div class="box-header">
-                    <h3 class="box-title">Data Table With Full Features</h3>
-                </div>*@
-            <!-- /.box-header -->
-            <div class="box-body">
-                <table id="tblEmpList" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th> Name </th>
-                            <th> Employee No </th>
-                            <th> Contact No </th>
-                            <th> Email </th>
-                            <th> Department </th>
-                            <th> Designation </th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        @*<div class="box-header">
+                <h3 class="box-title">Data Table With Full Features</h3>
+            </div>*@
+        <!-- /.box-header -->
+        <div class="box-body">
+            <table id="tblEmpList" class="table table-bordered table-striped dt-responsive nowrap table-hover" style="width:100%">
+                <thead>
+                    <tr>
+                        <th> Name </th>
+                        <th> Employee No </th>
+                        <th> Contact No </th>
+                        <th> Email </th>
+                        <th> Department </th>
+                        <th> Designation </th>
+                    </tr>
+                </thead>
+                <tbody>
 
-                        @if (Model != null && Model.Count() > 0)
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                        @foreach (var contact in Model)
                         {
-                            @foreach (var contact in Model)
-                            {
-                                <tr>
-                                    <td style="width: 34%;"> <img src="../UploadImages/@contact.EmployeeProfilePhoto" alt="Emp Image" style="width:10% !important; border-radius: 50%;"> <span style="margin-left:5%;"> <strong> @contact.FirstName  @contact.MiddleName  @contact.LastName </strong>  </span> </td>
-                                    <td>
-                                        <a asp-controller="Employee" asp-action="EmployeeDetails" asp-route-empId="@contact.EmployeeId" data-toggle="modal" data-target="#modal-default">
-                                            @contact.EmployeeNumber
-                                        </a>
-                                        <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@contact.EmployeeId" />
-                                    </td>
-                                    <td>@contact.ContactNumber</td>
-                                    <td> @contact.Email </td>
-                                    <td>@contact.Department</td>
-                                    <td>@contact.Designation </td>
-                                </tr>
-                            }
+                            <tr>
+                                <td style="width: 20%;"> <img src="../UploadImages/@contact.EmployeeProfilePhoto" alt="Emp Image" style="width:10% !important; border-radius: 50%;"> <span style="margin-left:5%;"> <strong> @contact.FirstName  @contact.MiddleName  @contact.LastName </strong>  </span> </td>
+                                <td>
+                                    <a asp-controller="Employee" asp-action="EmployeeDetails" asp-route-empId="@contact.EmployeeId" data-toggle="modal" data-target="#modal-default" data-backdrop="static" data-keyboard="false">
+                                        @contact.EmployeeNumber
+                                    </a>
+                                    <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@contact.EmployeeId" />
+                                </td>
+                                <td>@contact.ContactNumber</td>
+                                <td> @contact.Email </td>
+                                <td>@contact.Department</td>
+                                <td>@contact.Designation </td>
+                            </tr>
                         }
+                    }
 
-                    </tbody>
+                </tbody>
 
-                </table>
-            </div>
-            <!-- /.box-body -->
+            </table>
         </div>
-    </div>
+        <!-- /.box-body -->
 
+    </div>
     <div class="modal fade" id="modal-default">
         <div class="modal-dialog" style="width: 65% !important;">
-           
+
             <div class="modal-content">
-                
+
             </div>
             <!-- /.modal-content -->
         </div>
         <!-- /.modal-dialog -->
     </div>
+
     <!-- /.modal -->
+
 </section>
 
 

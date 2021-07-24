@@ -570,6 +570,10 @@ namespace SwiftHR.Models
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
+                entity.Property(e => e.SpouceName)
+                   .HasMaxLength(150)
+                   .IsUnicode(false);
+
                 entity.Property(e => e.MothersName)
                     .HasMaxLength(150)
                     .IsUnicode(false);
@@ -608,6 +612,11 @@ namespace SwiftHR.Models
                 entity.Property(e => e.Religion)
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.OnboardingStatus)
+                   .HasColumnName("OnboardingStatus");
+
+
             });
 
             modelBuilder.Entity<EmpSettingsCategory>(entity =>

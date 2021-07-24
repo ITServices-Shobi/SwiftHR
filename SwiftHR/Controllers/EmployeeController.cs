@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SwiftHR.Models;
 using SwiftHR.Utility;
+using System.IO;
+using System.Collections;
 
 namespace SwiftHR.Controllers
 {
@@ -77,13 +79,35 @@ namespace SwiftHR.Controllers
             {
                 List<Employee> empData = new List<Employee>();
                 empData = _context.Employees.ToList();
-
+                
                 return View("EmployeeList", empData);
             }
             else
                 return RedirectToAction("AccessDenied", "Home");
         }
 
+        public ActionResult EmployeeOnbList()
+        {
+            if (IsAllowPageAccess("AddEmployee"))
+            {
+                List<EmployeeOnboardingDetails> arrayEmployeeOnboardingDetails = new List<EmployeeOnboardingDetails>();
+                //empOnbData = _context.empl.Where(x => x.IsSelfOnboarding == true).ToList();
+
+                //ArrayList arrayEmployeeOnboardingDetails = new ArrayList();
+                List<Employee> empDataList = new List<Employee>();
+                empDataList = _context.Employees.Where(x => x.IsSelfOnboarding == true).ToList();
+                foreach (Employee emp in empDataList)
+                {
+                    EmployeeOnboardingDetails localEmpOnboardingDetail = new EmployeeOnboardingDetails(emp.EmployeeId.ToString());
+                    if(localEmpOnboardingDetail.empOnboardingDetails.OnboardingStatus<=2)
+                        arrayEmployeeOnboardingDetails.Add(localEmpOnboardingDetail);
+                }
+
+                return View("EmployeeSelfOnboarding", arrayEmployeeOnboardingDetails);
+            }
+            else
+                return RedirectToAction("AccessDenied", "Home");
+        }
         public ActionResult EmployeeDetails(string empId)
         {
             Employee empData = new Employee();
@@ -97,14 +121,59 @@ namespace SwiftHR.Controllers
             return RedirectToAction("EmployeeList", "Employee");
         }
 
-        public ActionResult EmployeeProfileDetails()
+        public ActionResult EmployeeProfileDetails(string empId, string callingView)
         {
-            String empId = GetLoggedInEmpId().ToString();
-            EmployeeOnboardingDetails empOnboardingDetails = new EmployeeOnboardingDetails(empId);
-            empOnboardingDetails = GetEmployeeProfileDetails(empId);
+            String localEmpId;
+            if (!string.IsNullOrEmpty(empId))
+                localEmpId = empId;
+            else
+                localEmpId = GetLoggedInEmpId().ToString();
+            
+
+            EmployeeOnboardingDetails empOnboardingDetails = new EmployeeOnboardingDetails(localEmpId);
+            empOnboardingDetails = GetEmployeeProfileDetails(localEmpId);
+
+            //Set calling view
+            if (!string.IsNullOrEmpty(callingView))
+            {
+                ViewBag.CallingView = callingView;
+                empOnboardingDetails.CallingView = callingView;
+            }
+            // full path to file in temp location
+            //var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot\\UploadImages", empOnboardingDetails.empDetails.EmployeeProfilePhoto);
+            //empOnboardingDetails.empDetails.EmployeeProfilePhoto = filePath;
+            if (string.IsNullOrEmpty(empOnboardingDetails.empDetails.EmployeeProfilePhoto))
+                empOnboardingDetails.empDetails.EmployeeProfilePhoto = "default-avatar.png";
+            //Convert to date formats
+            if (!string.IsNullOrEmpty(empOnboardingDetails.empDetails.DateOfBirth))
+                empOnboardingDetails.empDetails.DateOfBirth = System.Convert.ToDateTime(empOnboardingDetails.empDetails.DateOfBirth).ToString("yyyy-MM-dd");
+            if (!string.IsNullOrEmpty(empOnboardingDetails.empDetails.DateOfJoining))
+                empOnboardingDetails.empDetails.DateOfJoining = System.Convert.ToDateTime(empOnboardingDetails.empDetails.DateOfJoining).ToString("yyyy-MM-dd");
+            if (!string.IsNullOrEmpty(empOnboardingDetails.empDetails.MarriageDate))
+                empOnboardingDetails.empDetails.MarriageDate = System.Convert.ToDateTime(empOnboardingDetails.empDetails.MarriageDate).ToString("yyyy-MM-dd");
+            if (!string.IsNullOrEmpty(empOnboardingDetails.empDetails.NomineeDob))
+                empOnboardingDetails.empDetails.NomineeDob = System.Convert.ToDateTime(empOnboardingDetails.empDetails.NomineeDob).ToString("yyyy-MM-dd");
+            if (!string.IsNullOrEmpty(empOnboardingDetails.empDetails.PassportExpiryDate))
+                empOnboardingDetails.empDetails.PassportExpiryDate = System.Convert.ToDateTime(empOnboardingDetails.empDetails.PassportExpiryDate).ToString("yyyy-MM-dd");
+            if (!string.IsNullOrEmpty(empOnboardingDetails.empDetails.ConfirmationDate))
+                empOnboardingDetails.empDetails.ConfirmationDate = System.Convert.ToDateTime(empOnboardingDetails.empDetails.ConfirmationDate).ToString("yyyy-MM-dd");
+            if (!string.IsNullOrEmpty(empOnboardingDetails.empDetails.CreatedDate))
+                empOnboardingDetails.empDetails.CreatedDate = System.Convert.ToDateTime(empOnboardingDetails.empDetails.CreatedDate).ToString("yyyy-MM-dd");
+            if (!string.IsNullOrEmpty(empOnboardingDetails.empDetails.DateOfLastWorking))
+                empOnboardingDetails.empDetails.DateOfLastWorking = System.Convert.ToDateTime(empOnboardingDetails.empDetails.DateOfLastWorking).ToString("yyyy-MM-dd");
+            if (!string.IsNullOrEmpty(empOnboardingDetails.empDetails.DateOfResignation))
+                empOnboardingDetails.empDetails.DateOfResignation = System.Convert.ToDateTime(empOnboardingDetails.empDetails.DateOfResignation).ToString("yyyy-MM-dd");
+
 
             if (IsAllowPageAccess("AddEmployee"))
+            {
+            //    View()
+            //ViewBag.Layout = "~/Views/Employee/EditEmployeeDetails.cshtml";
+            //D:\ShobiProjects\SwiftHR\Main\SwiftHR\SwiftHR\Views\
+            //    return View(empOnboardingDetails);
+            
                 return View("EditEmployeeDetails", empOnboardingDetails);
+             }
             else
                 return RedirectToAction("AccessDenied", "Home");
 
@@ -258,39 +327,7 @@ namespace SwiftHR.Controllers
 
                                     if (Convert.ToBoolean(emp.IsSelfOnboarding))
                                     {
-                                        MailMessage m = new MailMessage();
-                                        SmtpClient sc = new SmtpClient();
-
-                                        string baseUrl = _configuration["AppData:BaseUrlLocal"];
-
-                                        string callUrl = baseUrl + "Employee/EmpSetPassword?eid=" + DataSecurity.Encode(emp.EmployeeId.ToString());
-
-                                        string htmlText = _context.EmailTemplates.Where(x => x.EmailTemplateTitle == "EmployeeOnboardingTemplate").Select(x => x.EmailTemplateHtml).SingleOrDefault();
-
-                                        htmlText = htmlText.Replace("#FullName", emp.FirstName + " " + emp.MiddleName + " " + emp.LastName);
-
-                                        htmlText = htmlText.Replace("#CallUrl", callUrl);
-
-                                        htmlText = htmlText.Replace("#EmployeeNumber", emp.EmployeeNumber.ToString());
-
-                                        string ToName = string.Empty;
-
-                                        if (!string.IsNullOrEmpty(emp.MiddleName)) ToName = emp.FirstName + "" + emp.MiddleName + "" + emp.LastName;
-                                        else ToName = emp.FirstName + "" + emp.LastName;
-
-                                        m.From = new MailAddress(_configuration["AppData:EmailAccessName"], "Human Resource");
-                                        m.To.Add(new MailAddress(emp.Email, ToName));
-
-                                        m.Subject = "Employee Self-Onboarding";
-                                        m.IsBodyHtml = true;
-                                        m.Body = htmlText;
-
-                                        sc.Host = "smtpout.asia.secureserver.net";
-                                        sc.Port = 3535;
-                                        sc.Credentials = new
-                                        System.Net.NetworkCredential(_configuration["AppData:EmailAccessName"], _configuration["AppData:EmailAccessPwd"]);
-                                        sc.EnableSsl = true;
-                                        sc.Send(m);
+                                        bool success = SendSelfOnboardingMail(emp,1);
                                     }
 
                                 }
@@ -316,52 +353,115 @@ namespace SwiftHR.Controllers
         }
 
 
+
+
         // POST: EmployeeController/Create
-        [HttpPost]
+        [HttpPost("ApproveEmployeeOnboarding")]
         //[ValidateAntiForgeryToken]
-        public ActionResult UpdateEmployeeDetails(IFormCollection collection)
+        public async Task<IActionResult> ApproveEmployeeOnboarding(string empid)
+        {
+            if (!string.IsNullOrEmpty(empid))
+            {
+                EmployeeOnboardingDetails empOnboardingDetails;
+                empOnboardingDetails = GetEmployeeProfileDetails(empid);
+
+                //Employee empData = new Employee();
+                //empData = _context.Employees.Where(o => o.EmployeeId == Convert.ToInt32(empid)).SingleOrDefault();
+
+                if(empOnboardingDetails.empDetails.IsSelfOnboarding==true)
+                {
+                    if(empOnboardingDetails.empOnboardingDetails.OnboardingStatus==2)
+                    {
+                        int updateStatus = empOnboardingDetails.ChangeOnboardingStatus(2);
+                        bool success = SendSelfOnboardingMail(empOnboardingDetails.empDetails, 2);
+                    }
+                }
+                ArrayList arrayResponse = new ArrayList();
+                //String responseObj = '{"name":"John", "age":30, "city":"New York"}';
+                string msg= string.Format("Employee Successfully Onboarded ! {0}.\\n Date: {1}", empid, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                arrayResponse.Add(msg);
+                //ViewBag.Message = string.Format("Successfully Updated Employee {0}.\\n Date: {1}", empid, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+
+                string result = JsonConvert.SerializeObject(arrayResponse);
+                return new JsonResult(result);
+
+                //return EmployeeOnbList();
+            }
+            return EmployeeOnbList();
+        }
+
+
+
+            // POST: EmployeeController/Create
+            [HttpPost("UpdateEmployeeDetails")]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateEmployeeDetails(IFormFile PicturePath, IFormCollection collection)
         {
             try
             {
-                int loggedEmployeeId = GetLoggedInEmpId();
-
-                if (loggedEmployeeId>0)
+                string loggedEmployeeId;
+                if (!string.IsNullOrEmpty(collection["loggedEmployeeId"].ToString()))
+                    loggedEmployeeId = collection["loggedEmployeeId"].ToString();
+                else
+                    loggedEmployeeId = GetLoggedInEmpId().ToString();
+                if (!string.IsNullOrEmpty(loggedEmployeeId))
                 {
-                    
+                    EmployeeOnboardingDetails empDetails;
+                    empDetails = GetEmployeeProfileDetails(loggedEmployeeId.ToString());
+
                     if (ModelState.IsValid)
                     {
                         if (IsAllowPageAccess("AddEmployee"))
                         {
-                            
                             Employee emp = new Employee();
-                            EmployeeOnboardingDetails empDetails = GetEmployeeProfileDetails(loggedEmployeeId.ToString());
+                            
                             emp.EmployeeId = 0;
                             emp.EmployeeNumber = Convert.ToInt32(collection["loggedEmployeeId"]);
+                            //Upload profile picture
+                            string fileUploadName = string.Empty;
+                            if (PicturePath != null && !string.IsNullOrEmpty(PicturePath.FileName))
+                            {
+                                long size = PicturePath.Length;
+                                // full path to file in temp location
+                                var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot\\UploadImages", PicturePath.FileName);
+
+                                using (var stream = new FileStream(filePath, FileMode.Create))
+                                {
+                                    await PicturePath.CopyToAsync(stream);
+                                }
+
+                                fileUploadName = PicturePath.FileName;
+                                empDetails.empDetails.EmployeeProfilePhoto = fileUploadName;
+                            }
+
                             empDetails.empDetails.FirstName = collection["FirstName"];
                             empDetails.empDetails.MiddleName = collection["MiddleName"];
                             empDetails.empDetails.LastName = collection["LastName"];
                             empDetails.empDetails.ContactNumber = collection["ContactNumber"];
                             empDetails.empDetails.Email = collection["Email"];
 
+
                             if (!string.IsNullOrEmpty(collection["ReportingManager"]) && collection["ReportingManager"] != "0")
                                 empDetails.empDetails.ReportingManager = collection["ReportingManager"];
                             empDetails.empDetails.DateOfJoining = collection["DateOfJoining"];
                             empDetails.empDetails.ConfirmationDate = collection["ConfirmationDate"];
 
+                            //empDetails.empDetails.EmployeeProfilePhoto = collection["PicturePath"];
 
+                            //empDetails.empDetails.DateOfBirth = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfBirth"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
                             //If self enboarding is enabled
                             if (Convert.ToBoolean(empDetails.empDetails.IsSelfOnboarding))
                             {
-                                empDetails.empOnboardingDetails.OnbemployeeId = Convert.ToInt32(collection["loggedEmployeeId"]);
-                                empDetails.empOnboardingDetails.OnbemployeeId = GetLoggedInEmpId();
+                                empDetails.empOnboardingDetails.OnbemployeeId = Convert.ToInt32(loggedEmployeeId);
+                                //empDetails.empOnboardingDetails.OnbemployeeId = GetLoggedInEmpId();
                                 if (!string.IsNullOrEmpty(collection["BloodGroup"]))
                                     empDetails.empOnboardingDetails.BloodGroup = collection["BloodGroup"];
                                 if (!string.IsNullOrEmpty(collection["DateOfBirth"]))
-                                    empDetails.empOnboardingDetails.DateOfBirth = collection["DateOfBirth"];
+                                    empDetails.empOnboardingDetails.DateOfBirth = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfBirth"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
                                 if (!string.IsNullOrEmpty(collection["MaritalStatus"]))
                                     empDetails.empOnboardingDetails.MaritalStatus = collection["MaritalStatus"];
                                 if (!string.IsNullOrEmpty(collection["DateOfMarriage"]))
-                                    empDetails.empOnboardingDetails.MarriageDate = collection["DateOfMarriage"];
+                                    empDetails.empOnboardingDetails.MarriageDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfMarriage"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
                                 if (!string.IsNullOrEmpty(collection["PlaceOfBirth"]))
                                     empDetails.empOnboardingDetails.PlaceOfBirth = collection["PlaceOfBirth"];
                                 if (!string.IsNullOrEmpty(collection["MothersName"]))
@@ -381,7 +481,7 @@ namespace SwiftHR.Controllers
                                 if (!string.IsNullOrEmpty(collection["NomineeContactNo"]))
                                     empDetails.empOnboardingDetails.NomineeContactNumber = collection["NomineeContactNo"];
                                 if (!string.IsNullOrEmpty(collection["NomineeDateOfBirth"]))
-                                    empDetails.empOnboardingDetails.NomineeDob = collection["NomineeDateOfBirth"];
+                                    empDetails.empOnboardingDetails.NomineeDob = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["NomineeDateOfBirth"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
                                 if (!string.IsNullOrEmpty(collection["NomineeRelation"]))
                                     empDetails.empOnboardingDetails.RelationWithNominee = collection["NomineeRelation"];
                                 //Time Stamp
@@ -394,20 +494,20 @@ namespace SwiftHR.Controllers
                                 if (!string.IsNullOrEmpty(collection["BloodGroup"]))
                                     empDetails.empDetails.BloodGroup = collection["BloodGroup"];
                                 if (!string.IsNullOrEmpty(collection["DateOfBirth"]))
-                                    empDetails.empDetails.DateOfBirth = collection["DateOfBirth"];
+                                    empDetails.empDetails.DateOfBirth = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfBirth"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
                                 if (!string.IsNullOrEmpty(collection["PlaceOfBirth"]))
                                     empDetails.empDetails.PlaceOfBirth = collection["PlaceOfBirth"];
                                 if (!string.IsNullOrEmpty(collection["MaritalStatus"]))
                                     empDetails.empDetails.MaritalStatus = collection["MaritalStatus"];
                                 if (!string.IsNullOrEmpty(collection["DateOfMarriage"]))
-                                    empDetails.empDetails.MarriageDate = collection["DateOfMarriage"];
+                                    empDetails.empDetails.MarriageDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfMarriage"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
                                 empDetails.empDetails.PlaceOfBirth = collection["FirstName"];
                                 if (!string.IsNullOrEmpty(collection["MothersName"]))
                                     empDetails.empDetails.MothersName = collection["MothersName"];
                                 if (!string.IsNullOrEmpty(collection["Religion"]))
                                     empDetails.empDetails.Religion = collection["Religion"];
-                               // empDetails.empDetails.PhysicallyChallenged = false;
-                               // empDetails.empDetails.InternationalEmployee = false;
+                                // empDetails.empDetails.PhysicallyChallenged = false;
+                                // empDetails.empDetails.InternationalEmployee = false;
                                 empDetails.empDetails.Address = collection["PresentAddress"];
                                 empDetails.empDetails.PermanentAddress = collection["PermanentAddress"];
                                 if (!string.IsNullOrEmpty(collection["EmergencyContactNumber"]))
@@ -419,10 +519,10 @@ namespace SwiftHR.Controllers
                                 if (!string.IsNullOrEmpty(collection["NomineeContactNo"]))
                                     empDetails.empDetails.NomineeContactNumber = collection["NomineeContactNo"];
                                 if (!string.IsNullOrEmpty(collection["NomineeDateOfBirth"]))
-                                    empDetails.empDetails.NomineeDob = collection["NomineeDateOfBirth"];
+                                    empDetails.empDetails.NomineeDob = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["NomineeDateOfBirth"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
                                 if (!string.IsNullOrEmpty(collection["NomineeRelation"]))
                                     empDetails.empDetails.NomineeRelation = collection["NomineeRelation"];
-                                
+
                             }
 
 
@@ -474,8 +574,28 @@ namespace SwiftHR.Controllers
                             //empOnboardingDetails.CreatedBy = 1;
 
                             empDetails.SaveEmployeeData();
-                            
+                            ViewBag.Message = string.Format("Successfully Updated Employee {0}.\\n Date: {1}", empDetails.empDetails.EmployeeNumber, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                            //Send mail for self enboarding with link....
+                            //if (Convert.ToBoolean(empDetails.empDetails.IsSelfOnboarding))
+                            //{
+                            //    bool success = SendSelfOnboardingMail(empDetails.empDetails);
+                            //}
+                            if (!string.IsNullOrEmpty(collection["CallingView"]))
+                            {
+                                //Set calling view
 
+                                if (collection["CallingView"] == "EditEmployeeDetails")
+                                    return EmployeeProfileDetails(loggedEmployeeId, "EditEmployeeDetails");
+                                else
+                                    return EmployeeOnbList();
+                            }
+                            else
+                            {
+                                //return EmployeeProfileDetails(loggedEmployeeId, "");
+                                return EmployeeOnbList();
+                            }
+                                
+                            //return View("EditEmployeeDetails", empDetails);
                             //using (SHR_SHOBIGROUP_DBContext entities = new SHR_SHOBIGROUP_DBContext())
                             //{
                             //    entities.Employees.Add(emp);
@@ -521,11 +641,7 @@ namespace SwiftHR.Controllers
 
                             //        ViewBag.Message = string.Format("Successfully Added Employee {0}.\\n Date: {1}", emp.EmployeeNumber, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
 
-                            //Send mail for self enboarding with link....
-                            //if (Convert.ToBoolean(emp.IsSelfOnboarding))
-                            //{
-                            //    bool success = SendSelfOnboardingMail(emp);
-                            //}
+
 
                             //    }
 
@@ -537,14 +653,16 @@ namespace SwiftHR.Controllers
 
                     }
 
-
+                    return View("EditEmployeeDetails", empDetails);
                 }
-                return View("EditEmployeeDetails", GetEmployeeProfileDetails(loggedEmployeeId.ToString()));
+                // return View("EditEmployeeDetails", empDetails);
+                return RedirectToAction("EmployeeProfileDetails", "Employee");
+               //return View("EditEmployeeDetails", empDetails);
             }
             catch (Exception ex)
             {
                 string error = ex.Message.ToString();
-                return RedirectToAction("EditEmployeeDetails", "Employee");
+                return RedirectToAction("EmployeeProfileDetails", "Employee");
             }
         }
 
@@ -556,6 +674,7 @@ namespace SwiftHR.Controllers
             string result = IsExists.ToString();
 
             return new JsonResult(result);
+            
         }
 
         // GET: EmployeeController/Edit/5
@@ -735,8 +854,9 @@ namespace SwiftHR.Controllers
             return IsAllowedAccess;
         }
 
-        private bool SendSelfOnboardingMail(Employee emp)
+        private bool SendSelfOnboardingMail(Employee emp, int templateId)
         {
+            string htmlText;
             MailMessage m = new MailMessage();
             SmtpClient sc = new SmtpClient();
 
@@ -744,9 +864,15 @@ namespace SwiftHR.Controllers
 
             string callUrl = baseUrl + "Employee/EmpSetPassword?eid=" + DataSecurity.Encode(emp.EmployeeId.ToString());
 
-            string htmlText = _context.EmailTemplates.Where(x => x.EmailTemplateTitle == "EmployeeOnboardingTemplate").Select(x => x.EmailTemplateHtml).SingleOrDefault();
-
-            htmlText = htmlText.Replace("#FullName", emp.FirstName + " " + emp.MiddleName + " " + emp.LastName);
+            if (templateId == 1)
+            {
+                htmlText = _context.EmailTemplates.Where(x => x.EmailTemplateTitle == "EmployeeOnboardingTemplate").Select(x => x.EmailTemplateHtml).SingleOrDefault();
+            }
+            else
+            {
+                htmlText = _context.EmailTemplates.Where(x => x.EmailTemplateTitle == "EmployeeOnboardingSuccessTemplate").Select(x => x.EmailTemplateHtml).SingleOrDefault();
+            }
+                htmlText = htmlText.Replace("#FullName", emp.FirstName + " " + emp.MiddleName + " " + emp.LastName);
 
             htmlText = htmlText.Replace("#CallUrl", callUrl);
 
