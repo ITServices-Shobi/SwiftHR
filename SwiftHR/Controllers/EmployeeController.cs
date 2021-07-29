@@ -14,6 +14,8 @@ using SwiftHR.Utility;
 using System.IO;
 using System.Collections;
 
+
+
 namespace SwiftHR.Controllers
 {
     public class EmployeeController : Controller
@@ -432,6 +434,7 @@ namespace SwiftHR.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> RejectEmployeeOnboarding(string empid)
         {
+            ArrayList arrayResponse = new ArrayList(); ;
             if (!string.IsNullOrEmpty(empid))
             {
                 EmployeeOnboardingDetails empOnboardingDetails;
@@ -445,15 +448,21 @@ namespace SwiftHR.Controllers
                     if (empOnboardingDetails.empOnboardingDetails.OnboardingStatus == 2)
                     {
                         int updateStatus = empOnboardingDetails.ChangeOnboardingStatus(0);
-                        bool success = SendSelfOnboardingMail(empOnboardingDetails.empDetails, 2);
+                        bool successEmail = SendSelfOnboardingMail(empOnboardingDetails.empDetails, 2);
+                        // Generating Random Password... 
+                        RandomGenerator generator = new RandomGenerator();
+                        string pass = generator.RandomPassword();
+                        //sending password through sms...
+                        bool successSMS = SendSelfOnboardingSms(pass, 1, empOnboardingDetails.empDetails.ContactNumber.ToString());
+
+                        //String responseObj = '{"name":"John", "age":30, "city":"New York"}';
+                        string msg = string.Format("Updation mail sent to Employee Successfully! {0}.\n Date: {1} " + pass, empid, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                        arrayResponse.Add(msg);
+                        //ViewBag.Message = string.Format("Successfully Updated Employee {0}.\\n Date: {1}", empid, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+
                     }
                 }
-                ArrayList arrayResponse = new ArrayList();
-                //String responseObj = '{"name":"John", "age":30, "city":"New York"}';
-                string msg = string.Format("Updation mail sent to Employee Successfully! {0}.\\n Date: {1}", empid, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
-                arrayResponse.Add(msg);
-                //ViewBag.Message = string.Format("Successfully Updated Employee {0}.\\n Date: {1}", empid, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
-
+                
                 string result = JsonConvert.SerializeObject(arrayResponse);
                 return new JsonResult(result);
 
@@ -923,6 +932,21 @@ namespace SwiftHR.Controllers
                                                  select a.IsAllow).SingleOrDefault());
 
             return IsAllowedAccess;
+        }
+
+        //Sending Sms through Vonage account...
+        private bool SendSelfOnboardingSms(string pass, int templateId, string empPhone)
+        {
+            SMSUtility smsUtility = new SMSUtility(_configuration);
+            String smsResponse="";
+            if (templateId==1)
+            {
+                smsResponse=smsUtility.SendVonageSms("Your Self Onboarding Password for SwiftHr is :" + pass, empPhone, "SwiftHr Admin");
+            }
+            if(smsResponse == "Success")
+                 return true;
+            else
+                return true;
         }
 
         private bool SendSelfOnboardingMail(Employee emp, int templateId)
