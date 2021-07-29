@@ -122,9 +122,13 @@ namespace SwiftHR.Controllers
             List<Department> deptData = new List<Department>();
             deptData = _context.Departments.ToList();
 
+            List <EmpOnboardingDetail> onbData = new List<EmpOnboardingDetail>();
+            onbData = _context.EmpOnboardingDetails.ToList();
+
             dBoard.empMasterDataItems = empData;
             dBoard.leaveApplyListAll = leaveData;
             dBoard.departmentListAll = deptData;
+            dBoard.empOnboardingDetails = onbData;
 
             return View("Dashboard", dBoard);
         }
@@ -469,7 +473,7 @@ namespace SwiftHR.Controllers
 
             int empId = 0;
 
-            if(userData.UserId > 0)
+            if(!String.IsNullOrEmpty(userData.UserId.ToString()) && userData.UserId > 0)
             {
                 if (string.IsNullOrEmpty(userData.ProfilePicturePath))
                     userData.ProfilePicturePath = "default-avatar.png";

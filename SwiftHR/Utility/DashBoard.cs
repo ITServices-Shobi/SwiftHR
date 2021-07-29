@@ -15,6 +15,8 @@ namespace SwiftHR.Utility
 
         public List<Department> departmentListAll { get; set; }
 
+        public List<EmpOnboardingDetail> empOnboardingDetails { get; set; }
+
 
         public String GetEmployeeDepartmentColorByDeptNumber(string deptName)
         {

@@ -13,6 +13,7 @@
 		<Content Include="wwwroot\bower_components\databases.net-bs4\css\dataTables.bootstrap4.min.css" />
 		<Content Include="wwwroot\bower_components\databases.net-bs4\css\responsive.bootstrap4.min.css" />
 		<Content Include="wwwroot\bower_components\datatables.net-bs\css\dataTables.bootstrap.min.css" />
+		<Content Include="wwwroot\bower_components\font-awesome\css\all.min.css" />
 		<Content Include="wwwroot\bower_components\font-awesome\css\font-awesome.min.css" />
 		<Content Include="wwwroot\bower_components\font-awesome\fonts\fontawesome-webfont.ttf" />
 		<Content Include="wwwroot\bower_components\font-awesome\fonts\fontawesome-webfont.woff" />
@@ -24,6 +25,8 @@
 		<Content Include="wwwroot\bower_components\Ionicons\fonts\ionicons.woff" />
 		<Content Include="wwwroot\bower_components\jvectormap\jquery-jvectormap.css" />
 		<Content Include="wwwroot\bower_components\morris.js\morris.css" />
+		<Content Include="wwwroot\bower_components\plugins\fullcalendar\adminlte.min.css" />
+		<Content Include="wwwroot\bower_components\plugins\fullcalendar\main.css" />
 		<Content Include="wwwroot\bower_components\select2\dist\css\select2.min.css" />
 	</ItemGroup>
 
@@ -62,8 +65,38 @@
 		<None Include="wwwroot\bower_components\moment\min\moment.min.js" />
 		<None Include="wwwroot\bower_components\moment\moment.js" />
 		<None Include="wwwroot\bower_components\morris.js\morris.min.js" />
+		<None Include="wwwroot\bower_components\plugins\bootstrap\js\bootstrap.bundle.min.js" />
+		<None Include="wwwroot\bower_components\plugins\fullcalendar\demo.js" />
+		<None Include="wwwroot\bower_components\plugins\fullcalendar\main.js" />
+		<None Include="wwwroot\bower_components\plugins\jquery-ui\jquery-ui.min.js" />
+		<None Include="wwwroot\bower_components\plugins\jquery\jquery.min.js" />
+		<None Include="wwwroot\bower_components\plugins\moment\moment.min.js" />
 		<None Include="wwwroot\bower_components\raphael\raphael.min.js" />
 		<None Include="wwwroot\bower_components\select2\dist\js\select2.full.min.js" />
+		<None Include="wwwroot\lib\hhurz\.gitignore" />
+		<None Include="wwwroot\lib\hhurz\libs\es6-promise\es6-promise.auto.min.js" />
+		<None Include="wwwroot\lib\hhurz\libs\es6-promise\LICENSE" />
+		<None Include="wwwroot\lib\hhurz\libs\FileSaver\FileSaver.min.js" />
+		<None Include="wwwroot\lib\hhurz\libs\FileSaver\LICENSE.md" />
+		<None Include="wwwroot\lib\hhurz\libs\html2canvas\html2canvas.min.js" />
+		<None Include="wwwroot\lib\hhurz\libs\html2canvas\LICENSE" />
+		<None Include="wwwroot\lib\hhurz\libs\js-xlsx\LICENSE" />
+		<None Include="wwwroot\lib\hhurz\libs\js-xlsx\xlsx.core.min.js" />
+		<None Include="wwwroot\lib\hhurz\libs\jsPDF-AutoTable\jspdf.plugin.autotable.js" />
+		<None Include="wwwroot\lib\hhurz\libs\jsPDF\jspdf.min.js" />
+		<None Include="wwwroot\lib\hhurz\libs\pdfmake\gbsn00lp_fonts.js" />
+		<None Include="wwwroot\lib\hhurz\libs\pdfmake\LICENSE" />
+		<None Include="wwwroot\lib\hhurz\libs\pdfmake\mirza_fonts.js" />
+		<None Include="wwwroot\lib\hhurz\libs\pdfmake\pdfmake.min.js" />
+		<None Include="wwwroot\lib\hhurz\libs\pdfmake\vfs_fonts.js" />
+		<None Include="wwwroot\lib\hhurz\libs\pdfmake\ZCOOLXiaoWei_fonts.js" />
+		<None Include="wwwroot\lib\hhurz\LICENSE" />
+		<None Include="wwwroot\lib\hhurz\README.md" />
+		<None Include="wwwroot\lib\hhurz\tableExport.js" />
+		<None Include="wwwroot\lib\hhurz\tableExport.min.js" />
+		<None Include="wwwroot\lib\hhurz\test\icons\Thumbs.db" />
+		<None Include="wwwroot\lib\hhurz\tools\minify2.py" />
+		<None Include="wwwroot\lib\hhurz\tools\minify3.py" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -30,6 +30,7 @@
             background: #3c8dbc !important;
         }
     </style>
+    
 </head>
 <body class="hold-transition skin-black-light sidebar-mini fixed">
 
@@ -335,10 +336,10 @@
                         </a>
                         <ul class="treeview-menu">
                             <li id="liAddEmployee" class="liItems"><a asp-controller="Employee" asp-action="AddEmployee" onclick="menuClick('liAddEmployee')"><i class="fa fa-circle-o"></i> Add Employee </a></li>
-                            <li id="liUpdateEmployee" class="liItems"><a asp-controller="Employee" asp-action="EmployeeProfileDetails" asp-route-callingView="EditEmployeeDetails"  onclick="menuClick('liUpdateEmployee')"><i class="fa fa-circle-o"></i> Employee Profile </a></li>
+                            <li id="liUpdateEmployee" class="liItems"><a asp-controller="Employee" asp-action="EmployeeProfileDetails" asp-route-callingView="EditEmployeeDetails" onclick="menuClick('liUpdateEmployee')"><i class="fa fa-circle-o"></i> Employee Profile </a></li>
                             <li id="liEmployeeList" class="liItems"><a asp-controller="Employee" asp-action="EmployeeList" onclick="menuClick('liEmployeeList')"><i class="fa fa-circle-o"></i> Employee List</a></li>
                             @*<li id="liEditEmployeeList" class="liItems"> <a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> Edit Employee Details</a></li>*@
-                            <li id="liEmpSelfOnboard" class="liItems"><a asp-controller="Employee" asp-action="EmployeeOnbList"  onclick="menuClick('liEmpSelfOnboard')"><i class="fa fa-circle-o"></i> Employee Self Onboarding </a></li>
+                            <li id="liEmpSelfOnboard" class="liItems"><a asp-controller="Employee" asp-action="EmployeeOnbList" onclick="menuClick('liEmpSelfOnboard')"><i class="fa fa-circle-o"></i> Employee Self Onboarding </a></li>
                             <li id="liEmpBackVerify" class="liItems"><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> Background Verification </a></li>
                             <li id="liGeneralSettings" class="liItems"><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> General Settings </a></li>
                         </ul>
@@ -364,7 +365,8 @@
                             <li id="liLeavePolicySetup" class="liItems"><a href="pages/UI/buttons.html"><i class="fa fa-circle-o"></i> Leave Policy Setup</a></li>
                             <li id="liApplyLeave" class="liItems"><a href="pages/UI/sliders.html"><i class="fa fa-circle-o"></i> Apply Leave </a></li>
                             @*<li><a href="pages/UI/timeline.html"><i class="fa fa-circle-o"></i> Leave Reasons</a></li>*@
-                            <li id="liApplyLeave" class="liItems"><a href="pages/UI/modals.html"><i class="fa fa-circle-o"></i> Holiday Calender</a></li>
+                            <li id="liHolidayCalendar" class="liItems"><a asp-controller="Leaves" asp-action="HolidayCalendar" onclick="menuClick('liHolidayCalendar')"><i class="fa fa-circle-o"></i> Holiday Calendar</a></li>
+                            @*<li id="liApplyLeave" class="liItems"><a href="../Views/Leaves/HolidayCalendar.cshtml"><i class="fa fa-circle-o"></i> Holiday Calender</a></li>*@
                         </ul>
                     </li>
                     <li id="liAttendance" class="treeview liItems">
@@ -731,8 +733,6 @@
     <!-- AdminLTE for demo purposes -->
     <script src="~/dist/js/demo.js"></script>
 
-
-
     <script>
         $(document).ready(function () {
             LoadUserData();
@@ -858,7 +858,7 @@
         <div class="modal-dialog" style="width: 25% !important;">
 
             <div class="modal-content">
-                
+
             </div>
             <!-- /.modal-content -->
         </div>
@@ -879,7 +879,7 @@
         </div>
         <!-- /.modal-content -->
     </div>
-        <!-- /.modal-dialog -->
+    <!-- /.modal-dialog -->
     </div>
 </body>
 

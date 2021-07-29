@@ -62,7 +62,7 @@ namespace SwiftHR.Controllers
             EmpMasters empMasters = new EmpMasters();
 
             List<MasterDataItem> empMasterData = new List<MasterDataItem>();
-            empMasterData = _context.MasterDataItems.Where(x => x.ItemTypeId >= 18 && x.ItemTypeId <= 28).ToList();
+            empMasterData = _context.MasterDataItems.Where(x => x.ItemTypeId >= 1 && x.ItemTypeId <= 198).ToList();
 
             List<UserDetail> reportingMgrList = new List<UserDetail>();
             reportingMgrList = _context.UserDetails.Where(e => e.RoleId == Convert.ToInt32("6")).ToList();
@@ -372,7 +372,7 @@ namespace SwiftHR.Controllers
                 {
                     if(empOnboardingDetails.empOnboardingDetails.OnboardingStatus==2)
                     {
-                        int updateStatus = empOnboardingDetails.ChangeOnboardingStatus(2);
+                        int updateStatus = empOnboardingDetails.ChangeOnboardingStatus(3);
                         bool success = SendSelfOnboardingMail(empOnboardingDetails.empDetails, 2);
                     }
                 }
@@ -390,10 +390,80 @@ namespace SwiftHR.Controllers
             return EmployeeOnbList();
         }
 
+        // POST: Send for onboarding
+        [HttpPost("SendOnboardingForApproval")]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendOnboardingForApproval(string empid)
+        {
+            if (!string.IsNullOrEmpty(empid))
+            {
+                EmployeeOnboardingDetails empOnboardingDetails;
+                empOnboardingDetails = GetEmployeeProfileDetails(empid);
+
+                //Employee empData = new Employee();
+                //empData = _context.Employees.Where(o => o.EmployeeId == Convert.ToInt32(empid)).SingleOrDefault();
+
+                if (empOnboardingDetails.empDetails.IsSelfOnboarding == true)
+                {
+                    if (empOnboardingDetails.empOnboardingDetails.OnboardingStatus <=1)
+                    {
+                        int updateStatus = empOnboardingDetails.ChangeOnboardingStatus(2);
+                       // bool success = SendSelfOnboardingMail(empOnboardingDetails.empDetails, 2);
+                    }
+                }
+                ArrayList arrayResponse = new ArrayList();
+                //String responseObj = '{"name":"John", "age":30, "city":"New York"}';
+                string msg = string.Format("Onboarding Details Successfully Submitted For Approval {0}.\\n Date: {1}", empid, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                arrayResponse.Add(msg);
+                //ViewBag.Message = string.Format("Successfully Updated Employee {0}.\\n Date: {1}", empid, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+
+                string result = JsonConvert.SerializeObject(arrayResponse);
+                return new JsonResult(result);
+
+                //return EmployeeOnbList();
+            }
+            return EmployeeProfileDetails(empid, "EditEmployeeDetails");
+        }
 
 
-            // POST: EmployeeController/Create
-            [HttpPost("UpdateEmployeeDetails")]
+
+        // POST: EmployeeController/Create
+        [HttpPost("RejectEmployeeOnboarding")]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejectEmployeeOnboarding(string empid)
+        {
+            if (!string.IsNullOrEmpty(empid))
+            {
+                EmployeeOnboardingDetails empOnboardingDetails;
+                empOnboardingDetails = GetEmployeeProfileDetails(empid);
+
+                //Employee empData = new Employee();
+                //empData = _context.Employees.Where(o => o.EmployeeId == Convert.ToInt32(empid)).SingleOrDefault();
+
+                if (empOnboardingDetails.empDetails.IsSelfOnboarding == true)
+                {
+                    if (empOnboardingDetails.empOnboardingDetails.OnboardingStatus == 2)
+                    {
+                        int updateStatus = empOnboardingDetails.ChangeOnboardingStatus(0);
+                        bool success = SendSelfOnboardingMail(empOnboardingDetails.empDetails, 2);
+                    }
+                }
+                ArrayList arrayResponse = new ArrayList();
+                //String responseObj = '{"name":"John", "age":30, "city":"New York"}';
+                string msg = string.Format("Updation mail sent to Employee Successfully! {0}.\\n Date: {1}", empid, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                arrayResponse.Add(msg);
+                //ViewBag.Message = string.Format("Successfully Updated Employee {0}.\\n Date: {1}", empid, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+
+                string result = JsonConvert.SerializeObject(arrayResponse);
+                return new JsonResult(result);
+
+                //return EmployeeOnbList();
+            }
+            return EmployeeOnbList();
+        }
+
+        // POST: EmployeeController/Create
+        [HttpPost("UpdateEmployeeDetails")]
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateEmployeeDetails(IFormFile PicturePath, IFormCollection collection)
         {
@@ -445,6 +515,7 @@ namespace SwiftHR.Controllers
                                 empDetails.empDetails.ReportingManager = collection["ReportingManager"];
                             empDetails.empDetails.DateOfJoining = collection["DateOfJoining"];
                             empDetails.empDetails.ConfirmationDate = collection["ConfirmationDate"];
+                            empDetails.empDetails.Gender = collection["Gender"];
 
                             //empDetails.empDetails.EmployeeProfilePhoto = collection["PicturePath"];
 
@@ -508,8 +579,8 @@ namespace SwiftHR.Controllers
                                     empDetails.empDetails.Religion = collection["Religion"];
                                 // empDetails.empDetails.PhysicallyChallenged = false;
                                 // empDetails.empDetails.InternationalEmployee = false;
-                                empDetails.empDetails.Address = collection["PresentAddress"];
-                                empDetails.empDetails.PermanentAddress = collection["PermanentAddress"];
+                                empDetails.empPermamentAddress.Address = collection["PresentAddress"];
+                                empDetails.empTemporaryAddress.Address = collection["PermanentAddress"];
                                 if (!string.IsNullOrEmpty(collection["EmergencyContactNumber"]))
                                     empDetails.empDetails.EmergencyNumber = collection["EmergencyContactNumber"];
                                 if (!string.IsNullOrEmpty(collection["EmergencyContactName"]))
@@ -862,16 +933,19 @@ namespace SwiftHR.Controllers
 
             string baseUrl = _configuration["AppData:BaseUrlLocal"];
 
-            string callUrl = baseUrl + "Employee/EmpSetPassword?eid=" + DataSecurity.Encode(emp.EmployeeId.ToString());
+            //string callUrl = baseUrl + "Employee/EmpSetPassword?eid=" + DataSecurity.Encode(emp.EmployeeId.ToString());
+            string callUrl = baseUrl + "Home/Login?empeid=" + DataSecurity.Encode(emp.EmployeeId.ToString());
 
             if (templateId == 1)
             {
                 htmlText = _context.EmailTemplates.Where(x => x.EmailTemplateTitle == "EmployeeOnboardingTemplate").Select(x => x.EmailTemplateHtml).SingleOrDefault();
             }
-            else
+            else if (templateId == 2)
             {
                 htmlText = _context.EmailTemplates.Where(x => x.EmailTemplateTitle == "EmployeeOnboardingSuccessTemplate").Select(x => x.EmailTemplateHtml).SingleOrDefault();
             }
+            else
+                htmlText = "";
                 htmlText = htmlText.Replace("#FullName", emp.FirstName + " " + emp.MiddleName + " " + emp.LastName);
 
             htmlText = htmlText.Replace("#CallUrl", callUrl);

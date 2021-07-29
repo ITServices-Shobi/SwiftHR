@@ -10,6 +10,7 @@ namespace SwiftHR.Utility
     {
         public List<MasterDataItem> empMasterDataItems { get; set; }
 
+
         public List<UserDetail> reportingMgrList { get; set; }
 
     }

@@ -10,6 +10,10 @@
 }
 
 
+<link rel="stylesheet" href="~/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" href="~/bower_components/datatables.net/js/jquery.dataTables.min.js">
+
+
 
 <style type="text/css">
     .info-box-number {
@@ -175,12 +179,12 @@
                             </p>
 
                             <div class="chart">
-                                <input id="chartData" name="chartValue1" type="hidden"/>
-                                <input id="chartMonths" name="chartValue2" type="hidden"/>
+                                <input id="chartData" name="chartValue1" type="hidden" />
+                                <input id="chartMonths" name="chartValue2" type="hidden" />
                                 <!-- Sales Chart Canvas -->
                                 @*<canvas id="salesChart" style="height: 180px;">
-            
-                                </canvas>*@
+
+                                    </canvas>*@
                                 <canvas id="swifthrcharts" style="height: 180px;"></canvas>
                                 @*<canvas id="myChart" style="height: 180px;"></canvas>*@
                             </div>
@@ -335,106 +339,24 @@
                     <h3 class="box-title">New Joined Employees</h3>
 
                     <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <a class="btn btn-sm btn-default btn-flat " id="btnExport"> Export To Excel </a>
+                        <button type="button" class="btn btn-box-tool pull-right" data-widget="collapse">
                             <i class="fa fa-minus"></i>
                         </button>
                     </div>
                 </div>
                 <!-- /.box-header -->
-                @*<div class="box-body">
-                        <div class="table-responsive">
-                            <table class="table no-margin">
-                                <thead>
-                                    <tr>
-                                        <th>Employee No</th>
-                                        <th>Name</th>
-                                        <th>Department</th>
-                                        <th>Self-Onboarding</th>
-                                        <th>Joining Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                                        <td>Call of Duty IV</td>
-                                        <td><span class="label label-success">Shipped</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                                        <td>Samsung Smart TV</td>
-                                        <td><span class="label label-warning">Pending</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                                        <td>iPhone 6 Plus</td>
-                                        <td><span class="label label-danger">Delivered</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                                        <td>Samsung Smart TV</td>
-                                        <td><span class="label label-info">Processing</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#00c0ef" data-height="20">90,80,-90,70,-61,83,63</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR1848</a></td>
-                                        <td>Samsung Smart TV</td>
-                                        <td><span class="label label-warning">Pending</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR7429</a></td>
-                                        <td>iPhone 6 Plus</td>
-                                        <td><span class="label label-danger">Delivered</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                                        <td>Call of Duty IV</td>
-                                        <td><span class="label label-success">Shipped</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><a href="pages/examples/invoice.html">OR9842</a></td>
-                                        <td>Call of Duty IV</td>
-                                        <td><span class="label label-success">Shipped</span></td>
-                                        <td>
-                                            <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- /.table-responsive -->
-                    </div>*@
-                <!-- /.box-body -->
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <div class="table-responsive">
-                        <table id="tblJoinersList" class="table table-bordered table-striped">
+                    <div class="table-responsive" id="divJoinerslist">
+                        <table id="tblJoinersList" class="table table-bordered table-striped nowrap table-hover table-condensed">
                             <thead>
                                 <tr align="center">
-                                    <th align="center">Employee No</th>
-                                    <th align="center">Name</th>
-                                    <th align="center">Department</th>
-                                    <th align="center">Self-Onboarding</th>
-                                    <th align="center">Joining Date</th>
+                                    <th class="bg-primary">Employee No</th>
+                                    <th class="bg-primary">Name</th>
+                                    <th class="bg-primary">Department</th>
+                                    <th class="bg-primary">Self-Onboarding</th>
+                                    <th class="bg-primary">Joining Date</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -468,9 +390,32 @@
 
 
                                             @*<td><span class="@Configuration["DepartmentBootStrapSettings:2"]">@empd.Department</span></td>*@
-                                            <td>
-                                                <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                                            </td>
+                                            @*<td>
+                                                    <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
+                                                </td>*@
+                                            @if (Model.empOnboardingDetails.Where(x => x.OnbemployeeId == empd.EmployeeId).ToList().Count() <= 0)
+                                            {
+                                                <td align="center"><small class="label  bg-yellow-gradient"><i class="fa fa-battery-0"></i> Not Applicable </small></td>
+                                            }
+                                            else
+                                            {
+                                                @foreach (var empOnb in Model.empOnboardingDetails.Where(x => x.OnbemployeeId == empd.EmployeeId).ToList())
+                                                {
+                                                    @if (empOnb.OnboardingStatus == 0)
+                                                    {
+                                                        <td style="width: 10%;"><small class="label  bg-red-gradient"><i class="fa fa-gears"></i> Initiated </small></td>
+                                                    }
+                                                    @if (empOnb.OnboardingStatus == 1)
+                                                    {
+                                                        <td style="width: 10%;"><small class="label  bg-green-gradient"><i class="fa fa-folder-open-o"></i> In Progress </small></td>
+                                                    }
+                                                    @if (empOnb.OnboardingStatus == 2)
+                                                    {
+                                                        <td style="width: 10%;"><small class="label bg-blue-gradient"><i class="fa fa-calendar-times-o"></i> Pending Approval </small></td>
+                                                    }
+                                                }
+                                            }
+
                                             <td>@empd.DateOfJoining </td>
                                         </tr>
                                     }
@@ -501,7 +446,6 @@
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">Employees On Leave Today</h3>
-
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
@@ -603,7 +547,7 @@
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer text-center">
-                    <a href="javascript:void(0)" class="uppercase"> View All </a>
+                    <a asp-controller="Leaves" asp-action="LeavesList" class="uppercase"> View All </a>
                 </div>
                 <div class="box-footer text-center">
                     <a href="javascript:void(0)" class="uppercase"> Add Leave On-behalf </a>
@@ -633,6 +577,16 @@
 @section Scripts {
     <!-- ChartJS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.4.1/dist/chart.min.js"></script>
+    <!-- Export plugin -->
+    <script type="text/javascript" src="~/lib/hhurz/libs/FileSaver/FileSaver.min.js"></script>
+    <script type="text/javascript" src="~/lib/hhurz/libs/js-xlsx/xlsx.core.min.js"></script>
+    <script type="text/javascript" src="~/lib/hhurz/libs/jsPDF/jspdf.min.js"></script>
+    <script type="text/javascript" src="~/lib/hhurz/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+    <script type="text/javascript" src="~/lib/hhurz/tableExport.js"></script>
+    <script type="text/javascript" src="~/lib/hhurz/tableExport.min.js"></script>
+    <!-- jQuery 3 -->
+    @*<script src="~/bower_components/jquery/dist/jquery.min.js"></script>*@
+
     <script>
 
         @*getData();
@@ -690,10 +644,6 @@
     <script src="~/bower_components/chart.js/Chart.js"></script>
 
     @*<script src="~/dist/js/pages/swifthrcharts.js?labels="+"[January, February, March, April, May, April]"+"&data="+"[45, 48, 40, 19, 86, 88]""></script>*@
-
-
-
-
 
 
     <script>
@@ -786,7 +736,6 @@
     </script>
 
 
-
     <script>
         // SLIMSCROLL FOR CHAT WIDGET
         $('#divDepartEmpCount').slimScroll({
@@ -860,5 +809,42 @@
     </script>
     <script src="~/dist/js/pages/swifthrcharts.js"></script>
 
+    <script>
+        $("#btnExport").click(function (e) {
+            //alert("excel");
+            //window.open('data:application/vnd.ms-excel,' + $('#divJoinerslist').dataTable.render);
+            @*$("#tblJoinersList").dataTable.render.*@
+           // $('#tblJoinersList').tableExport({ type: 'excel' });
+
+            //PDF
+            $('#tblJoinersList').tableExport({
+                type: 'pdf',
+                jspdf: {
+                    orientation: 'l',
+                    format: 'a4',
+                    margins: { left: 10, right: 10, top: 20, bottom: 20 },
+                    autotable: {
+                        styles: {
+                            fillColor: 'inherit',
+                            textColor: 'inherit'
+                        },
+                        tableWidth: 'auto'
+                    }
+                }
+            });
+            e.preventDefault();
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var table = $('#tblJoinersList').DataTable({
+                lengthChange: false,
+                buttons: ['copy', 'excel', 'pdf', 'colvis']
+            });
+
+            table.buttons().container()
+                .appendTo('#example_wrapper .col-sm-6:eq(0)');
+        });
+    </script>
 
 }

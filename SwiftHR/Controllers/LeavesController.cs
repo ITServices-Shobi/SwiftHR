@@ -33,8 +33,14 @@ namespace SwiftHR.Controllers
             this._configuration = configuration;
         }
 
-        // GET: Leaves List
-        public ActionResult LeavesList()
+        // GET: Holiday Calendar
+        public ActionResult HolidayCalendar()
+        {
+            return View("HolidayCalendar");
+        }
+
+            // GET: Leaves List
+            public ActionResult LeavesList()
         {
             //List<LeaveApplyDetail> leaveData = new List<LeaveApplyDetail>();
             //leaveData = _context.LeaveApplyDetails.ToList();

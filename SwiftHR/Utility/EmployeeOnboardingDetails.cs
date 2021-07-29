@@ -14,11 +14,14 @@ namespace SwiftHR.Utility
         public string CallingView { get; set; }
 
         public Employee empDetails { get; set; }
+        public EmpAddress empPermamentAddress { get; set; }
+        public EmpAddress empTemporaryAddress { get; set; }
         public EmpOnboardingDetail empOnboardingDetails { get; set; }
         public List<EmpEducationDetail> empEducationDetail { get; set; }
         public EmpBankDetail empBankDetail { get; set; }
         public List<PrevEmploymentDetail> prevEmploymentDetail { get; set; }
         public List<EmpDocument> empDocument { get; set; }
+        public List<MasterDataItem> empMasterDataItems { get; set; }
 
         public EmployeeOnboardingDetails()
         {
@@ -32,6 +35,16 @@ namespace SwiftHR.Utility
                 Employee empData = new Employee();
                 empData = dbContext.Employees.Where(x => x.EmployeeId == Convert.ToInt32(empId)).ToList().SingleOrDefault();
                 empDetails = empData;
+
+                //Permanent Address 
+                this.empPermamentAddress = new EmpAddress();
+                this.empPermamentAddress = dbContext.EmpAddress.Where(x => x.EmployeeId == Convert.ToInt32(empId) && x.IsPermanentAddress==true).ToList().SingleOrDefault();
+                //Present Address
+                this.empTemporaryAddress = new EmpAddress();
+                this.empTemporaryAddress = dbContext.EmpAddress.Where(x => x.EmployeeId == Convert.ToInt32(empId) && x.IsPermanentAddress == false).ToList().SingleOrDefault();
+
+                this.empMasterDataItems = new List<MasterDataItem>();
+                this.empMasterDataItems = dbContext.MasterDataItems.Where(x => x.ItemTypeId >= 1 && x.ItemTypeId <= 29).ToList();
 
                 //If self enboarding is enabled
                 if (Convert.ToBoolean(empData.IsSelfOnboarding))
@@ -170,9 +183,17 @@ namespace SwiftHR.Utility
                     
                     switch (status)
                     {
+                        case 0:
+                            this.empOnboardingDetails.OnboardingStatus = 0;
+                            this.empDetails.IsSelfOnboarding = true;
+                            break;
                         case 1:
                             break;
                         case 2:
+                            this.empOnboardingDetails.OnboardingStatus = 2;
+                            this.empDetails.IsSelfOnboarding = true;
+                            break;
+                        case 3:
                             this.empOnboardingDetails.OnboardingStatus = 3;
                             this.empDetails.IsSelfOnboarding = false;
                             ResetEmployeeOnboardingData(false);
@@ -269,8 +290,8 @@ namespace SwiftHR.Utility
                 empDetails.MothersName = null;
                 empDetails.Religion = null;
                 empDetails.SpouseName = null;
-                empDetails.Address = null;
-                empDetails.PermanentAddress = null;
+                //empDetails.empPermamentAddress.Address = null;
+                //empDetails.PermanentAddress = null;
                 empDetails.EmergencyNumber = null;
                 empDetails.EmergencyContactName = null;
                 empDetails.NomineeName = null;
@@ -289,8 +310,8 @@ namespace SwiftHR.Utility
                 empDetails.MothersName = empOnboardingDetails.MothersName;
                 empDetails.Religion = empOnboardingDetails.Religion;
                 empDetails.SpouseName = empOnboardingDetails.SpouceName;
-                empDetails.Address = empOnboardingDetails.PresentAddress;
-                empDetails.PermanentAddress = empOnboardingDetails.PermanentAddress;
+                //empDetails.Address = empOnboardingDetails.PresentAddress;
+                //empDetails.PermanentAddress = empOnboardingDetails.PermanentAddress;
                 empDetails.EmergencyNumber = empOnboardingDetails.AlternateContactNo;
                 empDetails.EmergencyContactName = empOnboardingDetails.AlternateContactName;
                 empDetails.NomineeName = empOnboardingDetails.NomineeName;

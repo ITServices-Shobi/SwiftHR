@@ -148,13 +148,13 @@
                                                 <label for="ddlDesignation">Designation</label>
                                                 <select class="form-control select2" id="ddlDesignation" name="Designation">
                                                     <option value="0">Choose..</option>
-                                                    @if (Model != null && Model.empMasterDataItems.Where(x => x.ItemTypeId == Convert.ToInt32(Configuration["AppData:DesignationCode"])).ToList().Count() > 0)
-                                                    {
-                                                        @foreach (var desig in Model.empMasterDataItems.Where(x => x.ItemTypeId == Convert.ToInt32(Configuration["AppData:DesignationCode"])).ToList())
+                                                        @if (Model != null && Model.empMasterDataItems.Where(x => x.ItemTypeId == Convert.ToInt32(Configuration["AppData:DesignationCode"])).ToList().Count() > 0)
                                                         {
-                                                            <option value="@desig.MasterDataItemId">@desig.MasterDataItemValue</option>
+                                                            @foreach (var desig in Model.empMasterDataItems.Where(x => x.ItemTypeId == Convert.ToInt32(Configuration["AppData:DesignationCode"])).ToList())
+                                                            {
+                                                                <option value="@desig.MasterDataItemId">@desig.MasterDataItemValue</option>
+                                                            }
                                                         }
-                                                    }
                                                 </select>
                                             </div>
                                         </div>

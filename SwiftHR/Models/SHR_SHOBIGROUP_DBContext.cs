@@ -26,6 +26,7 @@ namespace SwiftHR.Models
         public virtual DbSet<AttandancePolicySetup> AttandancePolicySetups { get; set; }
         public virtual DbSet<AuthorizedSignatory> AuthorizedSignatories { get; set; }
         public virtual DbSet<BankMaster> BankMasters { get; set; }
+        public virtual DbSet<EmpAddress> EmpAddress { get; set; }
         public virtual DbSet<CurrancyMaster> CurrancyMasters { get; set; }
         public virtual DbSet<Department> Departments { get; set; }
         public virtual DbSet<Designation> Designations { get; set; }
@@ -225,7 +226,55 @@ namespace SwiftHR.Models
                     .IsUnicode(false)
                     .HasColumnName("IFSCCODE");
             });
+            
+            modelBuilder.Entity<EmpAddress>(entity =>
+            {
+                entity.HasKey(e => e.EmpAddressId);
 
+                entity.ToTable("EmpAddress");
+
+                entity.Property(e => e.EmpAddressId).HasColumnName("EmpAddressId");
+
+                entity.Property(e => e.EmployeeId)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("EmployeeId");
+
+                entity.Property(e => e.Address)
+                    .HasMaxLength(500)
+                    .IsUnicode(false)
+                    .HasColumnName("Address");
+
+                entity.Property(e => e.Country)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Country");
+
+                entity.Property(e => e.State)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("State");
+
+                entity.Property(e => e.Pin)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("Pin");
+
+                entity.Property(e => e.IsPermanentAddress)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("IsPermanentAddress");
+
+                entity.Property(e => e.CreatedDate)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("CreatedDate");
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(20)
+                    .IsUnicode(false)
+                    .HasColumnName("CreatedBy");
+            });
             modelBuilder.Entity<CurrancyMaster>(entity =>
             {
                 entity.HasKey(e => e.CurrencyId);
@@ -616,7 +665,6 @@ namespace SwiftHR.Models
                 entity.Property(e => e.OnboardingStatus)
                    .HasColumnName("OnboardingStatus");
 
-
             });
 
             modelBuilder.Entity<EmpSettingsCategory>(entity =>
@@ -654,10 +702,7 @@ namespace SwiftHR.Models
             {
                 entity.ToTable("Employee");
 
-                entity.Property(e => e.Address)
-                    .HasMaxLength(500)
-                    .IsUnicode(false);
-
+               
                 entity.Property(e => e.AdharCardName)
                     .HasMaxLength(250)
                     .IsUnicode(false);
@@ -819,10 +864,6 @@ namespace SwiftHR.Models
 
                 entity.Property(e => e.PaymentMethod)
                     .HasMaxLength(100)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.PermanentAddress)
-                    .HasMaxLength(500)
                     .IsUnicode(false);
 
                 entity.Property(e => e.PersonalEmail)
@@ -1134,6 +1175,10 @@ namespace SwiftHR.Models
                 entity.Property(e => e.PrevEmploymentName)
                     .HasMaxLength(250)
                     .IsUnicode(false);
+
+                entity.Property(e => e.PrevCompanyAddress)
+                   .HasMaxLength(500)
+                   .IsUnicode(false);
 
                 entity.Property(e => e.VerificationComments)
                     .HasMaxLength(250)

@@ -10,6 +10,7 @@ namespace SwiftHR.Models
         public int PrevEmploymentDetailsId { get; set; }
         public int PrevEmployeeId { get; set; }
         public string PrevEmploymentName { get; set; }
+        public string PrevCompanyAddress { get; set; }
         public string Designation { get; set; }
         public string JoinedDate { get; set; }
         public string LeavingDate { get; set; }

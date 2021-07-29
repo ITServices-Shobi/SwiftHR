@@ -22,8 +22,6 @@ namespace SwiftHR.Models
         public string Gender { get; set; }
         public string BloodGroup { get; set; }
         public string Religion { get; set; }
-        public string Address { get; set; }
-        public string PermanentAddress { get; set; }
         public string DateOfBirth { get; set; }
         public string PlaceOfBirth { get; set; }
         public string EmployeeProfilePhoto { get; set; }
