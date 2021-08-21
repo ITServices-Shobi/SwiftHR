@@ -14,7 +14,7 @@ namespace SwiftHR.Models
         public string LeaveFromDate { get; set; }
         public string LeaveToDate { get; set; }
         public string LeaveAppliedOn { get; set; }
-        public string LeaveStatus { get; set; }
+        public int LeaveStatus { get; set; }
         public int? ReportingManagerUserId { get; set; }
         public string ReportingManagerName { get; set; }
         public string LeaveStatusChangeDate { get; set; }

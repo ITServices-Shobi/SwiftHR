@@ -7,7 +7,7 @@
 }
 
 
-<form asp-controller="Leaves" asp-action="EditLeavesStatus" method="post">
+<form asp-controller="Leaves" asp-action="LeavesList" method="post">
 
     <button type="submit" class="close" style="margin-right: 2%; margin-top: 1%;" title="Close Window">
         <span aria-hidden="true">&times;</span>
@@ -96,7 +96,7 @@
                                                                 <tbody>
                                                                     @if (Model.leaveApplyListAll != null && Model.leaveApplyListAll.Count() > 0)
                                                                     {
-                                                                        @foreach (var leave in Model.leaveApplyListAll.Where(x => x.LeaveStatus == "Approved"))
+                                                                        @foreach (var leave in Model.leaveApplyListAll.Where(x => x.LeaveStatus == 3))
                                                                         {
                                                                             <tr>
 
@@ -160,7 +160,7 @@
                                                                 <tbody>
                                                                     @if (Model.leaveApplyListAll != null && Model.leaveApplyListAll.Count() > 0)
                                                                     {
-                                                                        @foreach (var leave in Model.leaveApplyListAll.Where(x => x.LeaveStatus == "Applied"))
+                                                                        @foreach (var leave in Model.leaveApplyListAll.Where(x => x.LeaveStatus == 1))
                                                                         {
                                                                             <tr>
 

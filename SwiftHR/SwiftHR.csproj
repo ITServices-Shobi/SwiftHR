@@ -45,6 +45,13 @@
 		<None Include="wwwroot\bower_components\databases.net-bs4\js\responsive.bootstrap4.min.js" />
 		<None Include="wwwroot\bower_components\datatables.net-bs\js\dataTables.bootstrap.min.js" />
 		<None Include="wwwroot\bower_components\datatables.net-bs\js\jquery.dataTables.min.js" />
+		<None Include="wwwroot\bower_components\datatables.net-export\buttons.colVis.min.js" />
+		<None Include="wwwroot\bower_components\datatables.net-export\buttons.html5.min.js" />
+		<None Include="wwwroot\bower_components\datatables.net-export\buttons.print.min.js" />
+		<None Include="wwwroot\bower_components\datatables.net-export\dataTables.buttons.min.js" />
+		<None Include="wwwroot\bower_components\datatables.net-export\jszip.min.js" />
+		<None Include="wwwroot\bower_components\datatables.net-export\pdfmake.min.js" />
+		<None Include="wwwroot\bower_components\datatables.net-export\vfs_fonts.js" />
 		<None Include="wwwroot\bower_components\datatables.net\js\jquery.dataTables.min.js" />
 		<None Include="wwwroot\bower_components\fastclick\lib\fastclick.js" />
 		<None Include="wwwroot\bower_components\Flot\jquery.flot.categories.js" />

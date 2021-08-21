@@ -255,6 +255,11 @@ namespace SwiftHR.Models
                     .IsUnicode(false)
                     .HasColumnName("State");
 
+                entity.Property(e => e.City)
+                   .HasMaxLength(50)
+                   .IsUnicode(false)
+                   .HasColumnName("City");
+
                 entity.Property(e => e.Pin)
                     .HasMaxLength(50)
                     .IsUnicode(false)
@@ -1136,9 +1141,26 @@ namespace SwiftHR.Models
             {
                 entity.HasKey(e => e.PrevEmploymentDetailsId);
 
+
                 entity.Property(e => e.ContactPerson1)
                     .HasMaxLength(250)
                     .IsUnicode(false);
+
+                entity.Property(e => e.PrevEmployeeId)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PrevEmploymentOrder)
+                   .HasMaxLength(50)
+                   .IsUnicode(false);
+
+                entity.Property(e => e.VerifiedBy)
+                  .HasMaxLength(50)
+                  .IsUnicode(false);
+
+                entity.Property(e => e.CreatedBy)
+                 .HasMaxLength(50)
+                 .IsUnicode(false);
 
                 entity.Property(e => e.ContactPerson1No)
                     .HasMaxLength(50)
@@ -1149,6 +1171,14 @@ namespace SwiftHR.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.ContactPerson2No)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ContactPerson3)
+                    .HasMaxLength(250)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ContactPerson3No)
                     .HasMaxLength(50)
                     .IsUnicode(false);
 

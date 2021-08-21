@@ -337,7 +337,7 @@
                         <ul class="treeview-menu">
                             <li id="liAddEmployee" class="liItems"><a asp-controller="Employee" asp-action="AddEmployee" onclick="menuClick('liAddEmployee')"><i class="fa fa-circle-o"></i> Add Employee </a></li>
                             <li id="liUpdateEmployee" class="liItems"><a asp-controller="Employee" asp-action="EmployeeProfileDetails" asp-route-callingView="EditEmployeeDetails" onclick="menuClick('liUpdateEmployee')"><i class="fa fa-circle-o"></i> Employee Profile </a></li>
-                            <li id="liEmployeeList" class="liItems"><a asp-controller="Employee" asp-action="EmployeeList" onclick="menuClick('liEmployeeList')"><i class="fa fa-circle-o"></i> Employee List</a></li>
+                            <li id="liEmployeeList" class="liItems"><a asp-controller="Employee" asp-action="EmployeeList" onclick="menuClick('liEmployeeList')"><i class="fa fa-circle-o"></i> Employee Directory</a></li>
                             @*<li id="liEditEmployeeList" class="liItems"> <a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> Edit Employee Details</a></li>*@
                             <li id="liEmpSelfOnboard" class="liItems"><a asp-controller="Employee" asp-action="EmployeeOnbList" onclick="menuClick('liEmpSelfOnboard')"><i class="fa fa-circle-o"></i> Employee Self Onboarding </a></li>
                             <li id="liEmpBackVerify" class="liItems"><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> Background Verification </a></li>
@@ -498,7 +498,7 @@
         </div>
         <!-- /.content-wrapper -->
 
-        <footer class="main-footer" style="margin-left: 0px !important; text-align: center;">
+        <footer class="main-footer hidden-print" style="margin-left: 0px !important; text-align: center;">
             <div class="pull-right hidden-xs">
                 <b>Version</b> 1.0
             </div>
@@ -839,6 +839,7 @@
         }
 
         function menuClick(liItem) {
+            //alert(liItem);
             if ($(".liItems").hasClass("active")) {
                 $(".liItems").removeClass("active")
             }

@@ -81,8 +81,27 @@ namespace SwiftHR.Controllers
             {
                 List<Employee> empData = new List<Employee>();
                 empData = _context.Employees.ToList();
-                
-                return View("EmployeeList", empData);
+                MasterDataItem empDesignation;
+                MasterDataItem empDepartment;
+                string empDesigTypeId = _configuration["AppData:DesignationCode"];
+                string empDeptTypeId = _configuration["AppData:DepartmentCode"];
+                foreach (Employee emp in empData)
+                {
+
+                    empDesignation= _context.MasterDataItems.Where(x => x.MasterDataItemId.ToString() == emp.Designation && x.ItemTypeId == Convert.ToInt32(empDesigTypeId)).SingleOrDefault();
+                    if(empDesignation!=null)
+                    {
+                        emp.Designation = empDesignation.MasterDataItemValue;
+                    }
+                    
+                    empDepartment = _context.MasterDataItems.Where(x => x.MasterDataItemId.ToString() == emp.Department && x.ItemTypeId == Convert.ToInt32(empDeptTypeId)).SingleOrDefault();
+                    if (empDepartment != null)
+                    {
+                        emp.Department = empDepartment.MasterDataItemValue;
+                    }
+                }
+
+                    return View("EmployeeList", empData);
             }
             else
                 return RedirectToAction("AccessDenied", "Home");
@@ -116,6 +135,13 @@ namespace SwiftHR.Controllers
             empData = _context.Employees.Where(o => o.EmployeeId == Convert.ToInt32(empId)).SingleOrDefault();
             return PartialView("EmployeeDetails", empData);
             
+        }
+
+        public ActionResult PrintList()
+        {
+            Employee empData = new Employee();
+            empData = _context.Employees.Where(o => o.CompanyId == Convert.ToInt32(1)).SingleOrDefault();
+            return PartialView("Print", empData);
         }
 
         public ActionResult EditEmployeeDetails(string empId)
@@ -165,6 +191,21 @@ namespace SwiftHR.Controllers
                 empOnboardingDetails.empDetails.DateOfLastWorking = System.Convert.ToDateTime(empOnboardingDetails.empDetails.DateOfLastWorking).ToString("yyyy-MM-dd");
             if (!string.IsNullOrEmpty(empOnboardingDetails.empDetails.DateOfResignation))
                 empOnboardingDetails.empDetails.DateOfResignation = System.Convert.ToDateTime(empOnboardingDetails.empDetails.DateOfResignation).ToString("yyyy-MM-dd");
+           
+            if (!string.IsNullOrEmpty(empOnboardingDetails.prevEmploymentDetail1.JoinedDate))
+                empOnboardingDetails.prevEmploymentDetail1.JoinedDate = System.Convert.ToDateTime(empOnboardingDetails.prevEmploymentDetail1.JoinedDate).ToString("yyyy-MM-dd");
+            if (!string.IsNullOrEmpty(empOnboardingDetails.prevEmploymentDetail1.LeavingDate))
+                empOnboardingDetails.prevEmploymentDetail1.LeavingDate = System.Convert.ToDateTime(empOnboardingDetails.prevEmploymentDetail1.LeavingDate).ToString("yyyy-MM-dd");
+
+            if (!string.IsNullOrEmpty(empOnboardingDetails.prevEmploymentDetail2.JoinedDate))
+                empOnboardingDetails.prevEmploymentDetail2.JoinedDate = System.Convert.ToDateTime(empOnboardingDetails.prevEmploymentDetail2.JoinedDate).ToString("yyyy-MM-dd");
+            if (!string.IsNullOrEmpty(empOnboardingDetails.prevEmploymentDetail2.LeavingDate))
+                empOnboardingDetails.prevEmploymentDetail2.LeavingDate = System.Convert.ToDateTime(empOnboardingDetails.prevEmploymentDetail2.LeavingDate).ToString("yyyy-MM-dd");
+
+            if (!string.IsNullOrEmpty(empOnboardingDetails.prevEmploymentDetail3.JoinedDate))
+                empOnboardingDetails.prevEmploymentDetail3.JoinedDate = System.Convert.ToDateTime(empOnboardingDetails.prevEmploymentDetail3.JoinedDate).ToString("yyyy-MM-dd");
+            if (!string.IsNullOrEmpty(empOnboardingDetails.prevEmploymentDetail3.LeavingDate))
+                empOnboardingDetails.prevEmploymentDetail3.LeavingDate = System.Convert.ToDateTime(empOnboardingDetails.prevEmploymentDetail3.LeavingDate).ToString("yyyy-MM-dd");
 
 
             if (IsAllowPageAccess("AddEmployee"))
@@ -174,7 +215,7 @@ namespace SwiftHR.Controllers
             //D:\ShobiProjects\SwiftHR\Main\SwiftHR\SwiftHR\Views\
             //    return View(empOnboardingDetails);
             
-                return View("EditEmployeeDetails", empOnboardingDetails);
+                return PartialView("EditEmployeeDetails", empOnboardingDetails);
              }
             else
                 return RedirectToAction("AccessDenied", "Home");
@@ -453,7 +494,7 @@ namespace SwiftHR.Controllers
                         RandomGenerator generator = new RandomGenerator();
                         string pass = generator.RandomPassword();
                         //sending password through sms...
-                        bool successSMS = SendSelfOnboardingSms(pass, 1, empOnboardingDetails.empDetails.ContactNumber.ToString());
+                        //bool successSMS = SendSelfOnboardingSms(pass, 1, empOnboardingDetails.empDetails.ContactNumber.ToString());
 
                         //String responseObj = '{"name":"John", "age":30, "city":"New York"}';
                         string msg = string.Format("Updation mail sent to Employee Successfully! {0}.\n Date: {1} " + pass, empid, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
@@ -474,7 +515,7 @@ namespace SwiftHR.Controllers
         // POST: EmployeeController/Create
         [HttpPost("UpdateEmployeeDetails")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateEmployeeDetails(IFormFile PicturePath, IFormCollection collection)
+        public async Task<IActionResult> UpdateEmployeeDetails(IFormFile PicturePath, IFormCollection collection, IFormFile pdfPath1, IFormFile pdfPath2, IFormFile pdfPath3, IFormFile pdfPath4)
         {
             try
             {
@@ -497,21 +538,105 @@ namespace SwiftHR.Controllers
                             emp.EmployeeId = 0;
                             emp.EmployeeNumber = Convert.ToInt32(collection["loggedEmployeeId"]);
                             //Upload profile picture
-                            string fileUploadName = string.Empty;
-                            if (PicturePath != null && !string.IsNullOrEmpty(PicturePath.FileName))
+                            //string fileUploadName = string.Empty;
+                            //if (PicturePath != null && !string.IsNullOrEmpty(PicturePath.FileName))
+                            //{
+                            //    long size = PicturePath.Length;
+                            //    // full path to file in temp location
+                            //    var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot\\UploadImages", PicturePath.FileName);
+
+                            //    using (var stream = new FileStream(filePath, FileMode.Create))
+                            //    {
+                            //        await PicturePath.CopyToAsync(stream);
+                            //    }
+
+                            //    fileUploadName = PicturePath.FileName;
+                            //    empDetails.empDetails.EmployeeProfilePhoto = fileUploadName;
+                            //}
+
+                            //*******Upload profile picture********
+                            if(PicturePath!=null)
+                                empDetails.empDetails.EmployeeProfilePhoto = UploadSupportingDocuments(PicturePath, _configuration["AppData:ImageUploadPath"], empDetails.empDetails.EmployeeId, _configuration["DocumentCategory:EmployeeProfilePicture"]).Result.EmpDoumentName;
+
+                            //*******Upload 4 pdf docs*******
+                           
+                            List<EmpDocument> empDocumentListLocal=new List<EmpDocument>();
+                            IFormFile tmpFile=null;
+                            EmpDocument empDocumentLocal1 = new EmpDocument();
+                            List<EmpDocument> empDocumentLocal = new List<EmpDocument>();
+                            empDocumentLocal = empDetails.empDocument.Where(x => x.DocumentCategory == _configuration["DocumentCategory:ExperienceCertificates"]).ToList();
+                            //4 Pdf docs Upload
+                            for (int i=0; i<=4; i++)
                             {
-                                long size = PicturePath.Length;
-                                // full path to file in temp location
-                                var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot\\UploadImages", PicturePath.FileName);
-
-                                using (var stream = new FileStream(filePath, FileMode.Create))
+                                switch(i)
                                 {
-                                    await PicturePath.CopyToAsync(stream);
+                                    case 0:
+                                        tmpFile = pdfPath1;
+                                        break;
+                                    case 1:
+                                        tmpFile = pdfPath2;
+                                        break;
+                                    case 2:
+                                        tmpFile = pdfPath3;
+                                        break;
+                                    case 3:
+                                        tmpFile = pdfPath4;
+                                        break;
                                 }
-
-                                fileUploadName = PicturePath.FileName;
-                                empDetails.empDetails.EmployeeProfilePhoto = fileUploadName;
+                                if (tmpFile != null)
+                                {
+                                    empDocumentLocal1 = new EmpDocument();
+                                    empDocumentLocal1 = UploadSupportingDocuments(tmpFile, _configuration["AppData:DocumentUploadPath"], empDetails.empDetails.EmployeeId, _configuration["DocumentCategory:ExperienceCertificates"]).Result;
+                                    
+                                    if (empDocumentLocal.Count >= i + 1)
+                                    {
+                                        empDocumentLocal[i].DocEmployeeId = empDocumentLocal1.DocEmployeeId;
+                                        empDocumentLocal[i].DocumentCategory = empDocumentLocal1.DocumentCategory;
+                                        empDocumentLocal[i].EmpDoumentName = empDocumentLocal1.EmpDoumentName;
+                                        empDocumentLocal[i].DocumentFilePath = empDocumentLocal1.DocumentFilePath;
+                                        empDocumentLocal[i].CreatedDate = empDocumentLocal1.CreatedDate;
+                                        empDocumentLocal[i].CreatedBy = empDocumentLocal1.CreatedBy;
+                                    }
+                                    else
+                                    //Add to list
+                                        empDocumentListLocal.Add(empDocumentLocal1);
+                                }
                             }
+                            empDetails.SaveSupportingDocuments(empDocumentListLocal);
+                            //empDetails.empDocument = empDocumentListLocal;
+                            //if (empDetails.empDocument.Count > 0)
+                            //{
+                            //    foreach (var empDoc in empDetails.empDocument.ToList())
+                            //    {
+                            //        if (empDoc.DocEmployeeId == Convert.ToInt32(empDetails.empDetails.EmployeeId) && empDoc.EmpDoumentName == localDocPDF1Name && empDoc.DocumentCategory == _configuration["DocumentCategory:ExperienceCertificates"])
+                            //        {
+                            //            empDocumentLocal.Add(empDoc);
+                            //        }
+                            //        else
+                            //        {
+                            //            empDocumentLocal.Add(empDoc);
+                            //        }
+                            //        empDocumentLocal.Add(empDoc);
+                            //    }
+                            //}
+
+
+                            //string empDesigTypeId = _configuration["AppData:DocumentUploadPath"];
+                            //string fileUploadPDF1Name = string.Empty;
+                            //if (pdfPath1 != null && !string.IsNullOrEmpty(pdfPath1.FileName))
+                            //{
+                            //    long size = pdfPath1.Length;
+                            //    // full path to file in temp location
+                            //    var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot\\UploadFiles", pdfPath1.FileName);
+
+                            //    using (var stream = new FileStream(filePath, FileMode.Create))
+                            //    {
+                            //        await pdfPath1.CopyToAsync(stream);
+                            //    }
+
+                            //    fileUploadPDF1Name = pdfPath1.FileName;
+                            //    //empDetails.empDetails.EmployeeProfilePhoto = fileUploadName;
+                            //}
 
                             empDetails.empDetails.FirstName = collection["FirstName"];
                             empDetails.empDetails.MiddleName = collection["MiddleName"];
@@ -526,9 +651,74 @@ namespace SwiftHR.Controllers
                             empDetails.empDetails.ConfirmationDate = collection["ConfirmationDate"];
                             empDetails.empDetails.Gender = collection["Gender"];
 
+                            //Previous Employment Details1....
+                            empDetails.prevEmploymentDetail1.PrevEmployeeId = Convert.ToInt32(collection["loggedEmployeeId"]);
+                            empDetails.prevEmploymentDetail1.PrevEmploymentOrder = 1;
+                            empDetails.prevEmploymentDetail1.PrevEmploymentName = collection["inputCompanyName1"];
+                            empDetails.prevEmploymentDetail1.PrevCompanyAddress = collection["inputCompanyAddress1"];
+                            empDetails.prevEmploymentDetail1.Designation = collection["inputDesignation1"];
+                            if (!string.IsNullOrEmpty(collection["DateOfJoining1"]))
+                                empDetails.prevEmploymentDetail1.JoinedDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfJoining1"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
+                            if (!string.IsNullOrEmpty(collection["DateOfLeaving1"]))
+                                empDetails.prevEmploymentDetail1.LeavingDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfLeaving1"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
+                            empDetails.prevEmploymentDetail1.LeavingReason = collection["inputLeavingReason1"];
+                            empDetails.prevEmploymentDetail1.ContactPerson1 = collection["contact1Name1"];
+                            empDetails.prevEmploymentDetail1.ContactPerson1No = collection["contact1Phone1"];
+                            empDetails.prevEmploymentDetail1.ContactPerson2 = collection["contact2Name1"];
+                            empDetails.prevEmploymentDetail1.ContactPerson2No = collection["contact2Phone1"];
+                            empDetails.prevEmploymentDetail1.ContactPerson3 = collection["contact3Name1"];
+                            empDetails.prevEmploymentDetail1.ContactPerson3No = collection["contact3Phone1"];
+                            empDetails.prevEmploymentDetail1.CreatedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy");
+                            empDetails.prevEmploymentDetail1.CreatedBy= GetLoggedInUserId();
+
+                            //Previous Employment Details2....
+                            empDetails.prevEmploymentDetail2.PrevEmployeeId = Convert.ToInt32(collection["loggedEmployeeId"]);
+                            empDetails.prevEmploymentDetail2.PrevEmploymentOrder = 2;
+                            empDetails.prevEmploymentDetail2.PrevEmploymentName = collection["inputCompanyName2"];
+                            empDetails.prevEmploymentDetail2.PrevCompanyAddress = collection["inputCompanyAddress2"];
+                            empDetails.prevEmploymentDetail2.Designation = collection["inputDesignation2"];
+                            if(!string.IsNullOrEmpty(collection["DateOfJoining2"]))
+                            empDetails.prevEmploymentDetail2.JoinedDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfJoining2"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
+                            if (!string.IsNullOrEmpty(collection["DateOfLeaving2"]))
+                                empDetails.prevEmploymentDetail2.LeavingDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfLeaving2"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
+                            empDetails.prevEmploymentDetail2.LeavingReason = collection["inputLeavingReason2"];
+                            empDetails.prevEmploymentDetail2.ContactPerson1 = collection["contact1Name2"];
+                            empDetails.prevEmploymentDetail2.ContactPerson1No = collection["contact1Phone2"];
+                            empDetails.prevEmploymentDetail2.ContactPerson2 = collection["contact2Name2"];
+                            empDetails.prevEmploymentDetail2.ContactPerson2No = collection["contact2Phone2"];
+                            empDetails.prevEmploymentDetail2.ContactPerson3 = collection["contact3Name2"];
+                            empDetails.prevEmploymentDetail2.ContactPerson3No = collection["contact3Phone2"];
+                            empDetails.prevEmploymentDetail2.CreatedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy");
+                            empDetails.prevEmploymentDetail2.CreatedBy = GetLoggedInUserId();
+
+
+                            //Previous Employment Details3....
+                            empDetails.prevEmploymentDetail3.PrevEmployeeId = Convert.ToInt32(collection["loggedEmployeeId"]);
+                            empDetails.prevEmploymentDetail3.PrevEmploymentOrder = 3;
+                            empDetails.prevEmploymentDetail3.PrevEmploymentName = collection["inputCompanyName3"];
+                            empDetails.prevEmploymentDetail3.PrevCompanyAddress = collection["inputCompanyAddress3"];
+                            empDetails.prevEmploymentDetail3.Designation = collection["inputDesignation3"];
+                            if (!string.IsNullOrEmpty(collection["DateOfJoining3"]))
+                                empDetails.prevEmploymentDetail3.JoinedDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfJoining3"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
+                            if (!string.IsNullOrEmpty(collection["DateOfLeaving3"]))
+                                empDetails.prevEmploymentDetail3.LeavingDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfLeaving3"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
+                            empDetails.prevEmploymentDetail3.LeavingReason = collection["inputLeavingReason3"];
+                            empDetails.prevEmploymentDetail3.ContactPerson1 = collection["contact1Name3"];
+                            empDetails.prevEmploymentDetail3.ContactPerson1No = collection["contact1Phone3"];
+                            empDetails.prevEmploymentDetail3.ContactPerson2 = collection["contact2Name3"];
+                            empDetails.prevEmploymentDetail3.ContactPerson2No = collection["contact2Phone3"];
+                            empDetails.prevEmploymentDetail3.ContactPerson3 = collection["contact3Name3"];
+                            empDetails.prevEmploymentDetail3.ContactPerson3No = collection["contact3Phone3"];
+                            empDetails.prevEmploymentDetail3.CreatedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy");
+                            empDetails.prevEmploymentDetail3.CreatedBy = GetLoggedInUserId();
+
+
                             //empDetails.empDetails.EmployeeProfilePhoto = collection["PicturePath"];
 
                             //empDetails.empDetails.DateOfBirth = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["DateOfBirth"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
+
+                            //Saving previous emplyment details......
+                            if (!string.IsNullOrEmpty(collection["inputName1"]))
                             //If self enboarding is enabled
                             if (Convert.ToBoolean(empDetails.empDetails.IsSelfOnboarding))
                             {
@@ -588,8 +778,10 @@ namespace SwiftHR.Controllers
                                     empDetails.empDetails.Religion = collection["Religion"];
                                 // empDetails.empDetails.PhysicallyChallenged = false;
                                 // empDetails.empDetails.InternationalEmployee = false;
-                                empDetails.empPermamentAddress.Address = collection["PresentAddress"];
-                                empDetails.empTemporaryAddress.Address = collection["PermanentAddress"];
+                                if (!string.IsNullOrEmpty(collection["PresentAddress"]))
+                                    //empDetails.empPermamentAddress.Address = collection["PresentAddress"];
+                                if (!string.IsNullOrEmpty(collection["PermanentAddress"]))
+                                    //empDetails.empTemporaryAddress.Address = collection["PermanentAddress"];
                                 if (!string.IsNullOrEmpty(collection["EmergencyContactNumber"]))
                                     empDetails.empDetails.EmergencyNumber = collection["EmergencyContactNumber"];
                                 if (!string.IsNullOrEmpty(collection["EmergencyContactName"]))
@@ -666,6 +858,8 @@ namespace SwiftHR.Controllers
 
                                 if (collection["CallingView"] == "EditEmployeeDetails")
                                     return EmployeeProfileDetails(loggedEmployeeId, "EditEmployeeDetails");
+                                else if (collection["CallingView"] == "EmployeeDirectory")
+                                    return EmployeeList();
                                 else
                                     return EmployeeOnbList();
                             }
@@ -997,6 +1191,34 @@ namespace SwiftHR.Controllers
             return true;
 
         }
-        #endregion
+        private async ValueTask<EmpDocument> UploadSupportingDocuments(IFormFile uploadFilePath, string uploadDirectory, int empId, string docCategory)
+        {
+            //Upload documents
+            string fileUploadName = string.Empty;
+            EmpDocument empDocumentLocal = null;
+            if (uploadFilePath != null && !string.IsNullOrEmpty(uploadFilePath.FileName))
+            {
+                long size = uploadFilePath.Length;
+                // full path to file in temp location
+                var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, uploadDirectory, uploadFilePath.FileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await uploadFilePath.CopyToAsync(stream);
+                }
+
+                fileUploadName = uploadFilePath.FileName;
+
+                empDocumentLocal = new EmpDocument();
+                empDocumentLocal.DocEmployeeId = empId;
+                empDocumentLocal.DocumentCategory = docCategory;
+                empDocumentLocal.EmpDoumentName = fileUploadName;
+                empDocumentLocal.DocumentFilePath = _configuration["AppData:DocumentUploadPath"];
+                empDocumentLocal.CreatedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy");
+                empDocumentLocal.CreatedBy = GetLoggedInUserId();
+            }
+            return empDocumentLocal;
+        }
+            #endregion
     }
 }

@@ -9,6 +9,7 @@ namespace SwiftHR.Models
     {
         public int PrevEmploymentDetailsId { get; set; }
         public int PrevEmployeeId { get; set; }
+        public int PrevEmploymentOrder { get; set; }
         public string PrevEmploymentName { get; set; }
         public string PrevCompanyAddress { get; set; }
         public string Designation { get; set; }
@@ -19,6 +20,8 @@ namespace SwiftHR.Models
         public string ContactPerson1No { get; set; }
         public string ContactPerson2 { get; set; }
         public string ContactPerson2No { get; set; }
+        public string ContactPerson3 { get; set; }
+        public string ContactPerson3No { get; set; }
         public string VerificationStatus { get; set; }
         public string VerifiedDate { get; set; }
         public int? VerifiedBy { get; set; }

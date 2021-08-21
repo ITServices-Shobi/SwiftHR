@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SwiftHR.Models;
 using SwiftHR.Utility;
+using System.Collections;
 
 namespace SwiftHR.Controllers
 {
@@ -41,28 +42,28 @@ namespace SwiftHR.Controllers
 
             // GET: Leaves List
             public ActionResult LeavesList()
-        {
-            //List<LeaveApplyDetail> leaveData = new List<LeaveApplyDetail>();
-            //leaveData = _context.LeaveApplyDetails.ToList();
+            {
+                //List<LeaveApplyDetail> leaveData = new List<LeaveApplyDetail>();
+                //leaveData = _context.LeaveApplyDetails.ToList();
 
-            //return View("LeavesApplyDetails", leaveData);
+                //return View("LeavesApplyDetails", leaveData);
 
 
-            LeavesAllDetails empLeavesAll = new LeavesAllDetails();
+                LeavesAllDetails empLeavesAll = new LeavesAllDetails();
 
-            List<LeaveApplyDetail> leaveData = new List<LeaveApplyDetail>();
-            leaveData = _context.LeaveApplyDetails.ToList();
+                List<LeaveApplyDetail> leaveData = new List<LeaveApplyDetail>();
+                leaveData = _context.LeaveApplyDetails.ToList();
 
-            List<Employee> empData = new List<Employee>();
-            empData = _context.Employees.ToList();
+                List<Employee> empData = new List<Employee>();
+                empData = _context.Employees.ToList();
 
-            empLeavesAll.empMasterDataItems = empData;
-            empLeavesAll.leaveApplyListAll = leaveData;
+                empLeavesAll.empMasterDataItems = empData;
+                empLeavesAll.leaveApplyListAll = leaveData;
            
 
-            return View("LeavesApplyDetails", empLeavesAll);
+                return View("LeavesApplyDetails", empLeavesAll);
 
-        }
+            }
 
         public ActionResult LeavesStatus(string empId)
         {
@@ -79,10 +80,40 @@ namespace SwiftHR.Controllers
 
         }
 
-        public ActionResult EditLeavesStatus(string empId)
+        // POST: LeavesController/UpdateStatus
+        [HttpPost("UpdateLeavesStatus")]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateLeavesStatus(string empId, string leaveId, string leaveStatus)
         {
+            if (!string.IsNullOrEmpty(empId) && !string.IsNullOrEmpty(leaveId) && !string.IsNullOrEmpty(leaveStatus))
+            {
+                LeavesAllDetails empLeavesDetails;
+                empLeavesDetails = GetEmployeeLeavesDetails(empId);
+
+                int recordsUpdated = empLeavesDetails.ChangeLeavesStatus(empId, leaveId, _configuration["LeaveStatus:Approved"]);
+                //bool success = SendSelfOnboardingMail(empLeavesDetails.empDetails, 2);
+                
+                ArrayList arrayResponse = new ArrayList();
+                string msg = string.Format("Employee Successfully Onboarded ! {0}.\\n Date: {1}", empId, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                arrayResponse.Add(msg);
+
+                string result = JsonConvert.SerializeObject(arrayResponse);
+                return new JsonResult(result);
+
+                //return EmployeeOnbList();
+            }
+            //return EmployeeOnbList();
             return RedirectToAction("LeavesList", "Leaves");
         }
+
+
+        private LeavesAllDetails GetEmployeeLeavesDetails(string empId)
+        {
+            LeavesAllDetails empLeavesDetails = new LeavesAllDetails(empId);
+            return empLeavesDetails;
+
+        }
+
 
         // GET: LeavesController
         public ActionResult Index()
