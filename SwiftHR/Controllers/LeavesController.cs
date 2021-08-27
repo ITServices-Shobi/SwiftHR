@@ -40,30 +40,39 @@ namespace SwiftHR.Controllers
             return View("HolidayCalendar");
         }
 
-            // GET: Leaves List
-            public ActionResult LeavesList()
+        // GET: Leaves List
+        public ActionResult LeavesList(IFormCollection collection)
+        {
+            string[] myArray= { "", "", "", "", "", "", "", "", "", "", "", "", "" };
+            
+            LeavesAllDetails empLeavesAll=null;
+            string localManagerId=null;
+            string leavesPeriod=null;
+            if (!string.IsNullOrEmpty(collection["leavePeriod"].ToString()))
             {
-                //List<LeaveApplyDetail> leaveData = new List<LeaveApplyDetail>();
-                //leaveData = _context.LeaveApplyDetails.ToList();
-
-                //return View("LeavesApplyDetails", leaveData);
-
-
-                LeavesAllDetails empLeavesAll = new LeavesAllDetails();
-
-                List<LeaveApplyDetail> leaveData = new List<LeaveApplyDetail>();
-                leaveData = _context.LeaveApplyDetails.ToList();
-
-                List<Employee> empData = new List<Employee>();
-                empData = _context.Employees.ToList();
-
-                empLeavesAll.empMasterDataItems = empData;
-                empLeavesAll.leaveApplyListAll = leaveData;
-           
-
-                return View("LeavesApplyDetails", empLeavesAll);
+                localManagerId = GetLoggedInEmpId().ToString();
+                leavesPeriod = collection["leavePeriod"].ToString();
+                myArray[Convert.ToInt32(leavesPeriod)] = "autofocus";
+                empLeavesAll = new LeavesAllDetails(localManagerId);
 
             }
+            else
+            {
+                myArray[0] = "autofocus";
+                empLeavesAll = new LeavesAllDetails(localManagerId);
+            }
+            ViewBag.leaveListSelection = myArray;
+            return View("LeavesApplyDetails", empLeavesAll);
+
+        }
+
+        //// GET: Leaves List
+        //public ActionResult LeavesList(string empId)
+        //{
+        //    LeavesAllDetails empLeavesAll = new LeavesAllDetails();
+        //    return View("LeavesApplyDetails", empLeavesAll);
+
+        //}
 
         public ActionResult LeavesStatus(string empId)
         {
@@ -72,29 +81,42 @@ namespace SwiftHR.Controllers
             //return PartialView("LeavesStatus", empData);
             //return View("LeavesStatus", empData);
 
-            LeavesEmployeeDetails leaveEmployeeData = new LeavesEmployeeDetails(empId);
+            //LeavesEmployeeDetails leaveEmployeeData = new LeavesEmployeeDetails(empId);
 
-            
+            string managerEmpId = GetLoggedInEmpId().ToString();
+            LeavesAllDetails empLeavesAll = new LeavesAllDetails(empId, managerEmpId);
 
-            return PartialView("LeaveStatus", leaveEmployeeData);
+            return PartialView("LeaveStatus", empLeavesAll);
 
         }
 
         // POST: LeavesController/UpdateStatus
         [HttpPost("UpdateLeavesStatus")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateLeavesStatus(string empId, string leaveId, string leaveStatus)
+        public async Task<IActionResult> UpdateLeavesStatus(string empId, string leaveId, string leaveStatus, string rejectReason)
         {
             if (!string.IsNullOrEmpty(empId) && !string.IsNullOrEmpty(leaveId) && !string.IsNullOrEmpty(leaveStatus))
             {
                 LeavesAllDetails empLeavesDetails;
                 empLeavesDetails = GetEmployeeLeavesDetails(empId);
 
-                int recordsUpdated = empLeavesDetails.ChangeLeavesStatus(empId, leaveId, _configuration["LeaveStatus:Approved"]);
+                int recordsUpdated = empLeavesDetails.ChangeLeavesStatus(empId, leaveId, leaveStatus, rejectReason);
                 //bool success = SendSelfOnboardingMail(empLeavesDetails.empDetails, 2);
-                
+                string msg = null;
                 ArrayList arrayResponse = new ArrayList();
-                string msg = string.Format("Employee Successfully Onboarded ! {0}.\\n Date: {1}", empId, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                if(leaveStatus== _configuration["LeaveStatus:Approved"])
+                {
+                    msg = string.Format("Employee Leave(s) Successfully Approved ! {0}.\\n Date: {1}", empId, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                }
+                else if(leaveStatus == _configuration["LeaveStatus:Cancelled"])
+                {
+                    msg = string.Format("Employee Leave(s) Successfully Cancelled ! {0}.\\n Date: {1}", empId, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                }
+                else if (leaveStatus == _configuration["LeaveStatus:Rejected"])
+                {
+                    msg = string.Format("Employee Leave(s) Successfully Rejected ! {0}.\\n Date: {1}", empId, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                }
+                
                 arrayResponse.Add(msg);
 
                 string result = JsonConvert.SerializeObject(arrayResponse);
@@ -114,6 +136,23 @@ namespace SwiftHR.Controllers
 
         }
 
+        public string GetCookies(string key)
+        {
+            string cookieValue = string.Empty;
+            cookieValue = Request.Cookies[key];
+            return cookieValue;
+        }
+        public int GetLoggedInEmpId()
+        {
+            int employeeId = 0;
+            string eid = GetCookies("eid");
+            string empId = DataSecurity.DecryptString(eid);
+
+            if (!string.IsNullOrEmpty(empId))
+                employeeId = Convert.ToInt32(empId);
+
+            return employeeId;
+        }
 
         // GET: LeavesController
         public ActionResult Index()

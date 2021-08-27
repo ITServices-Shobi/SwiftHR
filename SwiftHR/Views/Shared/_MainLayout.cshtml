@@ -32,12 +32,12 @@
     </style>
     
 </head>
-<body class="hold-transition skin-black-light sidebar-mini fixed">
+<body class="hold-transition skin-black-light sidebar-mini  fixed">
 
     <div class="wrapper">
 
         <header class="main-header">
-
+            <button class="btn pull-left" onclick="openCloseNav()">☰</button>
             <!-- Logo -->
             <a href="https://www.shobigroup.com" class="logo" style="border-right: 0px !important;">
                 <img src="~/dist/img/shobi_logo.png" alt="homepage" class="logo-lg" style="width:75%;" />
@@ -289,11 +289,13 @@
             </nav>
         </header>
         <!-- Left side column. contains the logo and sidebar -->
-        <aside class="main-sidebar">
+        <aside class="main-sidebar" id="mySidebar">
             <!-- sidebar: style can be found in sidebar.less -->
             <section class="sidebar">
+                
                 <!-- Sidebar user panel -->
-                <div class="user-panel" style="background-color: #9999994f;">
+                <div class="user-panel" style="background-color: #337ab7; color: #f6f6f6 !important;">
+                      
                     <div class="pull-left image">
                         <img id="imgSideNavUser" src="~/dist/img/user2-160x160.jpg" class="profile-user-img img-responsive img-circle" alt="User Image">
                     </div>
@@ -303,8 +305,8 @@
                             <p class="help-block">jpg | jpeg | png</p>
                         </div>*@
                     <div class="pull-left info">
-                        <p> <span id="spanSideNavUser">  </span></p>
-                        <p> <span id="spanSideNavUserDesignation">  </span></p>
+                        <p> <span id="spanSideNavUser" style="background-color: #337ab7; color: #f6f6f6 !important;">  </span></p>
+                        <p> <span id="spanSideNavUserDesignation" style="background-color: #337ab7; color: #f6f6f6 !important;">  </span></p>
                         @*<a href="#"><i class="fa fa-circle text-success"></i> Online</a>*@
                     </div>
                 </div>
@@ -491,7 +493,7 @@
         </aside>
 
         <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
+        <div class="content-wrapper" id="mainWrapper">
             <div>
                 @RenderBody()
             </div>
@@ -844,6 +846,20 @@
                 $(".liItems").removeClass("active")
             }
 
+        }
+
+        function openCloseNav() {
+            if (document.getElementById("mySidebar").style.width == "0px")
+            {
+                document.getElementById("mySidebar").style.width = "230px";
+                document.getElementById("mainWrapper").style.marginLeft = "230px";
+            }
+            else
+            {
+                document.getElementById("mySidebar").style.width = "0px";
+                document.getElementById("mainWrapper").style.marginLeft = "0px";
+            }
+            
         }
     </script>
 

@@ -24,37 +24,42 @@
     </div>
     <div class="box box-info">
         <!-- /.box-header -->
-        <div class="box-header">
+        <div class="box-header with-border">
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool pull-right" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+            </div>
             <div class="btn-group">
-                <a class="btn btn-primary hidden-print pull-right" asp-controller="Employee" asp-action="AddEmployee"><i class="fa fa-address-card-o"></i> Add Employee </a>
+                <a class="btn btn-primary btn-sm hidden-print pull-right" asp-controller="Employee" asp-action="AddEmployee"><i class="fa fa-address-card-o"></i> Add Employee </a>
                 @*<div class="btn-group">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            Department <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            @if (Model != null && Model.Count() > 0)
-                            {
-                                @foreach (var contact in Model.Distinct().ToList())
-                                {
-                                    <li><a href="#">@contact.Department</a></li>
-                                }
-                            }
-                        </ul>
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            Designation <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">Tablet</a></li>
-                            <li><a href="#">Smartphone</a></li>
-                        </ul>
-                    </div>*@
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    Department <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                        @foreach (var contact in Model.Distinct().ToList())
+                        {
+                            <li><a href="#">@contact.Department</a></li>
+                        }
+                    }
+                </ul>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                    Designation <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">Tablet</a></li>
+                    <li><a href="#">Smartphone</a></li>
+                </ul>
+            </div>*@
             </div>
             @*<a asp-controller="Employee" asp-action="PrintList" class="btn btn-default hidden-print" onclick="menuClick('liEmployeeList')"><i class="fa fa-print"></i> Print</a>
-                <a class="btn btn-default btn-circle pull-right hidden-print" id="btnpDF"><i class="fa fa-file-pdf-o"></i></a>
-                <a class="btn btn-default btn-circle pull-right hidden-print" id="btnExport"><i class="fa fa-file-excel-o"></i></a>
-                <a class="btn btn-default btn-circle pull-right hidden-print" id="btnPrint"><i class="fa fa-print"></i></a>*@
+        <a class="btn btn-default btn-circle pull-right hidden-print" id="btnpDF"><i class="fa fa-file-pdf-o"></i></a>
+        <a class="btn btn-default btn-circle pull-right hidden-print" id="btnExport"><i class="fa fa-file-excel-o"></i></a>
+        <a class="btn btn-default btn-circle pull-right hidden-print" id="btnPrint"><i class="fa fa-print"></i></a>*@
 
         </div>
         <div class="box-body">
@@ -247,7 +252,7 @@
                     {
                         extend: 'csv',
                         className: 'btn btn-default btn-circle pull-right hidden-print',
-                        text: '<i class="fa fa-file-csv-o"></i>'
+                        text: '<i class="fa fa-table"></i>'
                     },
                     {
                         extend: 'print',
