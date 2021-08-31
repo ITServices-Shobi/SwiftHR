@@ -3,6 +3,15 @@
 @inject IConfiguration Configuration
 @{
 
+    switch (@ViewBag.CallingView)
+    {
+        case "ApplyLeaves":
+            Layout = "_MainLayout";
+            break;
+        default:
+            Layout = "";
+            break;
+    }
     ViewData["Title"] = "Leave Status";
 }
 
@@ -23,9 +32,9 @@
                     <div class="box-body box-profile">
                         <img class="profile-user-img img-responsive img-circle" src="../UploadImages/@Model.empMasterDataItems[0].EmployeeProfilePhoto" alt="User profile picture">
 
-                        <h3 class="profile-username text-center">@Model.empMasterDataItems[0].FirstName @Model.empMasterDataItems[0].MiddleName @Model.empMasterDataItems[0].LastName Leave Status</h3>
-
-                        <p class="text-muted text-center" style="font-size: 20px; font-weight: 700;"> @Model.empMasterDataItems[0].EmployeeNumber </p>
+                        <h3 class="profile-username text-center">@Model.empMasterDataItems[0].FirstName @Model.empMasterDataItems[0].MiddleName @Model.empMasterDataItems[0].LastName</h3>
+                        <p class="text-muted text-center" style="font-size: 20px; font-weight: 700;"> Leave Status </p>
+                        <p class="text-muted text-center" style="font-size: 20px; font-weight: 700;">Employee Code:  @Model.empMasterDataItems[0].EmployeeNumber </p>
 
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
@@ -64,7 +73,8 @@
                                 <div class="box-body">
                                     <!-- Box Group -->
                                     <div class="box-group" id="accordion">
-                                        <div id="divPanelBox1" class="panel box" >
+                                        <!-- Box 1 -->
+                                        <div id="divPanelBox1" class="panel box">
                                             <!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
                                             <div class="box-header with-border">
                                                 <h3 class="box-title">
@@ -72,7 +82,7 @@
                                                     Applied Leaves
                                                 </h3>
                                                 <div class="box-tools pull-right">
-                                                    <a class="btn btn-default btn-circle hidden-print" id="btnExport"><i class="fa fa-file-pdf-o"></i></a>
+                                                    <a class="btn btn-default btn-circle hidden-print" id="btnExport1"><i class="fa fa-file-pdf-o"></i></a>
                                                     <button id="btnPToggle1" type="button" class="btn btn-box-tool" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" title="Collapse" onclick="onToggle(this)">
                                                         <i id="iconPToggle1" class="fa fa-minus"></i>
                                                     </button>
@@ -123,183 +133,144 @@
                                             </div>
                                         </div>
                                         <!-- Box 2 -->
-                                        <div class="panel box" id="divPanelBox2" style="border-top: none !important;">
-                                            <div class="box-header">
-                                                <h4 class="box-title">
-                                                    Applied Leaves
-                                                </h4>
+                                        <div class="panel box" id="divPanelBox2">
+                                            <div class="box-header with-border">
+                                                <h3 class="box-title">
+                                                    <i class="fa fa-thumbs-up"></i>
+                                                    Approved Leaves
+                                                </h3>
                                                 <div class="box-tools pull-right">
+                                                    <a class="btn btn-default btn-circle hidden-print" id="btnExport2"><i class="fa fa-file-pdf-o"></i></a>
                                                     <button id="btnPToggle2" type="button" class="btn btn-box-tool" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" title="Expand" onclick="onToggle(this)">
                                                         <i id="iconPToggle2" class="fa fa-plus"></i>
                                                     </button>
                                                 </div>
                                             </div>
                                             <div id="collapseTwo" class="panel-collapse collapse">
-                                                @*<hr style="border-top: 1px solid #d2d6de;" />*@
-                                                <div class="box box-default">
-                                                    <div class="box">
-                                                        <div class="box-body">
-                                                            <table id="tblLeavesList" class="table table-bordered table-striped">
-                                                                <thead background-color:#ddd6>
+                                                <div class="box-body">
+                                                    <table id="tblApprovedLeavesList" data-toggle="table" data-sort-name="Status" data-sort-order="desc" class="table table-bordered table-striped dt-responsive  table-hover table-condensed">
+                                                        <thead class="bg-primary">
+                                                            <tr>
+                                                                <th> Leave Type</th>
+                                                                <th> Leave From </th>
+                                                                <th> Leave To </th>
+                                                                <th> Leave Applied On </th>
+                                                                <th> Leave Reason </th>
+                                                                <th> Leave Status </th>
+                                                                <th> Status Updated On </th>
+                                                                <th hidden> Status Updated On </th>
+                                                                <th> Leave Action </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (Model.leaveApproveListAll != null && Model.leaveApproveListAll.Count() > 0)
+                                                            {
+                                                                @foreach (var leaveApproved in Model.leaveApproveListAll)
+                                                                {
                                                                     <tr>
-                                                                        <th> Leave Type</th>
-                                                                        <th> Leave From </th>
-                                                                        <th> Leave To </th>
-                                                                        <th> Leave Applied On </th>
-                                                                        <th> Leave Reason </th>
-                                                                        <th> Leave Status </th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    @if (Model.leaveApplyListAll != null && Model.leaveApplyListAll.Count() > 0)
-                                                                    {
-                                                                        @foreach (var leave in Model.leaveApplyListAll.Where(x => x.LeaveStatus == 1))
+                                                                        @foreach (var empdApprove in Model.empMasterDataItems.Where(x => x.EmployeeId == @leaveApproved.EmployeeId).ToList())
                                                                         {
-                                                                            <tr>
-
-                                                                                @foreach (var empd in Model.leaveApplyListAll.Where(x => x.EmployeeId == @leave.EmployeeId).ToList())
+                                                                            <td> @leaveApproved.LeaveType </td>
+                                                                            <td> @leaveApproved.LeaveFromDate </td>
+                                                                            <td>@leaveApproved.LeaveToDate</td>
+                                                                            <td>@leaveApproved.LeaveAppliedOn</td>
+                                                                            <td>@leaveApproved.LeaveReason </td>
+                                                                            <td>
+                                                                                <small class="label  bg-green-gradient"><i class="fa fa-thumbs-up"></i> Approved</small>
+                                                                            </td>
+                                                                            <td>@leaveApproved.LeaveStatusChangeDate </td>
+                                                                            <td hidden>
+                                                                                @System.Convert.ToDateTime(leaveApproved.LeaveStatusChangeDate).ToString("yyyy-MM-dd")
+                                                                            </td>
+                                                                            <td style="width: 18%;">
+                                                                                @if (leaveApproved.LeaveStatus == 3 && System.Convert.ToDateTime(leaveApproved.LeaveFromDate) > System.DateTime.Now)
                                                                                 {
-                                                                                    <!--<td style="width: 34%;">-->
-                                                                                    @*<img src="../UploadImages/default-avatar.png" alt="Emp Image" style="width:10% !important; border-radius: 50%;">
-                                                                                        <a asp-controller="Leaves" asp-action="LeavesStatus" asp-route-empId="@leave.EmployeeId" data-toggle="modal" data-target="#modal-default">
-                                                                                            <span style="margin-left:5%;">
-                                                                                                <strong> @Model.empDetails.FirstName  @Model.empDetails.MiddleName  @Model.empDetails.LastName </strong>
-                                                                                            </span>
-                                                                                        </a>
-                                                                                        <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leave.EmployeeId" />*@
-                                                                                    <!--</td>-->
+                                                                                    <button href="" type="button" id="___@leaveApproved.EmployeeId" class="btn btn-linkedin pull-right btn-xs" style="float: right; margin-right: 4%;" onclick="UpdateLeaves(@leaveApproved.EmployeeId,@leaveApproved.EmpLeaveId,@Configuration["LeaveStatus:Cancelled"]);"><i id="C___@leaveApproved.EmployeeId" class="fa fa-thumbs-down"></i> Cancel Leave </button>
                                                                                 }
-                                                                                <td style="width: 24%;"> @leave.LeaveType </td>
-                                                                                <td> @leave.LeaveFromDate </td>
-                                                                                <td>@leave.LeaveToDate</td>
-                                                                                <td>@leave.LeaveAppliedOn</td>
-                                                                                <td style="width: 24%;">@leave.LeaveReason </td>
-                                                                                <td>@leave.LeaveStatus </td>
-                                                                            </tr>
+                                                                            </td>
                                                                         }
-                                                                    }
+                                                                    </tr>
+                                                                }
+                                                            }
 
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
                                         <!--Panel Box 3-->
-                                        <div class="panel box" id="divPanelBox3" style="border-top: none !important;">
-                                            <div class="box-header">
-                                                <h4 class="box-title">
-                                                    Cancelled Leaves
-                                                </h4>
+                                        <div class="panel box" id="divPanelBox3">
+                                            <div class="box-header with-border">
+                                                <h3 class="box-title">
+                                                    <i class="fa fa-thumbs-down"></i>
+                                                    Cancelled Or Rejected Leaves
+                                                </h3>
                                                 <div class="box-tools pull-right">
+                                                    <a class="btn btn-default btn-circle hidden-print" id="btnExport2"><i class="fa fa-file-pdf-o"></i></a>
                                                     <button id="btnPToggle3" type="button" class="btn btn-box-tool" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" title="Expand" onclick="onToggle(this)">
                                                         <i id="iconPToggle3" class="fa fa-plus"></i>
                                                     </button>
                                                 </div>
                                             </div>
                                             <div id="collapseThree" class="panel-collapse collapse">
-                                                <hr style="border-top: 1px solid #d2d6de;" />
                                                 <div class="box-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtMobileNo">Father's Name</label>
-                                                                <input type="text" id="txtFathersName" name="FathersName" asp-for="@Model.empMasterDataItems[0].FathersName class=" form-control" placeholder="Father's Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtEmail">Mother's Name </label>
-                                                                <input type="text" id="txtMothersName" name="MothersName" asp-for="@Model.empMasterDataItems[0].MothersName class=" form-control" placeholder="Mother's Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtMobileNo">Spouse Name</label>
-                                                                <input type="text" id="txtSpouseName" name="SpouseName" asp-for="@Model.empMasterDataItems[0].SpouseName class=" form-control" placeholder="Spouse Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
+                                                    <table id="tblCancelledLeavesList" data-toggle="table" data-sort-name="Status" data-sort-order="desc" class="table table-bordered table-striped dt-responsive table-hover table-condensed">
+                                                        <thead class="bg-primary">
+                                                            <tr>
+                                                                <th> Leave Type</th>
+                                                                <th> Leave From </th>
+                                                                <th> Leave To </th>
+                                                                <th> Leave Applied On </th>
+                                                                <th> Leave Reason </th>
+                                                                <th> Leave Status </th>
+                                                                <th data-field="Status"> Cancelled&nbsp;/Rejected On </th>
 
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtMobileNo">Nominee Name</label>
-                                                                <input type="text" id="txtFathersName" name="FathersName" asp-for="@Model.empMasterDataItems[0].NomineeName class=" form-control" placeholder="Nominee Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtEmail"> Nominee Contact No </label>
-                                                                <input type="text" id="txtNomineeContactNo" name="NomineeContactNo" class="form-control" maxlength="10" min="10" placeholder="Nominee Contact No" onkeypress='return restrictAlphabets(event)' onchange="ValidateMobileNo(this)">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtMobileNo">Nominee DOB</label>
-                                                                <input class="form-control" name="NomineeDateOfBirth" asp-for="@Model.empMasterDataItems[0].NomineeDob type=" date" id="dtNomineeDateOfBirth">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtMobileNo">Relation With Nominee </label>
-                                                                <input type="text" id="txtNomineeRelation" name="NomineeRelation" asp-for="@Model.empMasterDataItems[0].NomineeRelation class=" form-control" placeholder="Relation With Nominee" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                                                <th data-field="Status" hidden> Cancelled&nbsp;/Rejected On </th>
+                                                                <th> Cancelled&nbsp;/Rejected Reason </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
 
-                                        <div class="panel box" id="divPanelBox4" style="border-top: none !important;">
-                                            <div class="box-header">
-                                                <h4 class="box-title">
-                                                    Rejected Leaves
-                                                </h4>
-                                                <div class="box-tools pull-right">
-                                                    <button id="btnPToggle4" type="button" class="btn btn-box-tool" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" title="Expand" onclick="onToggle(this)">
-                                                        <i id="iconPToggle4" class="fa fa-plus"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div id="collapseFour" class="panel-collapse collapse">
-                                                <hr style="border-top: 1px solid #d2d6de;" />
-                                                <div class="box-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtCourseName">Course/Degree</label>
-                                                                <input type="text" id="txtCourseName" name="CourseName" class="form-control" placeholder="Course/Degree Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtUniversityName">Board/University </label>
-                                                                <input type="text" id="txtUniversityName" name="UniversityName" class="form-control" placeholder="University Name" onkeydown="preventNumberInput(event)" onkeyup="preventNumberInput(event)">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtMobileNo">Year of Passing </label>
-                                                                <input type="text" id="txtPassingYear" name="PassingYear" class="form-control" placeholder="Year of Passing" maxlength="4" onkeypress='return restrictAlphabets(event)'>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="txtMarks">Marks(%) </label>
-                                                                <input type="text" id="txtMarks" name="Marks" class="form-control" placeholder="Marks" onkeypress='return restrictAlphabets(event)'>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                            @if (Model.leaveCancelRejectListAll != null && Model.leaveCancelRejectListAll.Count() > 0)
+                                                            {
+                                                                @foreach (var leaveCancelled in Model.leaveCancelRejectListAll)
+                                                                {
+                                                                    <tr>
+                                                                        @foreach (var empdCancel in Model.empMasterDataItems.Where(x => x.EmployeeId == @leaveCancelled.EmployeeId).ToList())
+                                                                        {
+                                                                            <td> @leaveCancelled.LeaveType </td>
+                                                                            <td> @leaveCancelled.LeaveFromDate </td>
+                                                                            <td>@leaveCancelled.LeaveToDate</td>
+                                                                            <td>@leaveCancelled.LeaveAppliedOn</td>
+                                                                            <td>@leaveCancelled.LeaveReason </td>
+                                                                            <td>
+                                                                                @if (leaveCancelled.LeaveStatus == 2)
+                                                                                {
+                                                                                    <small class="label  bg-yellow-gradient"><i class="fa fa-times-circle-o"></i> Cancelled</small>
+                                                                                }
+                                                                                @if (leaveCancelled.LeaveStatus == 4)
+                                                                                {
+                                                                                    <small class="label  bg-yellow-gradient"><i class="fa fa-thumbs-down"></i> Rejected</small>
+                                                                                }
+
+                                                                            </td>
+                                                                            <td>
+                                                                                @leaveCancelled.LeaveStatusChangeDate
+                                                                            </td>
+                                                                            <td hidden>
+                                                                                @System.Convert.ToDateTime(leaveCancelled.LeaveStatusChangeDate).ToString("yyyy-MM-dd")
+                                                                            </td>
+                                                                            <td style="width: 18%;">
+                                                                                @leaveCancelled.LeaveRejectReason
+                                                                            </td>
+                                                                        }
+                                                                    </tr>
+                                                                }
+                                                            }
+
+                                                        </tbody>
+
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
@@ -406,63 +377,150 @@
                         </div>
                         <!-- /.tab-pane -->
                         <div class="tab-pane" id="Account">
+                            <div class="box box-solid" style="box-shadow: none !important;">
+                                <div class="box-body box-profile">
+                                    <div class="form-group">
+                                        <label for="inputName" class="col-sm-2 control-label">Name</label>
 
-                            <div class="form-group">
-                                <label for="inputName" class="col-sm-2 control-label">Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="email" class="form-control" id="inputName2" placeholder="Name">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputEmail" class="col-sm-2 control-label">Email</label>
 
-                                <div class="col-sm-10">
-                                    <input type="email" class="form-control" id="inputName2" placeholder="Name">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputEmail" class="col-sm-2 control-label">Email</label>
+                                        <div class="col-sm-10">
+                                            <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputName" class="col-sm-2 control-label">Name</label>
 
-                                <div class="col-sm-10">
-                                    <input type="email" class="form-control" id="inputEmail" placeholder="Email">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputName" class="col-sm-2 control-label">Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputName" placeholder="Name">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputExperience" class="col-sm-2 control-label">Experience</label>
 
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputName" placeholder="Name">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputExperience" class="col-sm-2 control-label">Experience</label>
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" id="inputExperience" placeholder="Experience"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputSkills" class="col-sm-2 control-label">Skills</label>
 
-                                <div class="col-sm-10">
-                                    <textarea class="form-control" id="inputExperience" placeholder="Experience"></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputSkills" class="col-sm-2 control-label">Skills</label>
-
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="inputSkills" placeholder="Skills">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox"> I agree to the <a href="#">terms and conditions</a>
-                                        </label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" id="inputSkills" placeholder="Skills">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox"> I agree to the <a href="#">terms and conditions</a>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button type="submit" class="btn btn-danger">Apply Leaves</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <button type="submit" class="btn btn-danger">Apply Leaves</button>
-                                </div>
-                            </div>
-
                         </div>
                         <!-- /.tab-pane -->
                     </div>
                     <!-- /.tab-content -->
                 </div>
                 <!-- /.nav-tabs-custom -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Yearly Employee Leaves Pattern</h3>
+
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+
+                                </div>
+                            </div>
+                            <!-- /.box-header -->
+                            <div class="box-body" style="margin-bottom: -2%;">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p class="text-center">
+                                            <strong> January, @System.DateTime.Now.Year.ToString() - December, @System.DateTime.Now.Year.ToString() </strong>
+                                        </p>
+                                        <div class="chart">
+                                            @*<input id="chartData" name="chartValue1" type="hidden" value="40, 5, 20, 0, 4, 6, 0, 0, 0, 12, 2, 1" />*@
+                                            <input id="chartData" name="chartValue1" type="hidden" value="@ViewBag.monthlyLeaveCount" />
+                                            <input id="chartMonths" name="chartValue2" type="hidden" />
+                                            <canvas id="salesChart1" style="height: 180px;"></canvas>
+                                        </div>
+                                        <!-- /.chart-responsive -->
+                                    </div>
+                                    <!-- /.col -->
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                            <!-- ./box-body -->
+                            <div class="box-footer">
+                                <div class="row">
+                                    <div class="col-sm-3 col-xs-12">
+                                        <div id="TotalEmployees" class="description-block border-right">
+                                            @*<span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 17%</span>*@
+                                            @*<h5 class="description-header">375</h5>*@
+                                            <h5 id="TotalLeaves" class="description-header">@ViewBag.chartLegends[12]</h5>
+                                            <span class="description-text">Total Approved Leaves</span>
+                                            <span class="description-text">in Year</span>
+                                        </div>
+                                        <!-- /.description-block -->
+                                    </div>
+                                    <!-- /.col -->
+                                    <div class="col-sm-3 col-xs-12">
+                                        <div class="description-block border-right">
+                                            @*<span class="description-percentage text-yellow"><i class="fa fa-caret-left"></i> 0%</span>*@
+                                            @*<h5 class="description-header">@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.Month - 6).ToList().Count</h5>*@
+                                            @*<h5 class="description-header">@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).AddMonths(6) >= @System.DateTime.Now).ToList().Count</h5>*@
+
+                                            <h5 id="TotalLeavesTaken" class="description-header">@ViewBag.chartLegends[13]</h5>
+                                            <span class="description-text"> Total Leaves Taken</span>
+                                            &nbsp;
+                                            <span class="description-text">in Year</span>
+                                        </div>
+                                        <!-- /.description-block -->
+                                    </div>
+                                    <!-- /.col -->
+                                    <div class="col-sm-3 col-xs-12">
+                                        <div class="description-block border-right">
+                                            @*<span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 20%</span>*@
+                                            <h5 id="TotalLeavesRemaining" class="description-header">@ViewBag.chartLegends[14]</h5>
+                                            <span class="description-text">Total Leaves Pending&nbsp; in Year</span>
+                                        </div>
+                                        <!-- /.description-block -->
+                                    </div>
+                                    <div class="col-sm-3 col-xs-12">
+                                        <div class="description-block border-right">
+                                            @*<span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 20%</span>*@
+                                            <h5 id="AverageLeaves" class="description-header">@ViewBag.chartLegends[15]</h5>
+                                            <span class="description-text">Average Leaves Per Month</span>
+                                        </div>
+                                        <!-- /.description-block -->
+                                    </div>
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                            <!-- /.box-footer -->
+                        </div>
+                        <!-- /.box -->
+                    </div>
+                    <!-- /.col -->
+                </div>
             </div>
             <!-- /.col -->
         </div>
@@ -476,7 +534,6 @@
         document.getElementById("divPanelBox1").style.backgroundColor = "#ffffff";
         document.getElementById("divPanelBox2").style.backgroundColor = "#ffffff";
         document.getElementById("divPanelBox3").style.backgroundColor = "#ffffff";
-        document.getElementById("divPanelBox4").style.backgroundColor = "#ffffff";
 
         switch (btnToggle.id) {
             case 'btnPToggle1':
@@ -529,23 +586,6 @@
                     $("#iconPToggle2").removeClass("fa-minus").addClass("fa-plus");
                     $("#btnPToggle4").prop('title', 'Expand');
                     $("#iconPToggle4").removeClass("fa-minus").addClass("fa-plus");
-                }
-                break;
-            case 'btnPToggle4':
-                if (btnToggle.title == "Collapse") {
-                    $(btnToggle).prop('title', 'Expand');
-                    $("#iconPToggle4").removeClass("fa-minus").addClass("fa-plus");
-                }
-                else {
-                    $(btnToggle).prop('title', 'Collapse');
-                    $("#iconPToggle4").removeClass("fa-plus").addClass("fa-minus");
-                    document.getElementById("divPanelBox4").style.backgroundColor = "#ddd6";
-                    $("#btnPToggle1").prop('title', 'Expand');
-                    $("#iconPToggle1").removeClass("fa-minus").addClass("fa-plus");
-                    $("#btnPToggle2").prop('title', 'Expand');
-                    $("#iconPToggle2").removeClass("fa-minus").addClass("fa-plus");
-                    $("#btnPToggle3").prop('title', 'Expand');
-                    $("#iconPToggle3").removeClass("fa-minus").addClass("fa-plus");
                 }
                 break;
 
@@ -603,7 +643,9 @@
 
 
 @section Scripts {
-
+    <!-- Charts -->
+    <script src="~/bower_components/chart.js/Chart.js"></script>
+    <script src="~/dist/js/pages/SwiftHrCharts_Leaves.js"></script>
     <!-- DataTables -->
     <script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -615,11 +657,32 @@
         $(document).ready(function () {
             $("#liLeave").addClass("active");
             $("#liEmployeeLeaves").addClass("active");
-            document.getElementById("liEmployeeLeaves").style.backgroundColor = "#3c8dbc45";
-            alert(document.getElementById("divPanelBox1").style.backgroundColor);
-            //document.getElementById("divPanelBox1").style.backgroundColor = "#ffffff";
+            document.getElementById("liApplyLeave").style.backgroundColor = "#3c8dbc45";
         });
     </script>
+    <script>
+            @*@{int[] monthlyLeaveCount = Model.GetMonthWiseEmployeeLeavesCount(DateTime.Now.Year, @Model.empMasterDataItems[0].EmployeeId.ToString());}
+            var dataPerMonth = [@monthlyLeaveCount[0],
+                                @monthlyLeaveCount[1],
+                                @monthlyLeaveCount[2],
+                                @monthlyLeaveCount[3],
+                                @monthlyLeaveCount[4],
+                                @monthlyLeaveCount[5],
+                                @monthlyLeaveCount[6],
+                                @monthlyLeaveCount[7],
+                                @monthlyLeaveCount[8],
+                                @monthlyLeaveCount[9],
+                                @monthlyLeaveCount[10],
+                                @monthlyLeaveCount[11]
+                                ];
+
+        document.getElementById("chartData").value = dataPerMonth;*@
+        @*document.getElementById("TotalLeaves").innerHTML = @monthlyLeaveCount[12];
+        document.getElementById("TotalLeavesTaken").innerHTML = @monthlyLeaveCount[13];
+        document.getElementById("TotalLeavesRemaining").innerHTML = @monthlyLeaveCount[14];
+        document.getElementById("AverageLeaves").innerHTML = @monthlyLeaveCount[15];*@
+    </script>
+
 }
 
 

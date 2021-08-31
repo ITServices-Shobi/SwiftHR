@@ -43,52 +43,81 @@ namespace SwiftHR.Controllers
         // GET: Leaves List
         public ActionResult LeavesList(IFormCollection collection)
         {
-            string[] myArray= { "", "", "", "", "", "", "", "", "", "", "", "", "" };
+            string[] myArray= { "", "", "", "", "", "", "", "", "", "", "", "", "","","","",""};
+            
             
             LeavesAllDetails empLeavesAll=null;
-            string localManagerId=null;
-            string leavesPeriod=null;
-            if (!string.IsNullOrEmpty(collection["leavePeriod"].ToString()))
-            {
-                localManagerId = GetLoggedInEmpId().ToString();
-                leavesPeriod = collection["leavePeriod"].ToString();
-                myArray[Convert.ToInt32(leavesPeriod)] = "autofocus";
-                empLeavesAll = new LeavesAllDetails(localManagerId);
+            string localManagerId= GetLoggedInEmpId().ToString();
+            string fromLeaveDate = null;
+            string toLeaveDate = null;
 
+            int leavesMonth=0;
+            if (!string.IsNullOrEmpty(collection["leavePeriod"].ToString()) && Convert.ToInt32(collection["leavePeriod"]) > 0)
+            {
+                leavesMonth = Convert.ToInt32(collection["leavePeriod"]);
+                if(leavesMonth<=12)
+                {
+                    fromLeaveDate = string.Concat("01-", leavesMonth, "-", System.DateTime.Today.Year.ToString());
+                    toLeaveDate = string.Concat(DateTime.DaysInMonth(System.DateTime.Today.Year, leavesMonth), "-", leavesMonth, "-", System.DateTime.Today.Year.ToString());
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(collection["rangeLeaveFromDate"]) && !string.IsNullOrEmpty(collection["rangeLeaveToDate"]))
+                    {
+                        fromLeaveDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["rangeLeaveFromDate"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
+                        toLeaveDate = TimeZoneInfo.ConvertTimeFromUtc(Convert.ToDateTime(collection["rangeLeaveToDate"]), IST_TIMEZONE).ToString("dd-MM-yyyy");
+                        myArray[15] = System.Convert.ToDateTime(fromLeaveDate).ToString("yyyy-MM-dd");
+                        myArray[16] = System.Convert.ToDateTime(toLeaveDate).ToString("yyyy-MM-dd");
+                        //System.Convert.ToDateTime(empOnboardingDetails.empDetails.DateOfBirth).ToString("yyyy-MM-dd");
+                    }
+                }
             }
             else
             {
-                myArray[0] = "autofocus";
-                empLeavesAll = new LeavesAllDetails(localManagerId);
+                fromLeaveDate = string.Concat("01-", "01", "-", System.DateTime.Today.Year.ToString());
+                toLeaveDate = string.Concat("31-", "12", "-", System.DateTime.Today.Year.ToString());
+
             }
+            empLeavesAll = new LeavesAllDetails(localManagerId, fromLeaveDate, toLeaveDate);
+            myArray[leavesMonth] = "autofocus";
+            myArray[13] = System.DateTime.Today.Year.ToString();
             ViewBag.leaveListSelection = myArray;
             return View("LeavesApplyDetails", empLeavesAll);
 
         }
 
-        //// GET: Leaves List
-        //public ActionResult LeavesList(string empId)
-        //{
-        //    LeavesAllDetails empLeavesAll = new LeavesAllDetails();
-        //    return View("LeavesApplyDetails", empLeavesAll);
-
-        //}
-
-        public ActionResult LeavesStatus(string empId)
+        public ActionResult LeavesStatus(string empId= null)
         {
-            //Employee empData = new Employee();
-            //empData = _context.Employees.Where(o => o.EmployeeId == Convert.ToInt32(empId)).SingleOrDefault();
-            //return PartialView("LeavesStatus", empData);
-            //return View("LeavesStatus", empData);
+            LeavesAllDetails empLeavesAll;
+            if (!string.IsNullOrEmpty(empId))
+            {
+                string managerEmpId = GetLoggedInEmpId().ToString();
+                empLeavesAll = new LeavesAllDetails(empId, managerEmpId);
+            }
+            else
+            {
+                string localEmpId = GetLoggedInEmpId().ToString();
+                empId = GetLoggedInEmpId().ToString();
+                empLeavesAll = new LeavesAllDetails(localEmpId);
+                ViewBag.CallingView = "ApplyLeaves";
+            }
 
-            //LeavesEmployeeDetails leaveEmployeeData = new LeavesEmployeeDetails(empId);
-
-            string managerEmpId = GetLoggedInEmpId().ToString();
-            LeavesAllDetails empLeavesAll = new LeavesAllDetails(empId, managerEmpId);
-
+            int[] monthlyLeaveCount = empLeavesAll.GetMonthWiseEmployeeLeavesCount(2021, empId);
+            var result = string.Join(",", monthlyLeaveCount);
+            ViewBag.monthlyLeaveCount = result;
+            ViewBag.chartLegends = monthlyLeaveCount;
             return PartialView("LeaveStatus", empLeavesAll);
 
         }
+        //public ActionResult LeavesStatus()
+        //{
+
+        //    string loggedEmpId = GetLoggedInEmpId().ToString();
+        //    LeavesAllDetails empLeavesAll = new LeavesAllDetails(loggedEmpId);
+        //    ViewBag.CallingView = "ApplyLeaves";
+        //    return PartialView("LeaveStatus", empLeavesAll);
+
+        //}
 
         // POST: LeavesController/UpdateStatus
         [HttpPost("UpdateLeavesStatus")]
@@ -97,8 +126,9 @@ namespace SwiftHR.Controllers
         {
             if (!string.IsNullOrEmpty(empId) && !string.IsNullOrEmpty(leaveId) && !string.IsNullOrEmpty(leaveStatus))
             {
+                string managerEmpId = GetLoggedInEmpId().ToString();
                 LeavesAllDetails empLeavesDetails;
-                empLeavesDetails = GetEmployeeLeavesDetails(empId);
+                empLeavesDetails = GetEmployeeLeavesDetails(empId, managerEmpId);
 
                 int recordsUpdated = empLeavesDetails.ChangeLeavesStatus(empId, leaveId, leaveStatus, rejectReason);
                 //bool success = SendSelfOnboardingMail(empLeavesDetails.empDetails, 2);
@@ -129,12 +159,14 @@ namespace SwiftHR.Controllers
         }
 
 
-        private LeavesAllDetails GetEmployeeLeavesDetails(string empId)
+        private LeavesAllDetails GetEmployeeLeavesDetails(string empId, string managerEmpId)
         {
-            LeavesAllDetails empLeavesDetails = new LeavesAllDetails(empId);
+            LeavesAllDetails empLeavesDetails = new LeavesAllDetails(empId, managerEmpId);
             return empLeavesDetails;
 
         }
+
+        
 
         public string GetCookies(string key)
         {

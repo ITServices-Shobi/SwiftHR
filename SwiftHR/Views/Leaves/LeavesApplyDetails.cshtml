@@ -23,36 +23,36 @@
                 <div class="form-group">
                     <div class="btn-group ">
                         @*@System.Convert.ToDateTime(leave.LeaveStatusChangeDate).ToString("yyyy-MM-dd")*@
-                        <button type="submit"  @ViewBag.leaveListSelection[0] class="btn btn-primary" name="leavePeriod" value="0">All</button>
+                        <button type="submit" @ViewBag.leaveListSelection[0] class="btn btn-primary" name="leavePeriod" value="0">All-@ViewBag.leaveListSelection[13]</button>
                         @*<button type="button" id="AllBtn1" name="leavePeriod" value="All" class="btn btn-primary" onclick="BtnOptionsClick(event)">All 2021</button>*@
-                        <button type="submit"  @ViewBag.leaveListSelection[1] class="btn btn-primary" name="leavePeriod" value="1">Jan 2021</button>
-                        <button type="submit" @ViewBag.leaveListSelection[2] class="btn btn-primary" name="leavePeriod" value="2">Feb 2021</button>
-                        <button type="submit" @ViewBag.leaveListSelection[3] class="btn btn-primary" name="leavePeriod" value="3">Mar 2021</button>
-                        <button type="submit" @ViewBag.leaveListSelection[4] class="btn btn-primary" name="leavePeriod" value="4">Apr 2021</button>
-                        <button type="submit" @ViewBag.leaveListSelection[5] class="btn btn-primary" name="leavePeriod" value="5">May 2021</button>
-                        <button type="submit" @ViewBag.leaveListSelection[6] class="btn btn-primary" name="leavePeriod" value="6">Jun 2021</button>
-                        <button type="submit" @ViewBag.leaveListSelection[7] class="btn btn-primary" name="leavePeriod" value="7">Jul 2021</button>
-                        <button type="submit" @ViewBag.leaveListSelection[8] class="btn btn-primary" name="leavePeriod" value="8">Aug 2021</button>
-                        <button type="submit" @ViewBag.leaveListSelection[9] class="btn btn-primary" name="leavePeriod" value="9">Sep 2021</button>
-                        <button type="submit" @ViewBag.leaveListSelection[10] class="btn btn-primary" name="leavePeriod" value="10">Oct 2021</button>
-                        <button type="submit" @ViewBag.leaveListSelection[11] class="btn btn-primary" name="leavePeriod" value="11">Nov 2021</button>
-                        <button type="submit" @ViewBag.leaveListSelection[12] class="btn btn-primary" name="leavePeriod" value="12">Dec 2021</button>
+                        <button type="submit" @ViewBag.leaveListSelection[1] class="btn btn-primary" name="leavePeriod" value="1">Jan @ViewBag.leaveListSelection[13]</button>
+                        <button type="submit" @ViewBag.leaveListSelection[2] class="btn btn-primary" name="leavePeriod" value="2">Feb @ViewBag.leaveListSelection[13]</button>
+                        <button type="submit" @ViewBag.leaveListSelection[3] class="btn btn-primary" name="leavePeriod" value="3">Mar @ViewBag.leaveListSelection[13]</button>
+                        <button type="submit" @ViewBag.leaveListSelection[4] class="btn btn-primary" name="leavePeriod" value="4">Apr @ViewBag.leaveListSelection[13]</button>
+                        <button type="submit" @ViewBag.leaveListSelection[5] class="btn btn-primary" name="leavePeriod" value="5">May @ViewBag.leaveListSelection[13]</button>
+                        <button type="submit" @ViewBag.leaveListSelection[6] class="btn btn-primary" name="leavePeriod" value="6">Jun @ViewBag.leaveListSelection[13]</button>
+                        <button type="submit" @ViewBag.leaveListSelection[7] class="btn btn-primary" name="leavePeriod" value="7">Jul @ViewBag.leaveListSelection[13]</button>
+                        <button type="submit" @ViewBag.leaveListSelection[8] class="btn btn-primary" name="leavePeriod" value="8">Aug @ViewBag.leaveListSelection[13]</button>
+                        <button type="submit" @ViewBag.leaveListSelection[9] class="btn btn-primary" name="leavePeriod" value="9">Sep @ViewBag.leaveListSelection[13]</button>
+                        <button type="submit" @ViewBag.leaveListSelection[10] class="btn btn-primary" name="leavePeriod" value="10">Oct @ViewBag.leaveListSelection[13]</button>
+                        <button type="submit" @ViewBag.leaveListSelection[11] class="btn btn-primary" name="leavePeriod" value="11">Nov @ViewBag.leaveListSelection[13]</button>
+                        <button type="submit" @ViewBag.leaveListSelection[12] class="btn btn-primary" name="leavePeriod" value="12">Dec @ViewBag.leaveListSelection[13]</button>
                         <div class="btn-group ">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                            <button type="button" @ViewBag.leaveListSelection[14] class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                                 Date Range <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <label for="dtDateOfJoining1" class="control-label">Leave From Date</label>
-                                        <input class="form-control" name="DateOfJoining1" type="date" id="dtDateOfJoining1" placeholder="Leaving Date">
+                                        <input class="form-control" name="rangeLeaveFromDate" value="@ViewBag.leaveListSelection[15]" type="date" id="dtDateOfJoining1" placeholder="Leaving Date">
                                     </div>
                                     <div class="col-sm-12">
                                         <label for="dtDateOfLeaving1" class="control-label">Leave Till Date</label>
-                                        <input class="form-control" name="DateOfLeaving1" type="date" id="dtDateOfLeaving1" placeholder="Leaving Date">
+                                        <input class="form-control" name="rangeLeaveToDate" value="@ViewBag.leaveListSelection[16]" type="date" id="dtDateOfLeaving1" placeholder="Leaving Date">
                                     </div>
                                     <div class="col-sm-12">
-                                        <button type="button" class="btn btn-primary">Search</button>
+                                        <button type="submit" class="btn btn-primary" name="leavePeriod" value="14">Search</button>
                                     </div>
                                 </div>
                             </ul>
@@ -108,46 +108,52 @@
                         {
                             @foreach (var leave in Model.leaveApplyListAll)
                             {
-                                <tr>
-                                    @foreach (var empd in Model.empMasterDataItems.Where(x => x.EmployeeId == @leave.EmployeeId).ToList())
-                                    {
+                                @foreach (var empd in Model.empMasterDataItems.Where(x => x.EmployeeId == @leave.EmployeeId).ToList())
+                                {
+                                    <tr>
                                         <td style="width: 20%;">
                                             <img src="../UploadImages/@empd.EmployeeProfilePhoto" alt="Emp Image" style="width:10% !important; border-radius: 50%;">
-                                            <a asp-controller="Leaves" asp-action="LeavesStatus" asp-route-empId="@leave.EmployeeId" data-toggle="modal" data-target="#modal-default" data-backdrop="static" data-keyboard="false">
+                                            <a asp-controller="Leaves" asp-action="LeavesStatus" asp-route-empId="@leave.EmployeeId" data-toggle="modal" data-target="#modal-defaultLeaves" data-backdrop="static" data-keyboard="false">
                                                 <span style="margin-left:5%;">
                                                     <strong> @empd.FirstName  @empd.MiddleName  @empd.LastName </strong>
                                                 </span>
                                             </a>
                                             <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leave.EmployeeId" />
                                         </td>
-                                    }
-                                    <td> @leave.LeaveType </td>
-                                    <td> @leave.LeaveFromDate </td>
-                                    <td>@leave.LeaveToDate</td>
-                                    <td>@leave.LeaveAppliedOn</td>
-                                    <td>@leave.LeaveReason </td>
-                                    <td>
-                                        <small class="label  bg-aqua-gradient"><i class="fa fa-gears"></i> Applied</small>
-                                    </td>
-                                    <td>@leave.LeaveStatusChangeDate </td>
-                                    <td hidden>
-                                        @System.Convert.ToDateTime(leave.LeaveStatusChangeDate).ToString("yyyy-MM-dd")
-                                    </td>
-                                    <td style="width: 18%;">
-                                        @if (leave.LeaveStatus == 1)
+
+                                        @if (Model.leaveTypesListAll.Where(x => x.LeaveTypeId.ToString() == @leave.LeaveType).ToList().SingleOrDefault() != null)
                                         {
-                                            <button href="" type="button" id="_@leave.EmployeeId" class="btn btn-primary bg-green-gradient pull-left btn-xs" style="float: left; margin-right: 4%;" onclick="UpdateLeaves(@leave.EmployeeId,@leave.EmpLeaveId,@Configuration["LeaveStatus:Approved"]);"><i id="__@leave.EmployeeId" class="fa fa-thumbs-up"></i> Approve Leave </button>
-                                            <button href="" type="button" id="__@leave.EmployeeId" class="btn btn-danger bg-red-gradient pull-right btn-xs" style="float: right; margin-right: 4%;" onclick="UpdateLeaves(@leave.EmployeeId,@leave.EmpLeaveId,@Configuration["LeaveStatus:Rejected"]);"><i id="R___@leave.EmployeeId" class="fa fa-thumbs-down"></i> Reject Leave </button>
+                                            <td>@Model.leaveTypesListAll.Where(x => x.LeaveTypeId.ToString() == @leave.LeaveType).ToList().SingleOrDefault().LeaveTypeName</td>
                                         }
+                                        else
+                                        {
+                                            <td> </td>
+                                        }
+                                        <td> @leave.LeaveFromDate </td>
+                                        <td>@leave.LeaveToDate</td>
+                                        <td>@leave.LeaveAppliedOn</td>
+                                        <td>@leave.LeaveReason </td>
+                                        <td>
+                                            <small class="label  bg-aqua-gradient"><i class="fa fa-gears"></i> Applied</small>
+                                        </td>
+                                        <td>@leave.LeaveStatusChangeDate </td>
+                                        <td hidden>
+                                            @System.Convert.ToDateTime(leave.LeaveStatusChangeDate).ToString("yyyy-MM-dd")
+                                        </td>
+                                        <td style="width: 18%;">
+                                            @if (leave.LeaveStatus == 1)
+                                            {
+                                                <button href="" type="button" id="_@leave.EmployeeId" class="btn btn-primary bg-green-gradient pull-left btn-xs" style="float: left; margin-right: 4%;" onclick="UpdateLeaves(@leave.EmployeeId,@leave.EmpLeaveId,@Configuration["LeaveStatus:Approved"]);"><i id="__@leave.EmployeeId" class="fa fa-thumbs-up"></i> Approve Leave </button>
+                                                <button href="" type="button" id="__@leave.EmployeeId" class="btn btn-danger bg-red-gradient pull-right btn-xs" style="float: right; margin-right: 4%;" onclick="UpdateLeaves(@leave.EmployeeId,@leave.EmpLeaveId,@Configuration["LeaveStatus:Rejected"]);"><i id="R___@leave.EmployeeId" class="fa fa-thumbs-down"></i> Reject Leave </button>
+                                            }
 
 
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                }
                             }
                         }
-
                     </tbody>
-
                 </table>
             </div>
             <!-- /.box-body -->
@@ -194,33 +200,40 @@
                                     {
                                         <td style="width: 20%;">
                                             <img src="../UploadImages/@empdApprove.EmployeeProfilePhoto" alt="Emp Image" style="width:10% !important; border-radius: 50%;">
-                                            <a asp-controller="Leaves" asp-action="LeavesStatus" asp-route-empId="@leaveApproved.EmployeeId" data-toggle="modal" data-target="#modal-default" data-backdrop="static" data-keyboard="false">
+                                            <a asp-controller="Leaves" asp-action="LeavesStatus" asp-route-empId="@leaveApproved.EmployeeId" data-toggle="modal" data-target="#modal-defaultLeaves" data-backdrop="static" data-keyboard="false">
                                                 <span style="margin-left:5%;">
                                                     <strong> @empdApprove.FirstName  @empdApprove.MiddleName  @empdApprove.LastName </strong>
                                                 </span>
                                             </a>
                                             <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leaveApproved.EmployeeId" />
                                         </td>
-                                    }
-                                    <td> @leaveApproved.LeaveType </td>
-                                    <td> @leaveApproved.LeaveFromDate </td>
-                                    <td>@leaveApproved.LeaveToDate</td>
-                                    <td>@leaveApproved.LeaveAppliedOn</td>
-                                    <td>@leaveApproved.LeaveReason </td>
-                                    <td>
-                                        <small class="label  bg-green-gradient"><i class="fa fa-thumbs-up"></i> Approved</small>
-                                    </td>
-                                    <td>@leaveApproved.LeaveStatusChangeDate </td>
-                                    <td hidden>
-                                        @System.Convert.ToDateTime(leaveApproved.LeaveStatusChangeDate).ToString("yyyy-MM-dd")
-                                    </td>
-                                    <td style="width: 18%;">
-                                        @if (leaveApproved.LeaveStatus == 3 && System.Convert.ToDateTime(leaveApproved.LeaveFromDate) > System.DateTime.Now)
+                                        var empdleaveType = Model.leaveTypesListAll.Where(x => x.LeaveTypeId.ToString() == @leaveApproved.LeaveType).ToList().SingleOrDefault();
+                                        @if (empdleaveType == null)
                                         {
-                                            <button href="" type="button" id="___@leaveApproved.EmployeeId" class="btn btn-linkedin pull-right btn-xs" style="float: right; margin-right: 4%;" onclick="UpdateLeaves(@leaveApproved.EmployeeId,@leaveApproved.EmpLeaveId,@Configuration["LeaveStatus:Cancelled"]);"><i id="C___@leaveApproved.EmployeeId" class="fa fa-thumbs-down"></i> Cancel Leave </button>
+                                            <td> </td>
                                         }
-
-                                    </td>
+                                        else
+                                        {
+                                            <td>@empdleaveType.LeaveTypeName </td>
+                                        }
+                                        <td> @leaveApproved.LeaveFromDate </td>
+                                        <td>@leaveApproved.LeaveToDate</td>
+                                        <td>@leaveApproved.LeaveAppliedOn</td>
+                                        <td>@leaveApproved.LeaveReason </td>
+                                        <td>
+                                            <small class="label  bg-green-gradient"><i class="fa fa-thumbs-up"></i> Approved</small>
+                                        </td>
+                                        <td>@leaveApproved.LeaveStatusChangeDate </td>
+                                        <td hidden>
+                                            @System.Convert.ToDateTime(leaveApproved.LeaveStatusChangeDate).ToString("yyyy-MM-dd")
+                                        </td>
+                                        <td style="width: 18%;">
+                                            @if (leaveApproved.LeaveStatus == 3 && System.Convert.ToDateTime(leaveApproved.LeaveFromDate) > System.DateTime.Now)
+                                            {
+                                                <button href="" type="button" id="___@leaveApproved.EmployeeId" class="btn btn-linkedin pull-right btn-xs" style="float: right; margin-right: 4%;" onclick="UpdateLeaves(@leaveApproved.EmployeeId,@leaveApproved.EmpLeaveId,@Configuration["LeaveStatus:Cancelled"]);"><i id="C___@leaveApproved.EmployeeId" class="fa fa-thumbs-down"></i> Cancel Leave </button>
+                                            }
+                                        </td>
+                                    }
                                 </tr>
                             }
                         }
@@ -276,39 +289,46 @@
                                     {
                                         <td style="width: 20%;">
                                             <img src="../UploadImages/@empdCancel.EmployeeProfilePhoto" alt="Emp Image" style="width:10% !important; border-radius: 50%;">
-                                            <a asp-controller="Leaves" asp-action="LeavesStatus" asp-route-empId="@leaveCancelled.EmployeeId" data-toggle="modal" data-target="#modal-default" data-backdrop="static" data-keyboard="false">
+                                            <a asp-controller="Leaves" asp-action="LeavesStatus" asp-route-empId="@leaveCancelled.EmployeeId" data-toggle="modal" data-target="#modal-defaultLeaves" data-backdrop="static" data-keyboard="false">
                                                 <span style="margin-left:5%;">
                                                     <strong> @empdCancel.FirstName  @empdCancel.MiddleName  @empdCancel.LastName </strong>
                                                 </span>
                                             </a>
                                             <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leaveCancelled.EmployeeId" />
                                         </td>
-                                    }
-                                    <td> @leaveCancelled.LeaveType </td>
-                                    <td> @leaveCancelled.LeaveFromDate </td>
-                                    <td>@leaveCancelled.LeaveToDate</td>
-                                    <td>@leaveCancelled.LeaveAppliedOn</td>
-                                    <td>@leaveCancelled.LeaveReason </td>
-                                    <td>
-                                        @if (leaveCancelled.LeaveStatus == 2)
+                                        @if (Model.leaveTypesListAll.Where(x => x.LeaveTypeId.ToString() == @leaveCancelled.LeaveType).ToList().SingleOrDefault() != null)
                                         {
-                                            <small class="label  bg-yellow-gradient"><i class="fa fa-times-circle-o"></i> Cancelled</small>
+                                            <td>@Model.leaveTypesListAll.Where(x => x.LeaveTypeId.ToString() == @leaveCancelled.LeaveType).ToList().SingleOrDefault().LeaveTypeName</td>
                                         }
-                                        @if (leaveCancelled.LeaveStatus == 4)
+                                        else
                                         {
-                                            <small class="label  bg-yellow-gradient"><i class="fa fa-thumbs-down"></i> Rejected</small>
+                                            <td> </td>
                                         }
+                                        <td> @leaveCancelled.LeaveFromDate </td>
+                                        <td>@leaveCancelled.LeaveToDate</td>
+                                        <td>@leaveCancelled.LeaveAppliedOn</td>
+                                        <td>@leaveCancelled.LeaveReason </td>
+                                        <td>
+                                            @if (leaveCancelled.LeaveStatus == 2)
+                                            {
+                                                <small class="label  bg-yellow-gradient"><i class="fa fa-times-circle-o"></i> Cancelled</small>
+                                            }
+                                            @if (leaveCancelled.LeaveStatus == 4)
+                                            {
+                                                <small class="label  bg-yellow-gradient"><i class="fa fa-thumbs-down"></i> Rejected</small>
+                                            }
 
-                                    </td>
-                                    <td>
-                                        @leaveCancelled.LeaveStatusChangeDate
-                                    </td>
-                                    <td hidden>
-                                        @System.Convert.ToDateTime(leaveCancelled.LeaveStatusChangeDate).ToString("yyyy-MM-dd")
-                                    </td>
-                                    <td style="width: 18%;">
-                                        @leaveCancelled.LeaveRejectReason
-                                    </td>
+                                        </td>
+                                        <td>
+                                            @leaveCancelled.LeaveStatusChangeDate
+                                        </td>
+                                        <td hidden>
+                                            @System.Convert.ToDateTime(leaveCancelled.LeaveStatusChangeDate).ToString("yyyy-MM-dd")
+                                        </td>
+                                        <td style="width: 18%;">
+                                            @leaveCancelled.LeaveRejectReason
+                                        </td>
+                                    }
                                 </tr>
                             }
                         }
@@ -320,8 +340,8 @@
             <!-- /.box-body -->
         </div>
 
-        <div class="modal fade" id="modal-default">
-            <div class="modal-dialog" style="width: 65% !important;">
+        <div class="modal fade" id="modal-defaultLeaves">
+            <div class="modal-dialog" style="width: 70% !important;">
 
                 <div class="modal-content">
 
@@ -358,48 +378,65 @@
         </script>
     }
 
+<script type="text/javascript">
+    $('#modal-defaultLeaves').on('shown.bs.modal', function () {
+        @*alert("here");
+         alert(document.getElementById("chartData").value);*@
+         document.getElementById("divPanelBox1").style.backgroundColor = "#ddd6";
+        //document.getElementById("chartData").value = dataPerMonth;
+        @*document.getElementById("TotalLeaves").innerHTML = @monthlyLeaveCount[12];
+        document.getElementById("TotalLeavesTaken").innerHTML = @monthlyLeaveCount[13];
+        document.getElementById("TotalLeavesRemaining").innerHTML = @monthlyLeaveCount[14];
+        document.getElementById("AverageLeaves").innerHTML = @monthlyLeaveCount[15];*@
+        var script = document.createElement('script');
+        script.src = "../dist/js/pages/SwiftHrCharts_Leaves.js";
+        document.head.appendChild(script);
+    });
+    function GetChartData(empId) {
+        alert("getchartdata");
+
+    }
+</script> 
+
     <script>
-        $('#modal-default').on('shown.bs.modal', function () {
-            document.getElementById("divPanelBox1").style.backgroundColor = "#ddd6";
-            //$('#myInput').trigger('focus')
-        })
+    
 
-            function BtnOptionsClick(event){
-                //alert("button");
-                //event.preventDefault();
-                document.getElementById("frmLeavesList").submit();
-            };
-        $(document).ready(function () {
-            
-            $("#liLeave").addClass("active");
-            $("#liEmployeeLeaves").addClass("active");
-            document.getElementById("liEmployeeLeaves").style.backgroundColor = "#3c8dbc45";
+    function BtnOptionsClick(event){
+            //alert("button");
+            //event.preventDefault();
+            document.getElementById("frmLeavesList").submit();
+    };
+    $(document).ready(function () {
 
-            //document.getElementById("AllBtn").blur();
-            //alert("ok");
-            //Sorting
-            $('#tblLeavesList').DataTable({
+        $("#liLeave").addClass("active");
+        $("#liEmployeeLeaves").addClass("active");
+        document.getElementById("liEmployeeLeaves").style.backgroundColor = "#3c8dbc45";
+
+        //document.getElementById("AllBtn").blur();
+        //alert("ok");
+        //Sorting
+        $('#tblLeavesList').DataTable({
                 "order": [[8, "desc"]]
-            });
-            $('#tblApprovedLeavesList').DataTable({
+        });
+        $('#tblApprovedLeavesList').DataTable({
                 "order": [[8, "desc"]]
-            });
-            $('#tblCancelledLeavesList').DataTable({
+        });
+        $('#tblCancelledLeavesList').DataTable({
                 "order": [[8, "desc"]]
-            });
+        });
             //alert(document.getElementById("AllBtn1").autofocus);
             //document.getElementById("AllBtn3").autofocus = true;
             //$("#AllBtn3").addClass("autofocus");
             //alert(document.getElementById("AllBtn1").autofocus);
-        });
+    });
         function successAlertClose(event) {
             document.getElementById("modal-success").style.display = "none";
-        }
-        $(function () {
-            $('#tblLeavesList').DataTable();
-            $('#tblApprovedLeavesList').DataTable();
-            $('#tblCancelledLeavesList').DataTable();
-        })
+        };
+    $(function () {
+        $('#tblLeavesList').DataTable();
+        $('#tblApprovedLeavesList').DataTable();
+        $('#tblCancelledLeavesList').DataTable();
+    });
 
         function UpdateLeaves(empId, leaveId, leaveStatus) {
             document.body.style.cursor = 'progress';
@@ -474,104 +511,11 @@
                     //console.log(msg);
                 }
             });
-    }
+        };
     </script>
+
+    <script src="~/bower_components/chart.js/Chart.js"></script>
+
 }
 
 
-
-
-@*<p>
-        <a asp-action="Create">Create New</a>
-    </p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.EmployeeId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LeaveType)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LeaveReason)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LeaveFromDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LeaveToDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LeaveAppliedOn)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LeaveStatus)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ReportingManagerUserId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ReportingManagerName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LeaveStatusChangeDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LeaveStatusChangedBy)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LeaveRejectReason)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.EmployeeId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LeaveType)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LeaveReason)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LeaveFromDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LeaveToDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LeaveAppliedOn)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LeaveStatus)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ReportingManagerUserId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ReportingManagerName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LeaveStatusChangeDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LeaveStatusChangedBy)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LeaveRejectReason)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.EmpLeaveId">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.EmpLeaveId">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.EmpLeaveId">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>*@
