@@ -1047,7 +1047,11 @@ namespace SwiftHR.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.LeaveTypeCategoryName)
-                    .HasMaxLength(500)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LeaveTypeCategoryDesc)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
             });
 
@@ -1076,8 +1080,24 @@ namespace SwiftHR.Models
                     .HasMaxLength(20)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LeaveTypeScemeName)
+                entity.Property(e => e.CreatedBy)
+                 .HasMaxLength(50)
+                 .IsUnicode(false);
+
+                entity.Property(e => e.LeaveTypeSchemeName)
                     .HasMaxLength(250)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LeaveTypeSchemeDescription)
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SchemeAppliedFrom)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.SchemeAppliedTill)
+                    .HasMaxLength(20)
                     .IsUnicode(false);
             });
 

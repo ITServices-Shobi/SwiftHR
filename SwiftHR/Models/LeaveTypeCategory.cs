@@ -9,6 +9,7 @@ namespace SwiftHR.Models
     {
         public int LeaveTypeCategoryId { get; set; }
         public string LeaveTypeCategoryName { get; set; }
+        public string LeaveTypeCategoryDesc { get; set; }
         public bool? IsActive { get; set; }
         public string CreatedDate { get; set; }
         public int? CreatedBy { get; set; }

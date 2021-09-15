@@ -270,10 +270,10 @@
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        <a asp-controller="Home" asp-action="ModifyPassword" asp-route-callingView="Dashboard" class="btn btn-default btn-flat" data-toggle="modal" data-target="#modal-password">Change Password</a>
+                                        <a asp-controller="Home" asp-action="ModifyPassword" asp-route-callingView="Dashboard" class="btn btn-default btn-flat" data-toggle="modal" data-target="#modal-password"><i class="fa fa-key"></i> Change Password</a>
                                     </div>
                                     <div class="pull-right">
-                                        <a asp-controller="Home" asp-action="Login" class="btn btn-default btn-flat">Sign Out</a>
+                                        <a asp-controller="Home" asp-action="Login" class="btn btn-default btn-flat"><i class="fa fa-sign-out"></i> Sign Out</a>
                                         @*<a href="#" class="btn btn-default btn-flat">Sign out</a>*@
                                     </div>
                                 </li>
@@ -356,10 +356,8 @@
                         </a>
                         <ul class="treeview-menu">
                             <li id="liEmployeeLeaves" class="liItems"><a asp-controller="Leaves" asp-action="LeavesList" onclick="menuClick('liEmployeeLeaves')"><i class="fa fa-circle-o"></i>Employee Leaves List</a></li>
-                            <li id="liLeaveTypes" class="liItems"><a href="pages/UI/general.html"><i class="fa fa-circle-o"></i> Leave Types</a></li>
-                            <li id="liLeaveRules" class="liItems"><a href="pages/UI/icons.html"><i class="fa fa-circle-o"></i> Leave Rules</a></li>
-                            <li id="liLeavePolicySetup" class="liItems"><a href="pages/UI/buttons.html"><i class="fa fa-circle-o"></i> Leave Policy Setup</a></li>
-                            <li id="liApplyLeave" class="liItems"><a asp-controller="Leaves" asp-action="LeavesStatus" onclick="menuClick('liApplyLeave')"><i class="fa fa-circle-o"></i> Apply Leave </a></li>
+                            <li id="liLeavesSettings" class="liItems"><a asp-controller="Leaves" asp-action="LeavesSettings" onclick="menuClick('liLeavesSettings')"><i class="fa fa-circle-o"></i>Leaves Settings</a></li>
+                            <li id="liApplyLeave" class="liItems"><a asp-controller="Leaves" asp-action="LeavesStatus" onclick="menuClick('liApplyLeave')"><i class="fa fa-circle-o"></i> My Leaves </a></li>
                             @*<li><a href="pages/UI/timeline.html"><i class="fa fa-circle-o"></i> Leave Reasons</a></li>*@
                             <li id="liHolidayCalendar" class="liItems"><a asp-controller="Leaves" asp-action="HolidayCalendar" onclick="menuClick('liHolidayCalendar')"><i class="fa fa-circle-o"></i> Holiday Calendar</a></li>
                             @*<li id="liApplyLeave" class="liItems"><a href="../Views/Leaves/HolidayCalendar.cshtml"><i class="fa fa-circle-o"></i> Holiday Calender</a></li>*@

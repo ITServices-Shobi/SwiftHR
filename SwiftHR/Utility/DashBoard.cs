@@ -17,7 +17,13 @@ namespace SwiftHR.Utility
 
         public List<EmpOnboardingDetail> empOnboardingDetails { get; set; }
 
+        public List<LeaveType> leaveTypesListAll { get; set; }
 
+        public DashBoard()
+        {
+            leaveTypesListAll = new List<LeaveType>();
+            leaveTypesListAll = _context.LeaveTypes.ToList();
+        }
         public String GetEmployeeDepartmentColorByDeptNumber(string deptName)
         {
             if (deptName != null && deptName != "")

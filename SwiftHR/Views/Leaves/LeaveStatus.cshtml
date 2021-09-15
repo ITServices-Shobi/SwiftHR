@@ -19,53 +19,121 @@
 <link rel="stylesheet" href="~/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
 
 <form asp-controller="Leaves" asp-action="LeavesList" method="post">
+    @if (@ViewBag.CallingView != "ApplyLeaves")
+    {
+        <button type="submit" class="close" style="margin-right: 2%; margin-top: 1%;" title="Close Window">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    }
 
-    <button type="submit" class="close" style="margin-right: 2%; margin-top: 1%;" title="Close Window">
-        <span aria-hidden="true">&times;</span>
-    </button>
 
-    <section class="content">
+    <section class="content" id="MainContent">
         <div class="row" style="margin-top: 2%;">
-            <div class="col-md-4">
+            <div class="alertS alert-success" id="leave-modal-success" style="display:none;">
+                <button type="button" class="close" aria-hidden="true" onclick="successAlertClose(event)">&times;</button>
+                <h4><i class="icon fa fa-check"></i> Success </h4>
+                <p id="leave-successBody"></p>
+            </div>
+            <div class="alertS alert-danger" id="modal-error" style="display:none;">
+                <button type="button" class="close" aria-hidden="true" onclick="successAlertClose(event)">&times;</button>
+                <h4><i class="icon fa fa-times"></i> Error </h4>
+                <p id="errorBody"></p>
+            </div>
+            <div class="col-md-3">
                 <!-- Profile Image -->
                 <div class="box box-primary">
                     <div class="box-body box-profile">
                         <img class="profile-user-img img-responsive img-circle" src="../UploadImages/@Model.empMasterDataItems[0].EmployeeProfilePhoto" alt="User profile picture">
 
                         <h3 class="profile-username text-center">@Model.empMasterDataItems[0].FirstName @Model.empMasterDataItems[0].MiddleName @Model.empMasterDataItems[0].LastName</h3>
-                        <p class="text-muted text-center" style="font-size: 20px; font-weight: 700;"> Leave Status </p>
+                        <p class="text-muted text-center" style="font-size: 20px; font-weight: 700;"> <i class="fa fa-exclamation-circle"></i> Leave Status </p>
                         <p class="text-muted text-center" style="font-size: 20px; font-weight: 700;">Employee Code:  @Model.empMasterDataItems[0].EmployeeNumber </p>
 
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
-                                <b> Contact No </b>  <span style="color:#3c8dbc; margin-left: 4%;"> <strong> @Model.empMasterDataItems[0].ContactNumber </strong> </span>
+                                <b> Contact No :</b>    <span style="color:#3c8dbc; margin-left: 4%;"> <strong> @Model.empMasterDataItems[0].ContactNumber </strong> </span>
                             </li>
                             <li class="list-group-item">
-                                <b> Email </b>  <br /> <span style="color:#3c8dbc;"><strong> @Model.empMasterDataItems[0].Email </strong>  </span>
+                                <b> Email : </b>  <span style="color:#3c8dbc;"><strong> @Model.empMasterDataItems[0].Email </strong>  </span>
                             </li>
                             <li class="list-group-item">
-                                <b>Department</b>  <br /> <span style="color:#3c8dbc;"><strong> @Model.empMasterDataItems[0].Department </strong>  </span>
+                                <b>Department :</b>   <span style="color:#3c8dbc;"><strong> @Model.empMasterDataItems[0].Department </strong>  </span>
                             </li>
                             <li class="list-group-item">
-                                <b>Designation</b>  <br /> <span style="color:#3c8dbc;"> <strong> @Model.empMasterDataItems[0].Designation </strong> </span>
+                                <b>Designation :</b>   <span style="color:#3c8dbc;"> <strong> @Model.empMasterDataItems[0].Designation </strong> </span>
                             </li>
                             <li class="list-group-item">
                                 <b>Date of Joining </b>   <span style="color:#3c8dbc; margin-left: 4%;"> <strong> @Model.empMasterDataItems[0].DateOfJoining </strong>  </span>
                             </li>
                         </ul>
-
-                        <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
                     </div>
                     <!-- /.box-body -->
                 </div>
+                <div class="box box-primary">
+                    <!-- /.box-header -->
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Employee Leave Status</h3>
+                        <!-- /.box-body -->
+                        <div class="box-body" style="margin-bottom: -2%;">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p class="text-center">
+                                        <strong>Leave Type wise count</strong>
+                                    </p>
+                                    <div id="divLeavetypeEmpCount">
+
+                                        @foreach (var leavtype in Model.leaveTypesListAll.Where(x => x.IsActive == true).ToList())
+                                        {
+
+                                            @if (leavtype.LeaveTypeName != "" && leavtype.LeaveTypeName != null)
+                                            {
+                                                <div class="progress-group">
+                                                    <span class="progress-text">@leavtype.LeaveTypeName</span>
+                                                    @{String totalLeavesOfEmployee = "0";}
+                                                    @{var totalLeavesOfEmployeeList = Model.leaveTypeMappingAll.Where(x => x.LeaveTypeId == leavtype.LeaveTypeId).ToList().SingleOrDefault();}
+
+
+                                                    @{int totalByEmployeeLeaveType = 0;}
+                                                    @{var totByEmployeeLeaveType = Model.leaveAppliedApprovedListAll.Where(x => x.LeaveType == leavtype.LeaveTypeId).ToList();}
+
+                                                    @foreach (var EmpLeave in totByEmployeeLeaveType)
+                                                    {
+                                                        totalByEmployeeLeaveType += (System.Convert.ToDateTime(EmpLeave.LeaveToDate) - System.Convert.ToDateTime(EmpLeave.LeaveFromDate)).Days + 1;
+                                                    }
+
+                                                    @if (totalLeavesOfEmployeeList != null)
+                                                    {
+                                                        totalLeavesOfEmployee = totalLeavesOfEmployeeList.LeaveAllotTotalNoDaysInYear;
+                                                    }
+                                                    @{String deptPerc = Model.GetLeavetypeWiseEmployeePercentage(totalByEmployeeLeaveType, Convert.ToInt32(totalLeavesOfEmployee));}
+
+                                                    <span class="progress-number"><b>@totalByEmployeeLeaveType of @totalLeavesOfEmployee</b> &nbsp; </span>
+                                                    <div class="progress">
+                                                        @*<div class="progress-bar progress-bar-aqua progress-bar-striped active" style="width: @deptPerc%">@deptPerc%</div>*@
+                                                        @if (leavtype.LeaveTypeName != "" && leavtype.LeaveTypeName != null)
+                                                        {
+                                                            <div class="progress-bar progress-bar-blue progress-bar-striped active" style="width: @deptPerc%">@deptPerc%</div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+
+                                    </div>
+                                    <!-- /.progress-group -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- /.col -->
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#Personal" data-toggle="tab">Leaves Status</a></li>
-                        <li><a href="#Account" data-toggle="tab">Apply Leaves</a></li>
-                        <li><a href="#Employment" data-toggle="tab">Leave Logs</a></li>
+                        <li id="liLeavesStatus" class="active"><a href="#Personal" data-toggle="tab">Leaves Status</a></li>
+                        <li id="liApplyLeaves"><a href="#ApplyLeaves" data-toggle="tab">Apply / Edit Leaves</a></li>
+                        <li><a href="#Account" data-toggle="tab">Leave Logs</a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="active tab-pane" id="Personal">
@@ -82,7 +150,6 @@
                                                     Applied Leaves
                                                 </h3>
                                                 <div class="box-tools pull-right">
-                                                    <a class="btn btn-default btn-circle hidden-print" id="btnExport1"><i class="fa fa-file-pdf-o"></i></a>
                                                     <button id="btnPToggle1" type="button" class="btn btn-box-tool" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" title="Collapse" onclick="onToggle(this)">
                                                         <i id="iconPToggle1" class="fa fa-minus"></i>
                                                     </button>
@@ -90,7 +157,7 @@
                                             </div>
                                             <div id="collapseOne" class="panel-collapse collapse in">
                                                 <div class="box-body">
-                                                    <table id="tblLeavesList" data-toggle="table" data-sort-name="Status" data-sort-order="desc" class="table table-bordered table-striped dt-responsive  table-hover table-condensed">
+                                                    <table id="tblLeavesList" data-toggle="table" data-sort-name="Status" data-sort-order="desc" class="table table-bordered table-striped dt-responsive  table-hover table-condensed" data-page-length='5' style="width:100%">
                                                         <thead class="bg-primary">
                                                             <tr>
                                                                 <th> Leave Type</th>
@@ -100,7 +167,8 @@
                                                                 <th> Leave Reason </th>
                                                                 <th> Leave Status </th>
                                                                 <th> Status Updated On </th>
-                                                                <th hidden> Status Updated On </th>
+                                                                <th hidden hidden-print> Status Updated On </th>
+                                                                <th> Leave Action </th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -110,7 +178,17 @@
                                                                 @foreach (var leave in Model.leaveApplyListAll)
                                                                 {
                                                                     <tr>
-                                                                        <td> @leave.LeaveType </td>
+                                                                        @if (Model.leaveTypesListAll.Where(x => x.LeaveTypeId == @leave.LeaveType).ToList().SingleOrDefault() != null)
+                                                                        {
+                                                                            <td>
+                                                                                @Model.leaveTypesListAll.Where(x => x.LeaveTypeId == @leave.LeaveType).ToList().SingleOrDefault().LeaveTypeName
+                                                                                <input id="empLeaveIdVal" type="hidden" value="@leave.EmpLeaveId" />
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td> </td>
+                                                                        }
                                                                         <td> @leave.LeaveFromDate </td>
                                                                         <td>@leave.LeaveToDate</td>
                                                                         <td>@leave.LeaveAppliedOn</td>
@@ -121,6 +199,12 @@
                                                                         <td>@leave.LeaveStatusChangeDate </td>
                                                                         <td hidden>
                                                                             @System.Convert.ToDateTime(leave.LeaveStatusChangeDate).ToString("yyyy-MM-dd")
+                                                                        </td>
+                                                                        <td style="width: 18%;">
+                                                                            @if (leave.LeaveStatus == 1 && System.Convert.ToDateTime(leave.LeaveFromDate) > System.DateTime.Now)
+                                                                            {
+                                                                                <button href="" type="button" id="___@leave.EmployeeId" class="btn btn-linkedin pull-left btn-xs" style="float: right; margin-right: 4%;" onclick="ModifyLeaves(@leave.EmployeeId,@leave.EmpLeaveId,'@System.Convert.ToDateTime(leave.LeaveFromDate).ToString("yyyy-MM-dd")', '@System.Convert.ToDateTime(leave.LeaveToDate).ToString("yyyy-MM-dd")', @leave.LeaveType, '@leave.LeaveReason');"><i id="C___@leave.EmployeeId" class="fa fa-pencil-square"></i> Modify Leave </button>
+                                                                            }
                                                                         </td>
                                                                     </tr>
                                                                 }
@@ -140,7 +224,6 @@
                                                     Approved Leaves
                                                 </h3>
                                                 <div class="box-tools pull-right">
-                                                    <a class="btn btn-default btn-circle hidden-print" id="btnExport2"><i class="fa fa-file-pdf-o"></i></a>
                                                     <button id="btnPToggle2" type="button" class="btn btn-box-tool" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" title="Expand" onclick="onToggle(this)">
                                                         <i id="iconPToggle2" class="fa fa-plus"></i>
                                                     </button>
@@ -148,7 +231,7 @@
                                             </div>
                                             <div id="collapseTwo" class="panel-collapse collapse">
                                                 <div class="box-body">
-                                                    <table id="tblApprovedLeavesList" data-toggle="table" data-sort-name="Status" data-sort-order="desc" class="table table-bordered table-striped dt-responsive  table-hover table-condensed">
+                                                    <table id="tblApprovedLeavesList" data-toggle="table" data-sort-name="Status" data-sort-order="desc" class="table table-bordered table-striped dt-responsive  table-hover table-condensed" data-page-length='5' style="width:100%">
                                                         <thead class="bg-primary">
                                                             <tr>
                                                                 <th> Leave Type</th>
@@ -158,7 +241,7 @@
                                                                 <th> Leave Reason </th>
                                                                 <th> Leave Status </th>
                                                                 <th> Status Updated On </th>
-                                                                <th hidden> Status Updated On </th>
+                                                                <th hidden hidden-print> Status Updated On </th>
                                                                 <th> Leave Action </th>
                                                             </tr>
                                                         </thead>
@@ -170,7 +253,14 @@
                                                                     <tr>
                                                                         @foreach (var empdApprove in Model.empMasterDataItems.Where(x => x.EmployeeId == @leaveApproved.EmployeeId).ToList())
                                                                         {
-                                                                            <td> @leaveApproved.LeaveType </td>
+                                                                            @if (Model.leaveTypesListAll.Where(x => x.LeaveTypeId == @leaveApproved.LeaveType).ToList().SingleOrDefault() != null)
+                                                                            {
+                                                                                <td>@Model.leaveTypesListAll.Where(x => x.LeaveTypeId == @leaveApproved.LeaveType).ToList().SingleOrDefault().LeaveTypeName</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td> </td>
+                                                                            }
                                                                             <td> @leaveApproved.LeaveFromDate </td>
                                                                             <td>@leaveApproved.LeaveToDate</td>
                                                                             <td>@leaveApproved.LeaveAppliedOn</td>
@@ -179,13 +269,17 @@
                                                                                 <small class="label  bg-green-gradient"><i class="fa fa-thumbs-up"></i> Approved</small>
                                                                             </td>
                                                                             <td>@leaveApproved.LeaveStatusChangeDate </td>
-                                                                            <td hidden>
+                                                                            <td hidden hidden-print>
                                                                                 @System.Convert.ToDateTime(leaveApproved.LeaveStatusChangeDate).ToString("yyyy-MM-dd")
                                                                             </td>
                                                                             <td style="width: 18%;">
                                                                                 @if (leaveApproved.LeaveStatus == 3 && System.Convert.ToDateTime(leaveApproved.LeaveFromDate) > System.DateTime.Now)
                                                                                 {
                                                                                     <button href="" type="button" id="___@leaveApproved.EmployeeId" class="btn btn-linkedin pull-right btn-xs" style="float: right; margin-right: 4%;" onclick="UpdateLeaves(@leaveApproved.EmployeeId,@leaveApproved.EmpLeaveId,@Configuration["LeaveStatus:Cancelled"]);"><i id="C___@leaveApproved.EmployeeId" class="fa fa-thumbs-down"></i> Cancel Leave </button>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <button href="" type="button" disabled id="___@leaveApproved.EmployeeId" class="btn btn-default pull-right btn-xs" style="float: right; margin-right: 4%;" onclick="UpdateLeaves(@leaveApproved.EmployeeId,@leaveApproved.EmpLeaveId,@Configuration["LeaveStatus:Cancelled"]);"><i id="C___@leaveApproved.EmployeeId" class="fa fa-thumbs-down"></i> Cancel Leave </button>
                                                                                 }
                                                                             </td>
                                                                         }
@@ -206,7 +300,6 @@
                                                     Cancelled Or Rejected Leaves
                                                 </h3>
                                                 <div class="box-tools pull-right">
-                                                    <a class="btn btn-default btn-circle hidden-print" id="btnExport2"><i class="fa fa-file-pdf-o"></i></a>
                                                     <button id="btnPToggle3" type="button" class="btn btn-box-tool" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" title="Expand" onclick="onToggle(this)">
                                                         <i id="iconPToggle3" class="fa fa-plus"></i>
                                                     </button>
@@ -214,7 +307,7 @@
                                             </div>
                                             <div id="collapseThree" class="panel-collapse collapse">
                                                 <div class="box-body">
-                                                    <table id="tblCancelledLeavesList" data-toggle="table" data-sort-name="Status" data-sort-order="desc" class="table table-bordered table-striped dt-responsive table-hover table-condensed">
+                                                    <table id="tblCancelledLeavesList" data-toggle="table" data-sort-name="Status" data-sort-order="desc" class="table table-bordered table-striped dt-responsive table-hover table-condensed" data-page-length='5' style="width:100%">
                                                         <thead class="bg-primary">
                                                             <tr>
                                                                 <th> Leave Type</th>
@@ -224,8 +317,7 @@
                                                                 <th> Leave Reason </th>
                                                                 <th> Leave Status </th>
                                                                 <th data-field="Status"> Cancelled&nbsp;/Rejected On </th>
-
-                                                                <th data-field="Status" hidden> Cancelled&nbsp;/Rejected On </th>
+                                                                <th data-field="Status" hidden hidden-print> Cancelled&nbsp;/Rejected On </th>
                                                                 <th> Cancelled&nbsp;/Rejected Reason </th>
                                                             </tr>
                                                         </thead>
@@ -238,7 +330,14 @@
                                                                     <tr>
                                                                         @foreach (var empdCancel in Model.empMasterDataItems.Where(x => x.EmployeeId == @leaveCancelled.EmployeeId).ToList())
                                                                         {
-                                                                            <td> @leaveCancelled.LeaveType </td>
+                                                                            @if (Model.leaveTypesListAll.Where(x => x.LeaveTypeId == @leaveCancelled.LeaveType).ToList().SingleOrDefault() != null)
+                                                                            {
+                                                                                <td>@Model.leaveTypesListAll.Where(x => x.LeaveTypeId == @leaveCancelled.LeaveType).ToList().SingleOrDefault().LeaveTypeName</td>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <td> </td>
+                                                                            }
                                                                             <td> @leaveCancelled.LeaveFromDate </td>
                                                                             <td>@leaveCancelled.LeaveToDate</td>
                                                                             <td>@leaveCancelled.LeaveAppliedOn</td>
@@ -280,7 +379,7 @@
                             </div>
                         </div>
                         <!-- /.tab-pane -->
-                        <div class="tab-pane" id="Employment">
+                        <div class="tab-pane" id="Account">
                             <!-- The timeline -->
                             <ul class="timeline timeline-inverse">
                                 <!-- timeline time label -->
@@ -376,42 +475,44 @@
                             </ul>
                         </div>
                         <!-- /.tab-pane -->
-                        <div class="tab-pane" id="Account">
+                        <div class="tab-pane" id="ApplyLeaves">
                             <div class="box box-solid" style="box-shadow: none !important;">
                                 <div class="box-body box-profile">
-                                    <div class="form-group">
-                                        <label for="inputName" class="col-sm-2 control-label">Name</label>
-
-                                        <div class="col-sm-10">
-                                            <input type="email" class="form-control" id="inputName2" placeholder="Name">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label for="dtLeaveFrom" class="col-sm-2 control-label">Leave From </label>
+                                            <div class="col-sm-4">
+                                                <input class="form-control" name="dtLeaveFrom" asp-for="@Model.leaveAppliedApprovedListAll[0].LeaveFromDate" type="date" id="dtLeaveFrom">
+                                            </div>
+                                            <label for="dtLeaveTo" class="col-sm-2 control-label">Leave Till </label>
+                                            <div class="col-sm-4">
+                                                <input class="form-control" name="dtLeaveTo" asp-for="@Model.leaveAppliedApprovedListAll[0].LeaveToDate" type="date" id="dtLeaveTo">
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="inputEmail" class="col-sm-2 control-label">Email</label>
-
-                                        <div class="col-sm-10">
-                                            <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label for="leaveType" class="col-sm-2 control-label">Leave Type</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control select2" id="ddlLeaveType" name="LeaveType">
+                                                    <option value="0">Choose..</option>
+                                                    @if (Model != null && Model.leaveTypesListAll.Where(x => x.IsActive == true).ToList().Count() > 0)
+                                                    {
+                                                        @foreach (var ltypes in Model.leaveTypesListAll.Where(x => x.IsActive == true).ToList())
+                                                        {
+                                                            <option value="@ltypes.LeaveTypeId">@ltypes.LeaveTypeName</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="inputName" class="col-sm-2 control-label">Name</label>
-
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputName" placeholder="Name">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="inputExperience" class="col-sm-2 control-label">Experience</label>
-
-                                        <div class="col-sm-10">
-                                            <textarea class="form-control" id="inputExperience" placeholder="Experience"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="inputSkills" class="col-sm-2 control-label">Skills</label>
-
-                                        <div class="col-sm-10">
-                                            <input type="text" class="form-control" id="inputSkills" placeholder="Skills">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label for="inputExperience" class="col-sm-2 control-label">Leave Reason</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows="4" cols="50" class="form-control" id="leaveReason" name="ReasonOfLeave" placeholder="Leaves Reason"></textarea>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -425,9 +526,11 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-10">
-                                            <button type="submit" class="btn btn-danger">Apply Leaves</button>
+                                            <input id="empLeaveIdValForEditing" type="hidden" value="" />
+                                            <button type="button" id="btnSaveLeaves" onclick="validateLeaveEntryData(event);" class="btn btn-danger active"><i id="iSave" class="fa fa-save"> Apply For Leaves</i> </button>
                                         </div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -476,7 +579,7 @@
                                             @*<span class="description-percentage text-green"><i class="fa fa-caret-up"></i> 17%</span>*@
                                             @*<h5 class="description-header">375</h5>*@
                                             <h5 id="TotalLeaves" class="description-header">@ViewBag.chartLegends[12]</h5>
-                                            <span class="description-text">Total Approved Leaves</span>
+                                            <span class="description-text">Total Applied Leaves</span>
                                             <span class="description-text">in Year</span>
                                         </div>
                                         <!-- /.description-block -->
@@ -523,122 +626,14 @@
                 </div>
             </div>
             <!-- /.col -->
+
         </div>
 
     </section>
 
 </form>
 
-<script type="text/javascript">
-    function onToggle(btnToggle) {
-        document.getElementById("divPanelBox1").style.backgroundColor = "#ffffff";
-        document.getElementById("divPanelBox2").style.backgroundColor = "#ffffff";
-        document.getElementById("divPanelBox3").style.backgroundColor = "#ffffff";
 
-        switch (btnToggle.id) {
-            case 'btnPToggle1':
-                if (btnToggle.title == "Collapse") {
-                    $(btnToggle).prop('title', 'Expand');
-                    $("#iconPToggle1").removeClass("fa-minus").addClass("fa-plus");
-                }
-                else {
-                    $(btnToggle).prop('title', 'Collapse');
-                    $("#iconPToggle1").removeClass("fa-plus").addClass("fa-minus");
-                    document.getElementById("divPanelBox1").style.backgroundColor = "#ddd6";
-
-                    $("#btnPToggle2").prop('title', 'Expand');
-                    $("#iconPToggle2").removeClass("fa-minus").addClass("fa-plus");
-                    $("#btnPToggle3").prop('title', 'Expand');
-                    $("#iconPToggle3").removeClass("fa-minus").addClass("fa-plus");
-                    $("#btnPToggle4").prop('title', 'Expand');
-                    $("#iconPToggle4").removeClass("fa-minus").addClass("fa-plus");
-                }
-                break;
-            case 'btnPToggle2':
-                if (btnToggle.title == "Collapse") {
-                    $(btnToggle).prop('title', 'Expand');
-                    $("#iconPToggle2").removeClass("fa-minus").addClass("fa-plus");
-                }
-                else {
-                    $(btnToggle).prop('title', 'Collapse');
-                    $("#iconPToggle2").removeClass("fa-plus").addClass("fa-minus");
-                    document.getElementById("divPanelBox2").style.backgroundColor = "#ddd6";
-                    $("#btnPToggle1").prop('title', 'Expand');
-                    $("#iconPToggle1").removeClass("fa-minus").addClass("fa-plus");
-                    $("#btnPToggle3").prop('title', 'Expand');
-                    $("#iconPToggle3").removeClass("fa-minus").addClass("fa-plus");
-                    $("#btnPToggle4").prop('title', 'Expand');
-                    $("#iconPToggle4").removeClass("fa-minus").addClass("fa-plus");
-                }
-                break;
-            case 'btnPToggle3':
-                if (btnToggle.title == "Collapse") {
-                    $(btnToggle).prop('title', 'Expand');
-                    $("#iconPToggle3").removeClass("fa-minus").addClass("fa-plus");
-                }
-                else {
-                    $(btnToggle).prop('title', 'Collapse');
-                    $("#iconPToggle3").removeClass("fa-plus").addClass("fa-minus");
-                    document.getElementById("divPanelBox3").style.backgroundColor = "#ddd6";
-                    $("#btnPToggle1").prop('title', 'Expand');
-                    $("#iconPToggle1").removeClass("fa-minus").addClass("fa-plus");
-                    $("#btnPToggle2").prop('title', 'Expand');
-                    $("#iconPToggle2").removeClass("fa-minus").addClass("fa-plus");
-                    $("#btnPToggle4").prop('title', 'Expand');
-                    $("#iconPToggle4").removeClass("fa-minus").addClass("fa-plus");
-                }
-                break;
-
-        }
-
-
-    }
-
-    function ValidateMobileNo(txtMobileNo) {
-        var mobileNo = txtMobileNo.value;
-
-        if (mobileNo.length < 10) {
-            txtMobileNo.value = "";
-            alert("Please enter valid mobile number.");
-        }
-    }
-
-    function preventNumberInput(e) {
-        var keyCode = (e.keyCode ? e.keyCode : e.which);
-        if (keyCode > 47 && keyCode < 58 || keyCode > 95 && keyCode < 107) {
-            e.preventDefault();
-        }
-    }
-
-    function restrictAlphabets(e) {
-        var x = e.which || e.keycode;
-        if ((x >= 48 && x <= 57))
-            return true;
-        else
-            return false;
-    }
-
-    function ValidateEmail(txtEmail) {
-        var emailId = txtEmail.value;
-        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-        if (!expr.test(emailId)) {
-            txtEmail.value = "";
-            alert("Please enter valid email.");
-        }
-    }
-
-    function ddlAddressSelectionChange(selValue) {
-        if (selValue == "PermanentAddress") {
-            document.getElementById("divPresentAddress").style.display = "none";
-            document.getElementById("divPermanentAddress").style.display = "block";
-        }
-        else {
-            document.getElementById("divPermanentAddress").style.display = "none";
-            document.getElementById("divPresentAddress").style.display = "block";
-        }
-    }
-
-</script>
 
 
 
@@ -649,40 +644,244 @@
     <!-- DataTables -->
     <script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <!-- Export -->
+    <script src="~/bower_components/datatables.net-export/dataTables.buttons.min.js"></script>
+    <script src="~/bower_components/datatables.net-export/jszip.min.js"></script>
+    <script src="~/bower_components/datatables.net-export/pdfmake.min.js"></script>
+    <script src="~/bower_components/datatables.net-export/vfs_fonts.js"></script>
+    <script src="~/bower_components/datatables.net-export/buttons.html5.min.js"></script>
+    <script src="~/bower_components/datatables.net-export/buttons.print.min.js"></script>
+    <script src="~/bower_components/datatables.net-export/buttons.colVis.min.js"></script>
+
+    <script>
+        function GridSetup(name) {
+            var table = $('#' + name).DataTable({
+                "pagingType": "full_numbers",
+                "pageLength": 5,
+                "order": [[8, "desc"]],
+                "dom": 'Bfrtip',
+                "buttons": [
+                    {
+                        extend: 'pdf',
+                        className: 'btn btn-default btn-circle pull-right hidden-print',
+                        text: '<i class="fa fa-file-pdf-o"></i>'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'btn btn-default btn-circle pull-right hidden-print',
+                        text: '<i class="fa fa-print"></i>'
+                    }
+                ],
+            });
+            table.draw();
+
+        };
+
+    </script>
 
     <script>
         $(function () {
-            $('#tblLeavesList').DataTable();
+            //$('#tblLeavesList').DataTable();
         })
         $(document).ready(function () {
             $("#liLeave").addClass("active");
-            $("#liEmployeeLeaves").addClass("active");
+            $("#liApplyLeave").addClass("active");
+            // $("#liEmployeeLeaves").addClass("active");
             document.getElementById("liApplyLeave").style.backgroundColor = "#3c8dbc45";
+            GridSetup('tblLeavesList');
+            GridSetup('tblApprovedLeavesList');
+            GridSetup('tblCancelledLeavesList');
+
+        });
+
+        // SLIMSCROLL FOR CHAT WIDGET
+        $('#divLeavetypeEmpCount').slimScroll({
+            height: '180px'
         });
     </script>
-    <script>
-            @*@{int[] monthlyLeaveCount = Model.GetMonthWiseEmployeeLeavesCount(DateTime.Now.Year, @Model.empMasterDataItems[0].EmployeeId.ToString());}
-            var dataPerMonth = [@monthlyLeaveCount[0],
-                                @monthlyLeaveCount[1],
-                                @monthlyLeaveCount[2],
-                                @monthlyLeaveCount[3],
-                                @monthlyLeaveCount[4],
-                                @monthlyLeaveCount[5],
-                                @monthlyLeaveCount[6],
-                                @monthlyLeaveCount[7],
-                                @monthlyLeaveCount[8],
-                                @monthlyLeaveCount[9],
-                                @monthlyLeaveCount[10],
-                                @monthlyLeaveCount[11]
-                                ];
 
-        document.getElementById("chartData").value = dataPerMonth;*@
-        @*document.getElementById("TotalLeaves").innerHTML = @monthlyLeaveCount[12];
-        document.getElementById("TotalLeavesTaken").innerHTML = @monthlyLeaveCount[13];
-        document.getElementById("TotalLeavesRemaining").innerHTML = @monthlyLeaveCount[14];
-        document.getElementById("AverageLeaves").innerHTML = @monthlyLeaveCount[15];*@
+    <script type="text/javascript">
+        function successAlertClose(event) {
+            document.getElementById("leave-modal-success").style.display = "none";
+            document.getElementById("modal-error").style.display = "none";
+        }
+        function validateLeaveEntryData(event) {
+
+            $("#iSave").addClass("fa-pulse fa-spin");
+
+            var IsAnyEmpty = false;
+            var alertMsg = "Values For : ";
+
+            if (document.getElementById("dtLeaveFrom").value == "") {
+                IsAnyEmpty = true;
+                alertMsg = alertMsg + "Leave From Date, ";
+            }
+            if (document.getElementById("dtLeaveTo").value == "") {
+                IsAnyEmpty = true;
+                alertMsg = alertMsg + "Leave Till Date, ";
+            }
+            if (document.getElementById("ddlLeaveType").value == "0") {
+                IsAnyEmpty = true;
+                alertMsg = alertMsg + "Leave Type, ";
+            }
+            if (document.getElementById("leaveReason").value == "") {
+                IsAnyEmpty = true;
+                alertMsg = alertMsg + "Reason Of Leave ";
+            }
+            event.preventDefault();
+            if (IsAnyEmpty) {
+                event.preventDefault();
+                $("#iSave").removeClass("fa-pulse fa-spin");
+                alertMsg = '<p>' + alertMsg + '<br /> cannot be left empty </p>'
+                document.getElementById("errorBody").innerHTML = alertMsg;
+                document.getElementById("modal-error").style.display = "block";
+                setTimeout(successAlertClose, 5000);
+
+                IsAnyEmpty = true;
+            }
+            else {
+                //alert("calling save" + document.getElementById("ddlLeaveType").value);
+                AddUpdateLeaves(@Model.empMasterDataItems[0].EmployeeId,
+                    document.getElementById("empLeaveIdValForEditing").value,
+                    document.getElementById("ddlLeaveType").value,
+                    document.getElementById("dtLeaveFrom").value,
+                    document.getElementById("dtLeaveTo").value,
+                    document.getElementById("leaveReason").value);
+            }
+            return IsAnyEmpty;
+        }
+        //Save Leave
+        function AddUpdateLeaves(empId, leaveId, leaveType, fromDate, toDate, leaveReason) {
+            //alert(leaveId);
+            document.body.style.cursor = 'progress';
+            //Form data
+            var form_data = new FormData();
+            form_data.append('empId', empId);
+            form_data.append('leaveId', leaveId);
+            form_data.append('leaveType', leaveType);
+            form_data.append('fromDate', fromDate);
+            form_data.append('toDate', toDate);
+            form_data.append('leaveReason', leaveReason);
+            //alert("Add Leave" + empId);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AddUpdateLeaves", "Leaves")",
+                processData: false,
+                contentType: false,
+                async: false,
+                cache: false,
+                data: form_data,
+                success: function (response) {
+                    //alert(leaveStatus);
+                    var usrMsgData = JSON.parse(response);
+                    //alert(usrMsgData[0]);
+                    if (usrMsgData != null && usrMsgData != undefined) {
+                        if (usrMsgData[1] == "1") {
+                            document.getElementById("errorBody").innerHTML = usrMsgData[0];
+                            document.getElementById("modal-error").style.display = "block";
+                        }
+                        else {
+                            document.getElementById("leave-successBody").innerHTML = usrMsgData[0];
+                            document.getElementById("leave-modal-success").style.display = "block";
+                        }
+
+                        setTimeout(successAlertClose, 5000);
+                        //alert("saved data");
+                        document.body.style.cursor = 'default';
+                        $("#iSave").removeClass("fa-pulse fa-spin");
+                        document.getElementById("empLeaveIdValForEditing").value = "";
+                        document.getElementById("dtLeaveFrom").value = "";
+                        document.getElementById("dtLeaveTo").value = "";
+                        document.getElementById("ddlLeaveType").value = "";
+                        document.getElementById("leaveReason").value = "";
+                        document.getElementById("iSave").innerHTML = ' Apply For Leaves';
+
+                    }
+                },
+                error: function (req, status, error) {
+                    //console.log(msg);
+                }
+            });
+        }
+        function ModifyLeaves(employeeId, employeeLeveId, leaveFrom, leaveTo, leaveType, leaveReason) {
+            $('.nav-tabs a[href="#ApplyLeaves"]').tab('show');
+            //alert(document.getElementById("dtLeaveFrom").value);
+
+            document.getElementById("dtLeaveFrom").value = leaveFrom;
+            document.getElementById("dtLeaveTo").value = leaveTo;
+            document.getElementById("ddlLeaveType").value = leaveType;
+            document.getElementById("leaveReason").value = leaveReason;
+            document.getElementById("iSave").innerHTML = ' Modify Leaves';
+            document.getElementById("empLeaveIdValForEditing").value = employeeLeveId;
+
+
+        }
+        function onToggle(btnToggle) {
+            document.getElementById("divPanelBox1").style.backgroundColor = "#ffffff";
+            document.getElementById("divPanelBox2").style.backgroundColor = "#ffffff";
+            document.getElementById("divPanelBox3").style.backgroundColor = "#ffffff";
+
+            switch (btnToggle.id) {
+                case 'btnPToggle1':
+                    if (btnToggle.title == "Collapse") {
+                        $(btnToggle).prop('title', 'Expand');
+                        $("#iconPToggle1").removeClass("fa-minus").addClass("fa-plus");
+                    }
+                    else {
+                        $(btnToggle).prop('title', 'Collapse');
+                        $("#iconPToggle1").removeClass("fa-plus").addClass("fa-minus");
+                        document.getElementById("divPanelBox1").style.backgroundColor = "#ffffff";
+
+                        $("#btnPToggle2").prop('title', 'Expand');
+                        $("#iconPToggle2").removeClass("fa-minus").addClass("fa-plus");
+                        $("#btnPToggle3").prop('title', 'Expand');
+                        $("#iconPToggle3").removeClass("fa-minus").addClass("fa-plus");
+                        $("#btnPToggle4").prop('title', 'Expand');
+                        $("#iconPToggle4").removeClass("fa-minus").addClass("fa-plus");
+                    }
+                    break;
+                case 'btnPToggle2':
+                    if (btnToggle.title == "Collapse") {
+                        $(btnToggle).prop('title', 'Expand');
+                        $("#iconPToggle2").removeClass("fa-minus").addClass("fa-plus");
+                    }
+                    else {
+                        $(btnToggle).prop('title', 'Collapse');
+                        $("#iconPToggle2").removeClass("fa-plus").addClass("fa-minus");
+                        document.getElementById("divPanelBox2").style.backgroundColor = "#ffffff";
+                        $("#btnPToggle1").prop('title', 'Expand');
+                        $("#iconPToggle1").removeClass("fa-minus").addClass("fa-plus");
+                        $("#btnPToggle3").prop('title', 'Expand');
+                        $("#iconPToggle3").removeClass("fa-minus").addClass("fa-plus");
+                        $("#btnPToggle4").prop('title', 'Expand');
+                        $("#iconPToggle4").removeClass("fa-minus").addClass("fa-plus");
+                    }
+                    break;
+                case 'btnPToggle3':
+                    if (btnToggle.title == "Collapse") {
+                        $(btnToggle).prop('title', 'Expand');
+                        $("#iconPToggle3").removeClass("fa-minus").addClass("fa-plus");
+                    }
+                    else {
+                        $(btnToggle).prop('title', 'Collapse');
+                        $("#iconPToggle3").removeClass("fa-plus").addClass("fa-minus");
+                        document.getElementById("divPanelBox3").style.backgroundColor = "#ffffff";
+                        $("#btnPToggle1").prop('title', 'Expand');
+                        $("#iconPToggle1").removeClass("fa-minus").addClass("fa-plus");
+                        $("#btnPToggle2").prop('title', 'Expand');
+                        $("#iconPToggle2").removeClass("fa-minus").addClass("fa-plus");
+                        $("#btnPToggle4").prop('title', 'Expand');
+                        $("#iconPToggle4").removeClass("fa-minus").addClass("fa-plus");
+                    }
+                    break;
+
+            }
+
+
+        }
+
+
     </script>
-
 }
 
 

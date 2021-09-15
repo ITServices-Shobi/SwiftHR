@@ -163,7 +163,7 @@
         <div class="col-md-12">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Monthly Employee Joining Report</h3>
+                    <h3 class="box-title">Last 6 Months Employee Joining Report</h3>
 
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -480,7 +480,11 @@
                                                     @empd.Department | @empd.Designation
                                                 </span>
                                                 <span class="product-description">
-                                                    @System.Convert.ToDateTime(leaveToday.LeaveFromDate).ToShortDateString() to @System.Convert.ToDateTime(leaveToday.LeaveToDate).ToShortDateString() | @leaveToday.LeaveType
+                                                    @System.Convert.ToDateTime(leaveToday.LeaveFromDate).ToShortDateString() to @System.Convert.ToDateTime(leaveToday.LeaveToDate).ToShortDateString() | 
+                                                    @if (Model.leaveTypesListAll.Where(x => x.LeaveTypeId == leaveToday.LeaveType).ToList().SingleOrDefault() != null)
+                                                    {
+                                                        @Model.leaveTypesListAll.Where(x => x.LeaveTypeId == leaveToday.LeaveType).ToList().SingleOrDefault().LeaveTypeName
+                                                    }
                                                 </span>
                                             </div>
                                         </li>
@@ -648,7 +652,7 @@
     @*<script src="~/dist/js/pages/swifthrcharts.js?labels="+"[January, February, March, April, May, April]"+"&data="+"[45, 48, 40, 19, 86, 88]""></script>*@
 
 
-    <script>
+    @*<script>
         // -----------------------
         // - MONTHLY EMPLOYEES CHART -
         // -----------------------
@@ -735,7 +739,7 @@
         // Create the line chart
         salesChart.Line(salesChartData, salesChartOptions);
 
-    </script>
+    </script>*@
 
 
     <script>
@@ -799,12 +803,12 @@
                                @System.DateTime.Now.AddMonths(-1).Month];
 
 
-        var dataPerMonth = [@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-6).Month).ToList().Count,
-                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-5).Month).ToList().Count,
-                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-4).Month).ToList().Count,
-                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-3).Month).ToList().Count,
-                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-2).Month).ToList().Count,
-                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-1).Month).ToList().Count
+        var dataPerMonth = [@Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-6).Month && System.Convert.ToDateTime(x.DateOfJoining).Year == @System.DateTime.Now.AddMonths(-6).Year).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-5).Month && System.Convert.ToDateTime(x.DateOfJoining).Year == @System.DateTime.Now.AddMonths(-5).Year).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-4).Month && System.Convert.ToDateTime(x.DateOfJoining).Year == @System.DateTime.Now.AddMonths(-4).Year).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-3).Month && System.Convert.ToDateTime(x.DateOfJoining).Year == @System.DateTime.Now.AddMonths(-3).Year).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-2).Month && System.Convert.ToDateTime(x.DateOfJoining).Year == @System.DateTime.Now.AddMonths(-2).Year).ToList().Count,
+                            @Model.empMasterDataItems.Where(x => System.Convert.ToDateTime(x.DateOfJoining).Month == @System.DateTime.Now.AddMonths(-1).Month && System.Convert.ToDateTime(x.DateOfJoining).Year == @System.DateTime.Now.AddMonths(-1).Year).ToList().Count
                             ];
         document.getElementById("chartData").value = dataPerMonth;
         document.getElementById("chartMonths").value = monthsToDisplay;

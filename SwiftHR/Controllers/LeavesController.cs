@@ -40,8 +40,17 @@ namespace SwiftHR.Controllers
             return View("HolidayCalendar");
         }
 
+        // GET: Leaves Settings
+        public ActionResult LeavesSettings(IFormCollection collection)
+        {
+            LeaveSettings leaveSettings = new LeaveSettings();
+
+            return View("LeavesSettings", leaveSettings);
+        }
+            
+        
         // GET: Leaves List
-        public ActionResult LeavesList(IFormCollection collection)
+            public ActionResult LeavesList(IFormCollection collection)
         {
             string[] myArray= { "", "", "", "", "", "", "", "", "", "", "", "", "","","","",""};
             
@@ -102,22 +111,14 @@ namespace SwiftHR.Controllers
                 ViewBag.CallingView = "ApplyLeaves";
             }
 
-            int[] monthlyLeaveCount = empLeavesAll.GetMonthWiseEmployeeLeavesCount(2021, empId);
+            int[] monthlyLeaveCount = empLeavesAll.GetMonthWiseEmployeeLeavesCount(System.DateTime.Today.Year, empId);
             var result = string.Join(",", monthlyLeaveCount);
             ViewBag.monthlyLeaveCount = result;
             ViewBag.chartLegends = monthlyLeaveCount;
             return PartialView("LeaveStatus", empLeavesAll);
 
         }
-        //public ActionResult LeavesStatus()
-        //{
-
-        //    string loggedEmpId = GetLoggedInEmpId().ToString();
-        //    LeavesAllDetails empLeavesAll = new LeavesAllDetails(loggedEmpId);
-        //    ViewBag.CallingView = "ApplyLeaves";
-        //    return PartialView("LeaveStatus", empLeavesAll);
-
-        //}
+        
 
         // POST: LeavesController/UpdateStatus
         [HttpPost("UpdateLeavesStatus")]
@@ -156,6 +157,49 @@ namespace SwiftHR.Controllers
             }
             //return EmployeeOnbList();
             return RedirectToAction("LeavesList", "Leaves");
+        }
+
+        // POST: LeavesController/UpdateStatus
+        [HttpPost("AddUpdateLeaves")]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddUpdateLeaves(string empId, string leaveId, string leaveType, string fromDate, string toDate, string leaveReason)
+        {
+            if (!string.IsNullOrEmpty(empId) && !string.IsNullOrEmpty(leaveType) && !string.IsNullOrEmpty(fromDate) && !string.IsNullOrEmpty(toDate))
+            {
+                string managerEmpId = GetLoggedInEmpId().ToString();
+                LeavesAllDetails empLeavesDetails;
+                empLeavesDetails = GetEmployeeLeavesDetails(empId, managerEmpId);
+
+                int recordsUpdated = empLeavesDetails.AddUpdateLeaves(empId, leaveType, fromDate, toDate, leaveReason, leaveId);
+                //bool success = SendSelfOnboardingMail(empLeavesDetails.empDetails, 2);
+                string msg = null;
+                int error = 0;
+                ArrayList arrayResponse = new ArrayList();
+                if (recordsUpdated == 1)
+                {
+                    msg = string.Format("Employee Leave(s) Successfully Saved ! {0}.\\n Date: {1}", empId, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                }
+                else if (recordsUpdated == 0)
+                {
+                    msg = string.Format("Employee Leave(s) Could Not Be Saved ! {0}.\\n Date: {1}", empId, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                    error = 1;
+                }
+                else if (recordsUpdated == 2)
+                {
+                    msg = string.Format("Overlapping leaves ! Employee Leave(s) Could Not Be Saved ! {0}.\\n Date: {1}", empId, TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, IST_TIMEZONE).ToString("dd-MM-yyyy"));
+                    error = 1;
+                }
+
+                arrayResponse.Add(msg);
+                arrayResponse.Add(error);
+
+                string result = JsonConvert.SerializeObject(arrayResponse);
+                return new JsonResult(result);
+
+                //return EmployeeOnbList();
+            }
+            //return EmployeeOnbList();
+            return RedirectToAction("LeavesStatus", "Leaves");
         }
 
 

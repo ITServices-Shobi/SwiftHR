@@ -7,6 +7,12 @@
     ViewData["Title"] = "LeavesApplyDetails";
 }
 
+<style type="text/css">
+    body {
+        background: navy !important;
+    }
+    /* Adding !important forces the browser to overwrite the default style applied by Bootstrap */
+</style>
 <!-- DataTables -->
 <link rel="stylesheet" href="~/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
 <form asp-controller="Leaves" asp-action="LeavesList" method="post" id="frmLeavesList">
@@ -21,7 +27,7 @@
         <div class="box box-solid" style="box-shadow:  inset !important;">
             <div class="box-body" id="divComp1">
                 <div class="form-group">
-                    <div class="btn-group ">
+                    <div class="btn-group">
                         @*@System.Convert.ToDateTime(leave.LeaveStatusChangeDate).ToString("yyyy-MM-dd")*@
                         <button type="submit" @ViewBag.leaveListSelection[0] class="btn btn-primary" name="leavePeriod" value="0">All-@ViewBag.leaveListSelection[13]</button>
                         @*<button type="button" id="AllBtn1" name="leavePeriod" value="All" class="btn btn-primary" onclick="BtnOptionsClick(event)">All 2021</button>*@
@@ -74,20 +80,20 @@
             <p id="successBody"></p>
         </div>
         <div class="box box-info">
-            <div class="box-header with-border">
+            <div id="Set1" class="box-header with-border">
                 <h3 class="box-title">
                     <i class="fa fa-gears"></i>
                     Applied Leaves
                 </h3>
                 <div class="box-tools pull-right">
-                    <a class="btn btn-default btn-circle hidden-print" id="btnExport"><i class="fa fa-file-pdf-o"></i></a>
+                    @*<a class="btn btn-default btn-circle hidden-print" id="btnExport" onclick="BtnExportClick('tblLeavesList')"><i class="fa fa-file-pdf-o"></i></a>*@
                     <button type="button" class="btn btn-box-tool pull-right" data-widget="collapse" id="box1">
                         <i class="fa fa-minus"></i>
                     </button>
                 </div>
             </div>
             <div class="box-body">
-                <table id="tblLeavesList" data-toggle="table" data-sort-name="Status" data-sort-order="desc" class="table table-bordered table-striped dt-responsive nowrap table-hover table-condensed" style="width:100%">
+                <table id="tblLeavesList" data-toggle="table" data-sort-name="Status" data-sort-order="desc" class="table table-bordered table-striped dt-responsive nowrap table-hover table-condensed" data-page-length='5' style="width:100%">
                     <thead class="bg-primary">
                         <tr>
                             <th> Employee Name</th>
@@ -121,9 +127,9 @@
                                             <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leave.EmployeeId" />
                                         </td>
 
-                                        @if (Model.leaveTypesListAll.Where(x => x.LeaveTypeId.ToString() == @leave.LeaveType).ToList().SingleOrDefault() != null)
+                                        @if (Model.leaveTypesListAll.Where(x => x.LeaveTypeId == @leave.LeaveType).ToList().SingleOrDefault() != null)
                                         {
-                                            <td>@Model.leaveTypesListAll.Where(x => x.LeaveTypeId.ToString() == @leave.LeaveType).ToList().SingleOrDefault().LeaveTypeName</td>
+                                            <td>@Model.leaveTypesListAll.Where(x => x.LeaveTypeId == @leave.LeaveType).ToList().SingleOrDefault().LeaveTypeName</td>
                                         }
                                         else
                                         {
@@ -161,32 +167,32 @@
 
         <!--Approved Leaves-->
         <div class="box box-info">
-            <div class="box-header with-border">
-                <h3 class="box-title">
+            <div id="Set2" class="box-header with-border">
+                <h3 class="box-title ">
                     <i class="fa fa-thumbs-up"></i>
                     Approved Leaves
                 </h3>
                 <div class="box-tools pull-right">
-                    <a class="btn btn-default btn-circle hidden-print" id="btnExport"><i class="fa fa-file-pdf-o"></i></a>
+                    @*<a class="btn btn-default btn-circle hidden-print" id="btnExport" onclick="BtnExportClick('tblApprovedLeavesList')"><i class="fa fa-file-pdf-o"></i></a>*@
                     <button type="button" class="btn btn-box-tool pull-right" data-widget="collapse">
                         <i class="fa fa-minus"></i>
                     </button>
                 </div>
             </div>
-            <div class="box-body">
+            <div  class="box-body">
                 <table id="tblApprovedLeavesList" class="table table-bordered table-striped dt-responsive nowrap table-hover table-condensed" style="width:100%">
-                    <thead class="bg-primary">
+                    <thead>
                         <tr>
-                            <th> Employee Name</th>
-                            <th> Leave Type</th>
-                            <th> Leave From </th>
-                            <th> Leave To </th>
-                            <th> Leave Applied On </th>
-                            <th> Leave Reason </th>
-                            <th> Leave Status </th>
-                            <th> Status Updated On </th>
+                            <th class="bg-primary"> Employee Name</th>
+                            <th class="bg-primary"> Leave Type</th>
+                            <th class="bg-primary"> Leave From </th>
+                            <th class="bg-primary"> Leave To </th>
+                            <th class="bg-primary"> Leave Applied On </th>
+                            <th class="bg-primary"> Leave Reason </th>
+                            <th class="bg-primary"> Leave Status </th>
+                            <th class="bg-primary"> Status Updated On </th>
                             <th hidden> Status Updated On </th>
-                            <th> Leave Action </th>
+                            <th class="bg-primary"> Leave Action </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -207,7 +213,7 @@
                                             </a>
                                             <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leaveApproved.EmployeeId" />
                                         </td>
-                                        var empdleaveType = Model.leaveTypesListAll.Where(x => x.LeaveTypeId.ToString() == @leaveApproved.LeaveType).ToList().SingleOrDefault();
+                                        var empdleaveType = Model.leaveTypesListAll.Where(x => x.LeaveTypeId == @leaveApproved.LeaveType).ToList().SingleOrDefault();
                                         @if (empdleaveType == null)
                                         {
                                             <td> </td>
@@ -232,6 +238,10 @@
                                             {
                                                 <button href="" type="button" id="___@leaveApproved.EmployeeId" class="btn btn-linkedin pull-right btn-xs" style="float: right; margin-right: 4%;" onclick="UpdateLeaves(@leaveApproved.EmployeeId,@leaveApproved.EmpLeaveId,@Configuration["LeaveStatus:Cancelled"]);"><i id="C___@leaveApproved.EmployeeId" class="fa fa-thumbs-down"></i> Cancel Leave </button>
                                             }
+                                            else
+                                            {
+                                                <button href="" type="button" disabled id="___@leaveApproved.EmployeeId" class="btn btn-default pull-right btn-xs" style="float: right; margin-right: 4%;" onclick="UpdateLeaves(@leaveApproved.EmployeeId,@leaveApproved.EmpLeaveId,@Configuration["LeaveStatus:Cancelled"]);"><i id="C___@leaveApproved.EmployeeId" class="fa fa-thumbs-down"></i> Cancel Leave </button>
+                                            }
                                         </td>
                                     }
                                 </tr>
@@ -247,7 +257,7 @@
 
         <!--Rejected or Cancelled Leaves-->
         <div class="box box-info">
-            <div class="box-header with-border">
+            <div id="Set3" class="box-header with-border">
                 <h3 class="box-title">
                     <i class="fa fa-thumbs-down"></i>
                     Rejected or
@@ -256,14 +266,14 @@
                 </h3>
 
                 <div class="box-tools pull-right">
-                    <a class="btn btn-default btn-circle hidden-print" id="btnExport"><i class="fa fa-file-pdf-o"></i></a>
+                    @*<a class="btn btn-default btn-circle hidden-print" id="btnExport" onclick="BtnExportClick('tblCancelledLeavesList')"><i class="fa fa-file-pdf-o"></i></a>*@
                     <button type="button" class="btn btn-box-tool pull-right" data-widget="collapse">
                         <i class="fa fa-minus"></i>
                     </button>
                 </div>
             </div>
             <div class="box-body">
-                <table id="tblCancelledLeavesList" class="table table-bordered table-striped dt-responsive nowrap table-hover table-condensed" style="width:100%">
+                <table id="tblCancelledLeavesList" class="table table-bordered table-striped dt-responsive nowrap table-hover table-condensed" data-page-length='5' style="width:100%">
                     <thead class="bg-primary">
                         <tr>
                             <th> Employee Name</th>
@@ -296,9 +306,9 @@
                                             </a>
                                             <input id="hndfEmployeeIdVal" name="empId" type="hidden" value="@leaveCancelled.EmployeeId" />
                                         </td>
-                                        @if (Model.leaveTypesListAll.Where(x => x.LeaveTypeId.ToString() == @leaveCancelled.LeaveType).ToList().SingleOrDefault() != null)
+                                        @if (Model.leaveTypesListAll.Where(x => x.LeaveTypeId == @leaveCancelled.LeaveType).ToList().SingleOrDefault() != null)
                                         {
-                                            <td>@Model.leaveTypesListAll.Where(x => x.LeaveTypeId.ToString() == @leaveCancelled.LeaveType).ToList().SingleOrDefault().LeaveTypeName</td>
+                                            <td>@Model.leaveTypesListAll.Where(x => x.LeaveTypeId == @leaveCancelled.LeaveType).ToList().SingleOrDefault().LeaveTypeName</td>
                                         }
                                         else
                                         {
@@ -361,6 +371,14 @@
     <!-- DataTables -->
     <script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <!-- Export -->
+    <script src="~/bower_components/datatables.net-export/dataTables.buttons.min.js"></script>
+    <script src="~/bower_components/datatables.net-export/jszip.min.js"></script>
+    <script src="~/bower_components/datatables.net-export/pdfmake.min.js"></script>
+    <script src="~/bower_components/datatables.net-export/vfs_fonts.js"></script>
+    <script src="~/bower_components/datatables.net-export/buttons.html5.min.js"></script>
+    <script src="~/bower_components/datatables.net-export/buttons.print.min.js"></script>
+    <script src="~/bower_components/datatables.net-export/buttons.colVis.min.js"></script>
 
     @if (ViewBag.leaveListSelection != null)
     {
@@ -379,27 +397,244 @@
     }
 
 <script type="text/javascript">
+    function validateLeaveEntryData(event) {
+            $("#iSave").addClass("fa-pulse fa-spin");
+
+            var IsAnyEmpty = false;
+            var alertMsg = "Values For : ";
+
+            if (document.getElementById("dtLeaveFrom").value == "") {
+                IsAnyEmpty = true;
+                alertMsg = alertMsg + "Leave From Date, ";
+            }
+            if (document.getElementById("dtLeaveTo").value == "") {
+                IsAnyEmpty = true;
+                alertMsg = alertMsg + "Leave Till Date, ";
+            }
+            if (document.getElementById("ddlLeaveType").value == "0") {
+                IsAnyEmpty = true;
+                alertMsg = alertMsg + "Leave Type, ";
+            }
+            if (document.getElementById("leaveReason").value == "") {
+                IsAnyEmpty = true;
+                alertMsg = alertMsg + "Reason Of Leave ";
+            }
+           event.preventDefault();
+            if (IsAnyEmpty) {
+                event.preventDefault();
+                $("#iSave").removeClass("fa-pulse fa-spin");
+                alertMsg = '<p>' + alertMsg + '<br /> cannot be left empty </p>'
+                document.getElementById("errorBody").innerHTML = alertMsg;
+                document.getElementById("modal-error").style.display = "block";
+                setTimeout(successAlertClose, 5000);
+
+                IsAnyEmpty = true;
+            }
+            else {
+                AddUpdateLeaves(@Model.empMasterDataItems[0].EmployeeId,
+                    document.getElementById("empLeaveIdValForEditing").value,
+                    document.getElementById("ddlLeaveType").value,
+                    document.getElementById("dtLeaveFrom").value,
+                    document.getElementById("dtLeaveTo").value,
+                    document.getElementById("leaveReason").value);
+            }
+            return IsAnyEmpty;
+    }
+
+    function AddUpdateLeaves(empId, leaveId, leaveType, fromDate, toDate, leaveReason) {
+            document.body.style.cursor = 'progress';
+            //Form data
+            var form_data = new FormData();
+            form_data.append('empId', empId);
+            form_data.append('leaveId', leaveId);
+            form_data.append('leaveType', leaveType);
+            form_data.append('fromDate', fromDate);
+            form_data.append('toDate', toDate);
+            form_data.append('leaveReason', leaveReason);
+            //alert("Add Leave" + empId);
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("AddUpdateLeaves", "Leaves")",
+                processData: false,
+                contentType: false,
+                async: false,
+                cache: false,
+                data: form_data,
+                success: function (response) {
+                    //alert(leaveStatus);
+                    var usrMsgData = JSON.parse(response);
+                    //alert(usrMsgData[0]);
+                    if (usrMsgData != null && usrMsgData != undefined) {
+                        //alert(usrMsgData[1] + "--"+usrMsgData[0]);
+                        if (usrMsgData[1] == "1") {
+                            document.getElementById("errorBody").innerHTML = usrMsgData[0];
+                            document.getElementById("modal-error").style.display = "block";
+                        }
+                        else {
+                            document.getElementById("leave-successBody").innerHTML = usrMsgData[0];
+                            document.getElementById("leave-modal-success").style.display = "block";
+                        }
+
+                        setTimeout(successAlertLeavesClose, 5000);
+                        //alert("saved data");
+                        document.body.style.cursor = 'default';
+                        $("#iSave").removeClass("fa-pulse fa-spin");
+                        document.getElementById("empLeaveIdValForEditing").value = "";
+                        document.getElementById("dtLeaveFrom").value = "";
+                        document.getElementById("dtLeaveTo").value = "";
+                        document.getElementById("ddlLeaveType").value = "";
+                        document.getElementById("leaveReason").value = "";
+                        document.getElementById("iSave").innerHTML = ' Apply For Leaves';
+                        
+                    }
+                },
+                error: function (req, status, error) {
+                    //console.log(msg);
+                }
+            });
+    }
+
+    function ModifyLeaves(employeeId, employeeLeveId, leaveFrom, leaveTo, leaveType, leaveReason) {
+        $('.nav-tabs a[href="#ApplyLeaves"]').tab('show');
+        //alert(document.getElementById("dtLeaveFrom").value);
+
+        document.getElementById("dtLeaveFrom").value = leaveFrom;
+        document.getElementById("dtLeaveTo").value = leaveTo;
+        document.getElementById("ddlLeaveType").value = leaveType;
+        document.getElementById("leaveReason").value = leaveReason;
+        document.getElementById("iSave").innerHTML = ' Modify Leaves';
+        document.getElementById("empLeaveIdValForEditing").value = employeeLeveId;
+
+
+    }
     $('#modal-defaultLeaves').on('shown.bs.modal', function () {
         @*alert("here");
          alert(document.getElementById("chartData").value);*@
-         document.getElementById("divPanelBox1").style.backgroundColor = "#ddd6";
-        //document.getElementById("chartData").value = dataPerMonth;
-        @*document.getElementById("TotalLeaves").innerHTML = @monthlyLeaveCount[12];
-        document.getElementById("TotalLeavesTaken").innerHTML = @monthlyLeaveCount[13];
-        document.getElementById("TotalLeavesRemaining").innerHTML = @monthlyLeaveCount[14];
-        document.getElementById("AverageLeaves").innerHTML = @monthlyLeaveCount[15];*@
+        document.getElementById("divPanelBox1").style.backgroundColor = "#ddd6";
+        document.getElementById("MainContent").style.backgroundColor = "#ecf0f5";
+
         var script = document.createElement('script');
         script.src = "../dist/js/pages/SwiftHrCharts_Leaves.js";
         document.head.appendChild(script);
+
+        // SLIMSCROLL FOR CHAT WIDGET
+        $('#divLeavetypeEmpCount').slimScroll({
+            height: '150px'
+        });
+
+
+
+
     });
-    function GetChartData(empId) {
-        alert("getchartdata");
+
+    function onToggle(btnToggle) {
+        document.getElementById("divPanelBox1").style.backgroundColor = "#ffffff";
+        document.getElementById("divPanelBox2").style.backgroundColor = "#ffffff";
+        document.getElementById("divPanelBox3").style.backgroundColor = "#ffffff";
+
+        switch (btnToggle.id) {
+            case 'btnPToggle1':
+                if (btnToggle.title == "Collapse") {
+                    $(btnToggle).prop('title', 'Expand');
+                    $("#iconPToggle1").removeClass("fa-minus").addClass("fa-plus");
+                }
+                else {
+                    $(btnToggle).prop('title', 'Collapse');
+                    $("#iconPToggle1").removeClass("fa-plus").addClass("fa-minus");
+                    document.getElementById("divPanelBox1").style.backgroundColor = "#ddd6";
+
+                    $("#btnPToggle2").prop('title', 'Expand');
+                    $("#iconPToggle2").removeClass("fa-minus").addClass("fa-plus");
+                    $("#btnPToggle3").prop('title', 'Expand');
+                    $("#iconPToggle3").removeClass("fa-minus").addClass("fa-plus");
+                    $("#btnPToggle4").prop('title', 'Expand');
+                    $("#iconPToggle4").removeClass("fa-minus").addClass("fa-plus");
+                }
+                break;
+            case 'btnPToggle2':
+                if (btnToggle.title == "Collapse") {
+                    $(btnToggle).prop('title', 'Expand');
+                    $("#iconPToggle2").removeClass("fa-minus").addClass("fa-plus");
+                }
+                else {
+                    $(btnToggle).prop('title', 'Collapse');
+                    $("#iconPToggle2").removeClass("fa-plus").addClass("fa-minus");
+                    document.getElementById("divPanelBox2").style.backgroundColor = "#ddd6";
+                    $("#btnPToggle1").prop('title', 'Expand');
+                    $("#iconPToggle1").removeClass("fa-minus").addClass("fa-plus");
+                    $("#btnPToggle3").prop('title', 'Expand');
+                    $("#iconPToggle3").removeClass("fa-minus").addClass("fa-plus");
+                    $("#btnPToggle4").prop('title', 'Expand');
+                    $("#iconPToggle4").removeClass("fa-minus").addClass("fa-plus");
+                }
+                break;
+            case 'btnPToggle3':
+                if (btnToggle.title == "Collapse") {
+                    $(btnToggle).prop('title', 'Expand');
+                    $("#iconPToggle3").removeClass("fa-minus").addClass("fa-plus");
+                }
+                else {
+                    $(btnToggle).prop('title', 'Collapse');
+                    $("#iconPToggle3").removeClass("fa-plus").addClass("fa-minus");
+                    document.getElementById("divPanelBox3").style.backgroundColor = "#ddd6";
+                    $("#btnPToggle1").prop('title', 'Expand');
+                    $("#iconPToggle1").removeClass("fa-minus").addClass("fa-plus");
+                    $("#btnPToggle2").prop('title', 'Expand');
+                    $("#iconPToggle2").removeClass("fa-minus").addClass("fa-plus");
+                    $("#btnPToggle4").prop('title', 'Expand');
+                    $("#iconPToggle4").removeClass("fa-minus").addClass("fa-plus");
+                }
+                break;
+
+        }
+
 
     }
-</script> 
+</script>
+
 
     <script>
-    
+        function GridSetup(name) {
+            var table = $('#' + name).DataTable({
+                "pagingType": "full_numbers",
+                "pageLength": 5,
+                "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+                "order": [[8, "desc"]],
+                "dom": 'Bfrtipl',
+                "buttons": [
+                    {
+                        extend: 'copy',
+                        className: 'btn btn-default btn-circle pull-right hidden-print',
+                        text: '<i class="fa fa-copy"></i>'
+                    },
+                    {
+                        extend: 'excel',
+                        className: 'btn btn-default btn-circle pull-right hidden-print',
+                        text: '<i class="fa fa-file-excel-o"></i>'
+                    },
+                    {
+                        extend: 'pdf',
+                        className: 'btn btn-default btn-circle pull-right hidden-print',
+                        text: '<i class="fa fa-file-pdf-o"></i>'
+                    },
+                    {
+                        extend: 'csv',
+                        className: 'btn btn-default btn-circle pull-right hidden-print',
+                        text: '<i class="fa fa-table"></i>'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'btn btn-default btn-circle pull-right hidden-print',
+                        text: '<i class="fa fa-print"></i>'
+                    }
+                ],
+            });
+            table.draw();
+
+        };
+
+    </script>
+    <script>
 
     function BtnOptionsClick(event){
             //alert("button");
@@ -412,31 +647,24 @@
         $("#liEmployeeLeaves").addClass("active");
         document.getElementById("liEmployeeLeaves").style.backgroundColor = "#3c8dbc45";
 
-        //document.getElementById("AllBtn").blur();
-        //alert("ok");
-        //Sorting
-        $('#tblLeavesList').DataTable({
-                "order": [[8, "desc"]]
-        });
-        $('#tblApprovedLeavesList').DataTable({
-                "order": [[8, "desc"]]
-        });
-        $('#tblCancelledLeavesList').DataTable({
-                "order": [[8, "desc"]]
-        });
-            //alert(document.getElementById("AllBtn1").autofocus);
-            //document.getElementById("AllBtn3").autofocus = true;
-            //$("#AllBtn3").addClass("autofocus");
-            //alert(document.getElementById("AllBtn1").autofocus);
+        GridSetup('tblLeavesList');
+        GridSetup('tblApprovedLeavesList');
+        GridSetup('tblCancelledLeavesList');
+        document.getElementById("Set1").style.backgroundColor = "#fafafa";
+        document.getElementById("Set2").style.backgroundColor = "#fafafa";
+        document.getElementById("Set3").style.backgroundColor = "#fafafa";
+
     });
         function successAlertClose(event) {
             document.getElementById("modal-success").style.display = "none";
+            document.getElementById("modal-error").style.display = "none";
+            
         };
-    $(function () {
-        $('#tblLeavesList').DataTable();
-        $('#tblApprovedLeavesList').DataTable();
-        $('#tblCancelledLeavesList').DataTable();
-    });
+        function successAlertLeavesClose(event) {
+            document.getElementById("leave-modal-success").style.display = "none";
+            document.getElementById("modal-error").style.display = "none";
+
+        };
 
         function UpdateLeaves(empId, leaveId, leaveStatus) {
             document.body.style.cursor = 'progress';
@@ -515,6 +743,7 @@
     </script>
 
     <script src="~/bower_components/chart.js/Chart.js"></script>
+
 
 }
 

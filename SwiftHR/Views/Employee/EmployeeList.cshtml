@@ -220,6 +220,10 @@
             // DataTable
             @* scrollY: "300px",*@
             var table = $('#tblEmpList').DataTable({
+                "fixedHeader": {
+                    header: true,
+                    footer: true
+                },
                 "scrollX": true,
                 "scrollY": true,
                 "scrollCollapse": true,

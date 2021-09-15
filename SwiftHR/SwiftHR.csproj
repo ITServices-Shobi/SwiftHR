@@ -13,6 +13,7 @@
 		<Content Include="wwwroot\bower_components\databases.net-bs4\css\dataTables.bootstrap4.min.css" />
 		<Content Include="wwwroot\bower_components\databases.net-bs4\css\responsive.bootstrap4.min.css" />
 		<Content Include="wwwroot\bower_components\datatables.net-bs\css\dataTables.bootstrap.min.css" />
+		<Content Include="wwwroot\bower_components\dbl-listview\css\bootstrap-duallistbox.css" />
 		<Content Include="wwwroot\bower_components\font-awesome\css\all.min.css" />
 		<Content Include="wwwroot\bower_components\font-awesome\css\font-awesome.min.css" />
 		<Content Include="wwwroot\bower_components\font-awesome\fonts\fontawesome-webfont.ttf" />
@@ -53,6 +54,7 @@
 		<None Include="wwwroot\bower_components\datatables.net-export\pdfmake.min.js" />
 		<None Include="wwwroot\bower_components\datatables.net-export\vfs_fonts.js" />
 		<None Include="wwwroot\bower_components\datatables.net\js\jquery.dataTables.min.js" />
+		<None Include="wwwroot\bower_components\dbl-listview\js\jquery.bootstrap-duallistbox.js" />
 		<None Include="wwwroot\bower_components\fastclick\lib\fastclick.js" />
 		<None Include="wwwroot\bower_components\Flot\jquery.flot.categories.js" />
 		<None Include="wwwroot\bower_components\Flot\jquery.flot.js" />
@@ -108,6 +110,7 @@
 
 	<ItemGroup>
 		<Folder Include="wwwroot\bower_components\New folder\" />
+		<Folder Include="wwwroot\bower_components\NewFolder\" />
 	</ItemGroup>
 
 	<ItemGroup>
